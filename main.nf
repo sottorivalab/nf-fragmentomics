@@ -229,6 +229,10 @@ process PEAK_STATS {
 	"""
 }
 
+// process PEAK_REPORT {
+
+// }
+
 workflow {
     // info
     log.info """\
@@ -271,8 +275,11 @@ workflow {
     HEATMAP(COMPUTEMATRIX.out.matrix)
     PEAK_STATS(COMPUTEMATRIX.out.matrix)
 
-    PEAK_STATS.out.peaks.view()
-    
+    // collect all peak stats and build a report per sample
+    sample_peaks_ch = PEAK_STATS.out.peak
+        .groupTuple(by:0)
+        .view()
+
     // buffer example
     // .buffer(size: params.buffer_size, remainder: true)    
 }
