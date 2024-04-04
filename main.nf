@@ -1,6 +1,6 @@
 process COMPUTEGCBIAS {
     conda '/home/davide.rambaldi/miniconda3/envs/deeptools'
-	publishDir "${params.outdir}/${meta.id}/bam", mode:'copy', overwrite:true
+	publishDir "${params.outdir}/${meta.caseid}/${meta.id}/fragmentomics/processed/bam", mode:'copy', overwrite:true
 
     if ( "${workflow.stubRun}" == "false" ) {
 		cpus = 32
@@ -35,7 +35,7 @@ process COMPUTEGCBIAS {
 
 process CORRECTGCBIAS {
     conda '/home/davide.rambaldi/miniconda3/envs/deeptools'
-	publishDir "${params.outdir}/${meta.id}/bam", mode:'copy', overwrite:true
+	publishDir "${params.outdir}/${meta.caseid}/${meta.id}/fragmentomics/processed/bam", mode:'copy', overwrite:true
 
     if ( "${workflow.stubRun}" == "false" ) {
 		cpus = 32
@@ -70,7 +70,7 @@ process CORRECTGCBIAS {
 }
 
 process SAMTOOLSINDEX {
-	publishDir "${params.outdir}/${meta.id}/bam", mode:'copy', overwrite:true
+	publishDir "${params.outdir}/${meta.caseid}/${meta.id}/fragmentomics/processed/bam", mode:'copy', overwrite:true
 
 	if ( "${workflow.stubRun}" == "false" ) {
 		cpus = 4
@@ -101,7 +101,7 @@ process SAMTOOLSINDEX {
 
 process COVERAGEBAM {
 	conda '/home/davide.rambaldi/miniconda3/envs/deeptools'
-	publishDir "${params.outdir}/${meta.id}/bw", mode:'copy', overwrite:true
+	publishDir "${params.outdir}/${meta.caseid}/${meta.id}/fragmentomics/processed/bw", mode:'copy', overwrite:true
 
 	if ( "${workflow.stubRun}" == "false" ) {
 		cpus = 32
@@ -130,7 +130,7 @@ process COVERAGEBAM {
 
 process COMPUTEMATRIX {
 	conda '/home/davide.rambaldi/miniconda3/envs/deeptools'
-	publishDir "${params.outdir}/${meta_sample.id}/matrix/${meta_target.source}/${meta_target.name}", mode:'copy', overwrite:true
+    publishDir "${params.outdir}/${meta_sample.caseid}/${meta_sample.id}/fragmentomics/processed/matrix/${meta_target.source}/${meta_target.name}", mode:'copy', overwrite:true	
 
 	if ( "${workflow.stubRun}" == "false" ) {
 		cpus = 32
@@ -167,28 +167,21 @@ process COMPUTEMATRIX {
 
 process HEATMAP {
     conda '/home/davide.rambaldi/miniconda3/envs/deeptools'
-    publishDir "${params.outdir}/${sample_id}/heatmaps", mode:'copy', overwrite:true
-    debug true
+    publishDir "${params.outdir}/${meta_sample.caseid}/${meta_sample.id}/fragmentomics/reports/heatmaps", mode:'copy', overwrite:true
+    
 
     input:
-    val matrix_files
+    tuple val(meta_sample), val(meta_targets), path(matrixes)
 
-    script:
-    def sample_id = matrix_files[0][0].id
-    def matrixes = matrix_files.collect{ it[2] }
+    script:    
     """
-    echo ${matrixes}
-    echo ${sample_id}
     """
 
     stub:
-    def sample_id = matrix_files[0][0].id
-    def matrixes = matrix_files.collect{ it[2] }
     """
-    for MATRIX in ${matrixes.join(' ')}; do
+    for MATRIX in ${matrix_data}; do
         echo \${MATRIX}
-    done
-    echo ${sample_id}    
+    done    
     """
 }
 
@@ -198,9 +191,11 @@ workflow {
     log.info """\
         FRAGMENTOMICS P I P E L I N E    
         ===================================
-        genome       : ${params.genome}      
-        outdir       : ${params.outdir}  
-        buffer size  : ${params.buffer_size}      
+        genome       : ${params.genome}
+        genome size  : ${params.genome_size}
+        outdir       : ${params.outdir}
+        buffer size  : ${params.buffer_size}
+        stubRun      : ${workflow.stubRun}
         """
         .stripIndent()
 
@@ -208,7 +203,6 @@ workflow {
     sample_ch = Channel.fromPath(params.input)
         .splitCsv(header:true, sep:',')
         .map{ create_sample_channel(it) }
-        
 
     // targets channel
     target_ch = Channel.fromPath(params.targets)
@@ -231,12 +225,24 @@ workflow {
         .combine(target_ch)
     
     COMPUTEMATRIX(target_sample_ch)
-
-    // buffer for heatmaps using matrix files
-    heatmap_ch = COMPUTEMATRIX.out.matrix        
-        .buffer(size: params.buffer_size, remainder: true)        
     
-    HEATMAP(heatmap_ch)
+    // group by sample and source
+    matrix_ch = COMPUTEMATRIX.out.matrix
+        .map { 
+            return tuple(
+                tuple(it[0].caseid, it[0].id, it[0].timepoint, it[1].source),
+                it[1],
+                it[2]
+            )
+        }
+        .groupTuple(by: 0)
+        .view()
+
+
+    // buffer example
+    // .buffer(size: params.buffer_size, remainder: true)
+
+    // HEATMAP(heatmap_ch)
 }
 
 def create_target_channel(LinkedHashMap row) {
@@ -251,7 +257,8 @@ def create_target_channel(LinkedHashMap row) {
 def create_sample_channel(LinkedHashMap row) {
     // create all at once
     def meta = [:]
-    meta.id = row.sample_id
+    meta.caseid = row.caseid
+    meta.id = row.sampleid
     meta.timepoint = row.timepoint
 
     def sample = []
