@@ -167,24 +167,67 @@ process COMPUTEMATRIX {
 
 process HEATMAP {
     conda '/home/davide.rambaldi/miniconda3/envs/deeptools'
-    publishDir "${params.outdir}/${meta_sample.caseid}/${meta_sample.id}/fragmentomics/reports/heatmaps", mode:'copy', overwrite:true
-    
+    publishDir "${params.outdir}/${meta_sample.caseid}/${meta_sample.id}/fragmentomics/processed/matrix/${meta_target.source}/${meta_target.name}", mode:'copy', overwrite:true	
+
+    if ( "${workflow.stubRun}" == "false" ) {
+		cpus = 4
+		memory = 32.GB
+	}
 
     input:
-    tuple val(meta_sample), val(meta_targets), path(matrixes)
+    tuple val(meta_sample), val(meta_target), path(matrix)
 
-    script:    
+    output:
+	tuple val(meta_sample), val(meta_target), path("*_heatmap.png"), emit: heatmaps
+
+    script:
+    def args = task.ext.args ?: ''
+    def prefix = task.ext.prefix ?: "${meta_sample.id}_${meta_target.name}"    
     """
+    plotHeatmap \\
+        -m $matrix \\
+        -o ${prefix}_heatmap.png \\
+        --dpi 200 \\
+        --plotTitle "Sample: ${$meta_sample.id} - Target: ${meta_target.name}" \\
+        --numberOfProcessors ${task.cpus} \\
+        $args
     """
 
     stub:
+    def prefix = task.ext.prefix ?: "${meta_sample.id}_${meta_target.name}"    
     """
-    for MATRIX in ${matrix_data}; do
-        echo \${MATRIX}
-    done    
+    touch ${prefix}_heatmap.png
     """
 }
 
+process PEAK_STATS {
+    publishDir "${params.outdir}/${meta_sample.caseid}/${meta_sample.id}/fragmentomics/processed/matrix/${meta_target.source}/${meta_target.name}", mode:'copy', overwrite:true
+
+    if ( "${workflow.stubRun}" == "false" ) {
+		cpus = 1
+		memory = 16.GB
+	}
+
+    input:
+    tuple val(meta_sample), val(meta_target), path(matrix)
+
+    output:
+    tuple val(meta_sample), val(meta_target), path("*_peak_data.tsv"), path("*_peak_stats.tsv"), path("*_PeakIntegration.pdf"), emit: peak
+
+    script:
+	"""
+	module unload R/rstudio-dependencies
+	module load R/4.3.1
+	fragmentomics_peakStats.R $matrix
+	"""
+
+	stub:
+	"""
+	touch ${meta_sample.id}_${meta_target.name}_peak_data.tsv
+	touch ${meta_sample.id}_${meta_target.name}_peak_stats.tsv
+	touch ${meta_sample.id}_${meta_target.name}_PeakIntegration.pdf
+	"""
+}
 
 workflow {
     // info
@@ -224,25 +267,14 @@ workflow {
     target_sample_ch = COVERAGEBAM.out.bw
         .combine(target_ch)
     
-    COMPUTEMATRIX(target_sample_ch)
+    COMPUTEMATRIX(target_sample_ch)    
+    HEATMAP(COMPUTEMATRIX.out.matrix)
+    PEAK_STATS(COMPUTEMATRIX.out.matrix)
+
+    PEAK_STATS.out.peaks.view()
     
-    // group by sample and source
-    matrix_ch = COMPUTEMATRIX.out.matrix
-        .map { 
-            return tuple(
-                tuple(it[0].caseid, it[0].id, it[0].timepoint, it[1].source),
-                it[1],
-                it[2]
-            )
-        }
-        .groupTuple(by: 0)
-        .view()
-
-
     // buffer example
-    // .buffer(size: params.buffer_size, remainder: true)
-
-    // HEATMAP(heatmap_ch)
+    // .buffer(size: params.buffer_size, remainder: true)    
 }
 
 def create_target_channel(LinkedHashMap row) {
