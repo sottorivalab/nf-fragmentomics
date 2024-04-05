@@ -43,7 +43,7 @@ process CORRECTGCBIAS {
 	}
 
     input:
-	tuple val(meta), path(freq), path(bai), path(bam)
+	tuple val(meta), path(freq), path(bam), path(bai)
 
 	output:
 	tuple val(meta), path("*.gc_correct.bam"), emit: gc_correct
@@ -259,7 +259,7 @@ workflow {
     COMPUTEGCBIAS(sample_ch)
     sample_with_gc_computed_ch = COMPUTEGCBIAS.out.freqfile       
         .combine(sample_ch, by: 0)
-    
+
     CORRECTGCBIAS(sample_with_gc_computed_ch)    
     SAMTOOLSINDEX(CORRECTGCBIAS.out.gc_correct)
     
