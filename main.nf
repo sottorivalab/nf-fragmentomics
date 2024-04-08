@@ -170,8 +170,8 @@ process HEATMAP {
     publishDir "${params.outdir}/${meta_sample.caseid}/${meta_sample.id}/fragmentomics/processed/matrix/${meta_target.source}/${meta_target.name}", mode:'copy', overwrite:true	
 
     if ( "${workflow.stubRun}" == "false" ) {
-		cpus = 4
-		memory = 32.GB
+		cpus = 1
+		memory = 4.GB
 	}
 
     input:
@@ -188,8 +188,7 @@ process HEATMAP {
         -m $matrix \\
         -o ${prefix}_heatmap.png \\
         --dpi 200 \\
-        --plotTitle "Sample: ${$meta_sample.id} - Target: ${meta_target.name}" \\
-        --numberOfProcessors ${task.cpus} \\
+        --plotTitle "Sample: ${meta_sample.id} - Target: ${meta_target.name}" \\
         $args
     """
 
@@ -205,7 +204,7 @@ process PEAK_STATS {
 
     if ( "${workflow.stubRun}" == "false" ) {
 		cpus = 1
-		memory = 16.GB
+		memory = 4.GB
 	}
 
     input:
@@ -218,6 +217,7 @@ process PEAK_STATS {
 	"""
 	module unload R/rstudio-dependencies
 	module load R/4.3.1
+    module load nlopt
 	fragmentomics_peakStats.R $matrix
 	"""
 
@@ -229,9 +229,33 @@ process PEAK_STATS {
 	"""
 }
 
-// process PEAK_REPORT {
+process PEAK_REPORT {
+    publishDir "${params.outdir}/${meta_sample.caseid}/${meta_sample.id}/fragmentomics/reports/", mode:'copy', overwrite:true
 
-// }
+    if ( "${workflow.stubRun}" == "false" ) {
+		cpus = 1
+		memory = 4.GB
+	}
+
+    input:
+    tuple val(meta_sample), val(targets), path(data), path(stats), path(plots)
+    
+    output:
+    tuple val(meta_sample), path("${meta_sample.id}_peak_stats.tsv")
+
+    script:
+    """
+    head -n 1 ${stats[0]} > "${meta_sample.id}_peak_stats.tsv"
+    for STAT in ${stats.join(' ')}; do
+        tail -n +2 \$STAT >> "${meta_sample.id}_peak_stats.tsv"
+    done
+    """
+
+    stub:
+	"""
+	touch ${meta_sample.id}_peak_stats.tsv
+	"""
+}
 
 workflow {
     // info
@@ -272,13 +296,14 @@ workflow {
         .combine(target_ch)
     
     COMPUTEMATRIX(target_sample_ch)    
+    // COMPUTEMATRIX.out.matrix.view()
     HEATMAP(COMPUTEMATRIX.out.matrix)
     PEAK_STATS(COMPUTEMATRIX.out.matrix)
 
     // collect all peak stats and build a report per sample
-    sample_peaks_ch = PEAK_STATS.out.peak
-        .groupTuple(by:0)
-        .view()
+    sample_peaks_ch = PEAK_STATS.out.peak.groupTuple(by:0)        
+
+    PEAK_REPORT(sample_peaks_ch)
 
     // buffer example
     // .buffer(size: params.buffer_size, remainder: true)    

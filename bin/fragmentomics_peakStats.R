@@ -34,7 +34,7 @@ peakData <- fortify(as.data.frame(peakData)) %>%
 rownames(peakData) <- NULL
 
 # write peak means to build the profile plot
-write_delim(peakData, paste(mysignal,mytarget,"peak_data.tsv",sep="_"))
+write_delim(peakData, paste(mysignal,mytarget,"peak_data.tsv",sep="_"), delim="\t")
 
 # create random points
 x1 = runif(random.points, min=1, max=(ncol(mdata)-6))
@@ -73,7 +73,7 @@ peakStats <- tibble(
 )
 
 # write peak stats
-write_delim(peakStats,paste(mysignal,mytarget,"peak_stats.tsv",sep="_"))
+write_delim(peakStats,paste(mysignal,mytarget,"peak_stats.tsv",sep="_"), delim="\t")
 
 peak.limits <- tibble(
   y=c(peakStats$ymin, peakStats$ymax),
@@ -91,7 +91,7 @@ ggplot() +
   geom_line(data=peak.limits, aes(x=x, y=y), color="green", linetype="dashed") +
   geom_point(data=peak.limits, aes(x=x, y=y), color="green", size=1) +
   xlab(paste("Target:",mytarget)) +
-  ylab(paste("Signal:",mysignal) +
+  ylab(paste("Signal:",mysignal)) +
   ggtitle(
     paste(
       "Peak integration: I=",
@@ -103,8 +103,9 @@ ggplot() +
       " N=",
       nrow(mIntegrationData)
     )
-  ) +
-  theme(legend.position = "none")
+  ) + theme(legend.position = "none")
+
 
 mpeakplot_filename <- paste(mysignal,mytarget,"PeakIntegration.pdf",sep = "_")
+
 ggsave(mpeakplot_filename)
