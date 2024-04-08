@@ -292,9 +292,19 @@ workflow {
 
     COVERAGEBAM(sample_gc_correct_ch)
 
+    // combine sample bw and targets
     target_sample_ch = COVERAGEBAM.out.bw
         .combine(target_ch)
     
+    // merge bw by timepoint
+    COVERAGEBAM.out.bw
+        .map{ sample ->
+            def tp = sample[0].timepoint
+            tuple(tp, sample[0], sample[1])
+        }
+        .groupTuple(by: 0)
+        .view()
+
     COMPUTEMATRIX(target_sample_ch)    
     // COMPUTEMATRIX.out.matrix.view()
     HEATMAP(COMPUTEMATRIX.out.matrix)
@@ -308,6 +318,7 @@ workflow {
     // buffer example
     // .buffer(size: params.buffer_size, remainder: true)    
 }
+
 
 def create_target_channel(LinkedHashMap row) {
     def meta = [:]
