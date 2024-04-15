@@ -17,7 +17,7 @@ process SAMTOOLSINDEX {
     def prefix = task.ext.prefix ?: "${meta.id}"
 	"""
 	module load samtools
-	samtools index -@ ${task.cpus} $bam $args
+	samtools index -@ ${task.cpus} ${bam} $args
 	"""
 
 	stub:

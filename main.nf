@@ -51,12 +51,12 @@ workflow {
     log.info """\
         FRAGMENTOMICS P I P E L I N E    
         ===================================
-        genome       : ${params.genome}
-        genome size  : ${params.genome_size}
         outdir       : ${params.outdir}        
         stubRun      : ${workflow.stubRun}
-        mappability  : ${params.mappability_bw}
-        mappability  : ${params.mappability_treshold}
+        genome 2bit  : ${params.genome_2bit}
+        genome size  : ${params.genome_size}
+        chr sizes    : ${params.chr_sizes}
+        blacklist    : ${params.blacklist_bed}        
         """
         .stripIndent()
 
@@ -64,21 +64,25 @@ workflow {
     sample_ch = Channel.fromPath(params.input)
         .splitCsv(header:true, sep:',')
         .map{ create_sample_channel(it) }
+        .dump(tag: 'samples')
 
     // targets channel
     target_ch = Channel.fromPath(params.targets)
         .splitCsv(header: true, sep:',')
         .map{ create_target_channel(it) }        
+        .dump(tag: 'targets')
 
     COMPUTEGCBIAS(sample_ch)
     sample_with_gc_computed_ch = COMPUTEGCBIAS.out.freqfile       
         .combine(sample_ch, by: 0)
+        .dump(tag: 'bam_gc')
 
     CORRECTGCBIAS(sample_with_gc_computed_ch)    
     SAMTOOLSINDEX(CORRECTGCBIAS.out.gc_correct)
     
     sample_gc_correct_ch = CORRECTGCBIAS.out.gc_correct
         .combine(SAMTOOLSINDEX.out.bai, by: 0)
+        .dump(tag: 'bam_with_index')
 
     COVERAGEBAM(sample_gc_correct_ch)
 

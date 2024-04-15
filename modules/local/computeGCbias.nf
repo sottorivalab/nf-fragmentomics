@@ -20,7 +20,7 @@ process COMPUTEGCBIAS {
 	computeGCBias \\
         -b ${bam} \\
         --effectiveGenomeSize ${params.genome_size} \\
-        -g ${params.genome} \\
+        -g ${params.genome_2bit} \\
         --GCbiasFrequenciesFile ${prefix}.freq.txt \\
         --numberOfProcessors ${task.cpus} \\
         $args

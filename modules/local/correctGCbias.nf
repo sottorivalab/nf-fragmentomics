@@ -18,10 +18,10 @@ process CORRECTGCBIAS {
     def prefix = task.ext.prefix ?: "${meta.id}"
 	"""
 	correctGCBias \\
-        -b $bam \\
+        -b ${bam} \\
         --effectiveGenomeSize ${params.genome_size} \\
-        -g ${params.genome} \\
-        --GCbiasFrequenciesFile $freq \\
+        -g ${params.genome_2bit} \\
+        --GCbiasFrequenciesFile ${freq} \\
         --numberOfProcessors ${task.cpus} \\
         -o ${prefix}.gc_correct.bam \\
         $args

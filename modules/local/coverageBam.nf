@@ -17,7 +17,12 @@ process COVERAGEBAM {
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
 	"""
-	bamCoverage -b $bam -o ${prefix}.bw --numberOfProcessors ${task.cpus} $args
+	bamCoverage \\
+		-b $bam \\
+		-o ${prefix}.bw \\
+		--numberOfProcessors ${task.cpus} \\
+		--blackListFileName ${params.blacklist_bed} \\
+		$args
 	"""
 
 	stub:    

@@ -1,5 +1,19 @@
 # NF-FRAGMENTOMICS
 
+## USAGE
+
+### PARAMS
+
+
+### DEBUG
+
+use `-dump-channels` to see channels.
+
+
+
+### DEV NOTES
+
+
 faToTwoBit /scratch/chela.james/references/Homo_sapiens/GATK/GRCh38/Sequence/WholeGenomeFasta/Homo_sapiens_assembly38.fasta GRCh38.2bit
 
 twoBitInfo GRCh38.2bit GRCh38.sizes
