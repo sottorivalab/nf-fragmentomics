@@ -8,44 +8,6 @@ include { PEAK_STATS    } from './modules/local/peakStats.nf'
 include { PEAK_REPORT   } from './modules/local/peakReport.nf'
 include { BIGWIG_MERGE  } from './modules/local/bigWigMerge.nf'
 
-process BWMAPPABILITY {    
-	publishDir "${params.outdir}/${meta.caseid}/${meta.id}/fragmentomics/processed/bw", mode:'copy', overwrite:true
-
-    if ( "${workflow.stubRun}" == "false" ) {
-		cpus = 1
-		memory = 8.GB
-	}
-
-    input:
-    tuple val(meta), path(bw)
-
-    output:
-    tuple val(meta), path("*.mappability_filter.canonical.bw"), emit: bw
-
-    script:
-    def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "${meta.id}"
-    """
-    module load ucsc-tools
-    bigWigToBedGraph ${prefix}.bw ${prefix}.bedGraph
-    awk '{if (\$1 ~ /^chr/) { print \$1"\t"\$2"\t"\$3"\tid-"NR"\t"\$4; }}' ${prefix}.bedGraph > ${prefix}.bed
-    bigWigAverageOverBed ${params.mappability_bw} ${prefix}.bed ${prefix}.mappability.tab
-    cut -f 6 ${prefix}.mappability.tab > ${prefix}.mappability_score.out
-    paste ${prefix}.bed ${prefix}.mappability_score.out > ${prefix}.mappability.bed
-    awk '\$6 >= ${params.mappability_treshold}' ${prefix}.mappability.bed > ${prefix}.mappability_filter.bed
-    awk '{printf "%s\\t%d\\t%d\\t%d\\n", \$1,\$2,\$3,\$5}' ${prefix}.mappability_filter.bed > ${prefix}.mappability_filter.bedGraph
-    exit 1
-    awk '\$1 !~ /_/' ${prefix}.mappability_filter.bedGraph | egrep -v "chrEBV" > ${prefix}.mappability_filter.canonical.bedGraph
-    bedGraphToBigWig ${prefix}.mappability_filter.canonical.bedGraph ${params.genome_sizes} ${prefix}.mappability_filter.canonical.bw
-    """
-
-    stub:
-    def prefix = task.ext.prefix ?: "${meta.id}"
-    """
-    touch ${prefix}.mappability_filter.canonical.bw
-    """
-}
-
 workflow {
     // info
     log.info """\
@@ -86,36 +48,30 @@ workflow {
 
     COVERAGEBAM(sample_gc_correct_ch)
 
-    // BWMAPPABILITY(COVERAGEBAM.out.bw)
-
     // combine sample bw and targets
-    // target_sample_ch = BWMAPPABILITY.out.bw
-    //     .combine(target_ch)
+    target_sample_ch = COVERAGEBAM.out.bw
+        .combine(target_ch)
+        .dump(tag: 'combine')
     
-    // // merge bw by timepoint
-    // timepoint_bw_ch = COVERAGEBAM.out.bw
-    //     .map{ sample ->
-    //         def tp = sample[0].timepoint
-    //         tuple(tp, sample[0], sample[1])
-    //     }
-    //     .groupTuple(by: 0)
+    // merge bw by timepoint
+    timepoint_bw_ch = COVERAGEBAM.out.bw
+        .map{ sample ->
+            def tp = sample[0].timepoint
+            tuple(tp, sample[0], sample[1])
+        }
+        .groupTuple(by: 0)
+        .dump(tag: 'timepoints')
     
-    // BIGWIG_MERGE(timepoint_bw_ch)
+    BIGWIG_MERGE(timepoint_bw_ch)
 
-    // COMPUTEMATRIX(target_sample_ch)    
-    // // COMPUTEMATRIX.out.matrix.view()
-    // HEATMAP(COMPUTEMATRIX.out.matrix)
-    // PEAK_STATS(COMPUTEMATRIX.out.matrix)
+    COMPUTEMATRIX(target_sample_ch)    
+    HEATMAP(COMPUTEMATRIX.out.matrix)
+    PEAK_STATS(COMPUTEMATRIX.out.matrix)
 
-    // // collect all peak stats and build a report per sample
-    // sample_peaks_ch = PEAK_STATS.out.peak.groupTuple(by:0)        
-
-    // PEAK_REPORT(sample_peaks_ch)
-
-    // buffer example
-    // .buffer(size: params.buffer_size, remainder: true)    
+    // collect all peak stats and build a report per sample
+    sample_peaks_ch = PEAK_STATS.out.peak.groupTuple(by:0)        
+    PEAK_REPORT(sample_peaks_ch)
 }
-
 
 def create_target_channel(LinkedHashMap row) {
     def meta = [:]

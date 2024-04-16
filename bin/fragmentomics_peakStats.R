@@ -38,7 +38,7 @@ write_delim(peakData, paste(mysignal,mytarget,"peak_data.tsv",sep="_"), delim="\
 
 # create random points
 x1 = runif(random.points, min=1, max=(ncol(mdata)-6))
-y1 = runif(random.points, min=min(peakData$raw) , max=max(peakData$raw))
+y1 = runif(random.points, min=min(peakData$raw, na.rm=TRUE) , max=max(peakData$raw, na.rm=TRUE))
 mpoints = tibble(x=x1,y=y1)
 
 # left join, this expand the peakData to N=random.points

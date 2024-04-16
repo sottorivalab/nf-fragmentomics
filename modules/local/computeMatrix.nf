@@ -24,6 +24,7 @@ process COMPUTEMATRIX {
         -a 4000 \\
         -b 4000 \\
         -o ${prefix}_matrix.gz \\
+		--blackListFileName ${params.blacklist_bed} \\
         --numberOfProcessors ${task.cpus} \\
         $args
 	"""

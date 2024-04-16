@@ -22,6 +22,7 @@ process COVERAGEBAM {
 		-o ${prefix}.bw \\
 		--numberOfProcessors ${task.cpus} \\
 		--blackListFileName ${params.blacklist_bed} \\
+		--centerReads \\
 		$args
 	"""
 

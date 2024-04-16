@@ -34,6 +34,15 @@ wiggletools write to_exclude.wig lt .6 GRCh38_full_subset_noalt_nopatch_50.bw
 wig2bed -x < to_exclude.wig > to_exclude.bed
 ```
 
+Too many regions, this does not work at this level of resolution
+
+Taking instead https://genome.ucsc.edu/cgi-bin/hgTables?hgsid=2127426726_xHrpF4ayWJ7eDcaAcyJgh3HKx30I&boolshad.hgta_printCustomTrackHeaders=0&hgta_ctName=tb_encBlacklist&hgta_ctDesc=table+browser+query+on+encBlacklist&hgta_ctVis=pack&hgta_ctUrl=&fbQual=whole&fbUpBases=200&fbDownBases=200&hgta_doGetBed=get+BED
+
+ENCODE BLACKLIST v2 
+
+https://pubmed.ncbi.nlm.nih.gov/31249361/
+
+
 
 ```
 bamCoverage -b MAYA_12_BL.gc_correct.bam -o MAYA_12_BL.mappability.bw --blackListFileName ../../references/to_exclude.bed
