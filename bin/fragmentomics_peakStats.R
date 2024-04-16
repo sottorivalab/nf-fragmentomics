@@ -26,7 +26,8 @@ mdata <- as_tibble(read.delim(args[1], header=F, skip=1))
 
 peakData <- mdata %>% 
   select(c(-V1,-V2,-V3,-V4,-V5,-V6)) %>%
-  summarise(across(everything(), list(mean))) %>%
+  mutate_all(function(x) ifelse(is.nan(x), NA, x)) %>%
+  summarise(across(everything(), .f = list(mean), na.rm = TRUE)) %>%
   unlist()
 peakData <- fortify(as.data.frame(peakData)) %>% 
   rename(raw="peakData") %>%
@@ -38,7 +39,7 @@ write_delim(peakData, paste(mysignal,mytarget,"peak_data.tsv",sep="_"), delim="\
 
 # create random points
 x1 = runif(random.points, min=1, max=(ncol(mdata)-6))
-y1 = runif(random.points, min=min(peakData$raw, na.rm=TRUE) , max=max(peakData$raw, na.rm=TRUE))
+y1 = runif(random.points, min=min(peakData$raw) , max=max(peakData$raw))
 mpoints = tibble(x=x1,y=y1)
 
 # left join, this expand the peakData to N=random.points
