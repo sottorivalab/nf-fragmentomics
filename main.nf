@@ -1,12 +1,13 @@
-include { COMPUTEGCBIAS } from './modules/local/computeGCbias.nf'
-include { CORRECTGCBIAS } from './modules/local/correctGCbias.nf'
-include { SAMTOOLSINDEX } from './modules/local/samtoolsIndex.nf'
-include { COVERAGEBAM   } from './modules/local/coverageBam.nf'
-include { COMPUTEMATRIX } from './modules/local/computeMatrix.nf'
-include { HEATMAP       } from './modules/local/heatmap.nf'
-include { PEAK_STATS    } from './modules/local/peakStats.nf'
-include { PEAK_REPORT   } from './modules/local/peakReport.nf'
-include { BIGWIG_MERGE  } from './modules/local/bigWigMerge.nf'
+include { COMPUTEGCBIAS    } from './modules/local/computeGCbias.nf'
+include { CORRECTGCBIAS    } from './modules/local/correctGCbias.nf'
+include { SAMTOOLSINDEX    } from './modules/local/samtoolsIndex.nf'
+include { COVERAGEBAM      } from './modules/local/coverageBam.nf'
+include { COMPUTEMATRIX    } from './modules/local/computeMatrix.nf'
+include { HEATMAP          } from './modules/local/heatmap.nf'
+include { PEAK_STATS       } from './modules/local/peakStats.nf'
+include { PEAK_REPORT      } from './modules/local/peakReport.nf'
+include { BIGWIG_MERGE     } from './modules/local/bigWigMerge.nf'
+include { BEDGRAPHTOBIGWIG } from './modules/local/bedGraphToBigWig.nf'
 
 workflow {
     // info
@@ -53,6 +54,10 @@ workflow {
         .combine(target_ch)
         .dump(tag: 'combine')
     
+    COMPUTEMATRIX(target_sample_ch)    
+    HEATMAP(COMPUTEMATRIX.out.matrix)
+    PEAK_STATS(COMPUTEMATRIX.out.matrix)
+
     // merge bw by timepoint
     timepoint_bw_ch = COVERAGEBAM.out.bw
         .map{ sample ->
@@ -63,11 +68,8 @@ workflow {
         .dump(tag: 'timepoints')
     
     BIGWIG_MERGE(timepoint_bw_ch)
-
-    COMPUTEMATRIX(target_sample_ch)    
-    HEATMAP(COMPUTEMATRIX.out.matrix)
-    PEAK_STATS(COMPUTEMATRIX.out.matrix)
-
+    BEDGRAPHTOBIGWIG(BIGWIG_MERGE.out.bedgraph)
+    
     // collect all peak stats and build a report per sample
     sample_peaks_ch = PEAK_STATS.out.peak.groupTuple(by:0)        
     PEAK_REPORT(sample_peaks_ch)
