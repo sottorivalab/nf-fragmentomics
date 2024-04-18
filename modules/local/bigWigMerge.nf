@@ -1,5 +1,5 @@
 process BIGWIG_MERGE {    
-
+    publishDir "${params.outdir}/TIMEPOINTS/processed/bedgraph", mode:'copy', overwrite:true
     if ( "${workflow.stubRun}" == "false" ) {
 		cpus = 1
 		memory = 24.GB

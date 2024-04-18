@@ -71,8 +71,8 @@ workflow {
     BEDGRAPHTOBIGWIG(BIGWIG_MERGE.out.bedgraph)
     
     // collect all peak stats and build a report per sample
-    sample_peaks_ch = PEAK_STATS.out.peak.groupTuple(by:0)        
-    PEAK_REPORT(sample_peaks_ch)
+    sample_peaks_ch = PEAK_STATS.out.peak.groupTuple(by:0)
+    // PEAK_REPORT(sample_peaks_ch)
 }
 
 def create_target_channel(LinkedHashMap row) {
