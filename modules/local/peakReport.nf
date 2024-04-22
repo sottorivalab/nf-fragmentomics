@@ -1,5 +1,6 @@
 process PEAK_REPORT {
-    publishDir "${params.outdir}/${meta_sample.caseid}/${meta_sample.id}/fragmentomics/reports/", mode:'copy', overwrite:true
+    debug true
+    publishDir "${params.outdir}/${caseid}/${sampleid[0]}/fragmentomics/reports/", mode:'copy', overwrite:true
 
     if ( "${workflow.stubRun}" == "false" ) {
 		cpus = 1
@@ -7,23 +8,26 @@ process PEAK_REPORT {
 	}
 
     input:
-    tuple val(meta_sample), val(targets), path(data), path(stats), path(plots)
+    tuple val(caseid), val(sampleid), val(targets), val(sources), path(stats)
     
     output:
-    tuple val(meta_sample), path("${meta_sample.id}_all_peaks_stat.tsv")
+    path("${sampleid[0]}_all_peaks_stat.tsv")
 
     script:
+    def target_data = "name,source,path\n"
+    for (int i=0; i<targets.size(); i++) {
+        target_data += "${targets[i]},${sources[i]},${stats[i]}\n"
+    }
+    
     """
-    echo -e "target\tintegration\tlength\tymin\tymax\tx\tratio" > "${meta_sample.id}_all_peaks_stat.tsv"
-    for STAT in ${stats.join(' ')}; do
-        mdata=`tail -n +2 \$STAT`
-        mtarget=`basename \$STAT _peak_stats.tsv | sed 's/${meta_sample.id}_//'`
-        echo -e "\$mtarget\t\$mdata" >> "${meta_sample.id}_all_peaks_stat.tsv"
-    done
+    cat <<EOT >> targets.csv
+${target_data}
+EOT
+    fragmentomics_peakReport.py targets.csv > ${sampleid[0]}_all_peaks_stat.tsv
     """
 
     stub:
 	"""
-	touch ${meta_sample.id}_all_peaks_stat.tsv
+	touch ${sampleid[0]}_all_peaks_stat.tsv
 	"""
 }

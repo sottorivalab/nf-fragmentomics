@@ -4,7 +4,7 @@ process COMPUTEMATRIX {
 
 	if ( "${workflow.stubRun}" == "false" ) {
 		cpus = 32
-		memory = 128.GB
+		memory = 32.GB
 	}
 	
 	input:

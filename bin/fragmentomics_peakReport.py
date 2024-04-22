@@ -3,6 +3,8 @@
 import sys
 import argparse
 import logging
+import csv
+from pathlib import Path
 
 __author__    = "Davide Rambaldi"
 __copyright__ = "Davide Rambaldi"
@@ -13,6 +15,11 @@ _logger = logging.getLogger(__name__)
 def parse_args():
     parser = argparse.ArgumentParser(description="Generate report by sample.")
     
+    parser.add_argument(
+        dest="targets",
+        help="Targets csv annotation file."
+    )
+
     parser.add_argument(
         "-v",
         "--verbose",
@@ -48,8 +55,20 @@ def setup_logging(loglevel):
 
 def main():
     args = parse_args()
-    setup_logging(args.loglevel)
+    setup_logging(args.loglevel)    
+    with open(args.targets) as csvfile:
+        reader = csv.DictReader(csvfile)                
+        report_data = "name\tsource\tintegration\tlength\tymin\tymax\tx\tratio\n"
+        for row in reader:
+            mstat = Path(row['path'])            
+            with open(mstat) as fh:
+                statreader = csv.reader(fh, delimiter="\t")
+                next(fh)
+                for statrow in statreader:     
+                    mdata = "\t".join(statrow)
+                    report_data += f"{row['name']}\t{row['source']}\t{mdata}" 
 
-
+            report_data += "\n"
+        print(report_data.strip())
 if __name__ == "__main__":
     sys.exit(main())

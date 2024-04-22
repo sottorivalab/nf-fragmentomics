@@ -70,9 +70,23 @@ workflow {
     BIGWIG_MERGE(timepoint_bw_ch)
     BEDGRAPHTOBIGWIG(BIGWIG_MERGE.out.bedgraph)
     
-    // collect all peak stats and build a report per sample
-    sample_peaks_ch = PEAK_STATS.out.peak.groupTuple(by:0)
-    // PEAK_REPORT(sample_peaks_ch)
+    // collect all peak stats and build a report per sample    
+    sample_peaks_ch = PEAK_STATS.out.peak
+        .map { sample ->
+            def peak_meta = sample[1]
+            def peak_path = sample[3]
+            return [
+                sample[0]['caseid'],
+                sample[0]['id'], 
+                peak_meta['name'], 
+                peak_meta['source'], 
+                peak_path
+            ]
+        }
+        .groupTuple(by:0)
+        .dump(tag: 'sample_peaks')
+
+    PEAK_REPORT(sample_peaks_ch)
 }
 
 def create_target_channel(LinkedHashMap row) {

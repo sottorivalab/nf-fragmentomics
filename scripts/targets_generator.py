@@ -9,10 +9,23 @@ from rich import print
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Generate targets.csv")
+    
     parser.add_argument(
-        'dir',
-        nargs='+',
-        help="target dirs"
+        "-d",
+        '--dirs',
+        dest="dirs",
+        help="list of target dirs",
+        required=True,
+        nargs='+'
+    )
+
+    parser.add_argument(
+        "-s",
+        "--sources",
+        dest="sources",
+        help="List of sources names",
+        required=True,
+        nargs='+'
     )
 
     parser.add_argument(
@@ -48,9 +61,16 @@ def setup_logging(loglevel):
 def main():
     args = parse_args()
     setup_logging(args.loglevel)
-    dirs = [Path(d) for d in args.dir]
-    for mdir in dirs:
-        print(mdir)
+    
+    dirs = [Path(d) for d in args.dirs]
+    
+    print("name,source,bed")
+
+    for idx, x in enumerate(dirs):
+        for mfile in x.glob("*.*"):
+            print(f"{mfile.stem.split('.')[0]},{args.sources[idx]},{mfile.absolute()}")
+            
+    
 
 if __name__ == "__main__":
     sys.exit(main())
