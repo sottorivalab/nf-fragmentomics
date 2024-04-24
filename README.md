@@ -10,6 +10,16 @@
 use `-dump-channels` to see channels.
 
 
+### SCRIPTS
+
+* `samplesheet_generator.py` 
+ 
+```
+./scripts/samplesheet_generator.py /group/sottoriva/00-PROCESSED_DATA/2022-MAYA_MISSONI_VALENTINO/CASES/MAYA_*/MAYA_*/low_pass_wgs/bwa/*filter_90_150*.bam
+```
+
+* `targets_generator.py`
+
 
 ### DEV NOTES
 

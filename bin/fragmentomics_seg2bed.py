@@ -60,7 +60,7 @@ def main():
     seg_file = Path(args.seg)
 
     gain = []
-    loss = []
+    neut = []
 
     with open(seg_file) as csvfile:
         mreader = csv.reader(csvfile, delimiter="\t")
@@ -68,15 +68,15 @@ def main():
         for row in mreader:
             ploidy = int(row[5])
             if 1 <= ploidy <= 2:                
-                loss.append(f"chr{row[1]}\t{row[2]}\t{row[3]}\tchr{row[1]}_{row[2]}_{row[3]}\t{row[5]}")
+                neut.append(f"chr{row[1]}\t{row[2]}\t{row[3]}\tchr{row[1]}_{row[2]}_{row[3]}\t{row[5]}")
             elif 3 <= ploidy <= 4:
                 gain.append(f"chr{row[1]}\t{row[2]}\t{row[3]}\tchr{row[1]}_{row[2]}_{row[3]}\t{row[5]}")
     
     with open(f"{seg_file.stem}_GAIN.bed", "w") as gain_fh:
         gain_fh.write("\n".join(gain))
 
-    with open(f"{seg_file.stem}_LOSS.bed", "w") as loss_fh:
-        loss_fh.write("\n".join(loss))
+    with open(f"{seg_file.stem}_NEUT.bed", "w") as neut_fh:
+        neut_fh.write("\n".join(neut))
     
 
 
