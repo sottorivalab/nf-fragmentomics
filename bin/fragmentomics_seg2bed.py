@@ -4,6 +4,7 @@ import sys
 import argparse
 import logging
 import csv
+from rich import print
 from pathlib import Path
 
 __author__    = "Davide Rambaldi"
@@ -14,10 +15,10 @@ _logger = logging.getLogger(__name__)
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Generate report by sample.")
-    
+
     parser.add_argument(
-        dest="targets",
-        help="Targets csv annotation file."
+        dest="seg",
+        help="Seg txt ichorCNA file"
     )
 
     parser.add_argument(
@@ -52,24 +53,35 @@ def setup_logging(loglevel):
         level=loglevel, stream=sys.stdout, format=logformat, datefmt="%Y-%m-%d %H:%M:%S"
     )
 
-
 def main():
     args = parse_args()
-    setup_logging(args.loglevel)    
-    with open(args.targets) as csvfile:
-        reader = csv.DictReader(csvfile)                
-        report_data = "name\tsource\tintegration\tlength\tymin\tymax\tx\tratio\n"
-        for row in reader:
-            mstat = Path(row['path'])            
-            with open(mstat) as fh:
-                statreader = csv.reader(fh, delimiter="\t")
-                next(fh)
-                for statrow in statreader:     
-                    mdata = "\t".join(statrow)
-                    report_data += f"{row['name']}\t{row['source']}\t{mdata}" 
+    setup_logging(args.loglevel)
 
-            report_data += "\n"
-        print(report_data.strip())
+    seg_file = Path(args.seg)
+
+    gain = []
+    loss = []
+
+    with open(seg_file) as csvfile:
+        mreader = csv.reader(csvfile, delimiter="\t")
+        next(csvfile)
+        for row in mreader:
+            ploidy = int(row[5])
+            if 1 <= ploidy <= 2:                
+                loss.append(f"chr{row[1]}\t{row[2]}\t{row[3]}\tchr{row[1]}_{row[2]}_{row[3]}\t{row[5]}")
+            elif 3 <= ploidy <= 4:
+                gain.append(f"chr{row[1]}\t{row[2]}\t{row[3]}\tchr{row[1]}_{row[2]}_{row[3]}\t{row[5]}")
+    
+    with open(f"{seg_file.stem}_GAIN.bed", "w") as gain_fh:
+        gain_fh.write("\n".join(gain))
+
+    with open(f"{seg_file.stem}_LOSS.bed", "w") as loss_fh:
+        loss_fh.write("\n".join(loss))
+    
+
+
+
+
 
 if __name__ == "__main__":
     sys.exit(main())

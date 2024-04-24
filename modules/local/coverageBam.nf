@@ -3,8 +3,8 @@ process COVERAGEBAM {
 	publishDir "${params.outdir}/${meta.caseid}/${meta.id}/fragmentomics/processed/bw", mode:'copy', overwrite:true
 
 	if ( "${workflow.stubRun}" == "false" ) {
-		cpus = 32
-		memory = 128.GB
+		cpus = 16
+		memory = 64.GB
 	}
 
 	input:

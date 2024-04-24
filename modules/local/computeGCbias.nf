@@ -3,8 +3,8 @@ process COMPUTEGCBIAS {
 	publishDir "${params.outdir}/${meta.caseid}/${meta.id}/fragmentomics/processed/bam", mode:'copy', overwrite:true
 
     if ( "${workflow.stubRun}" == "false" ) {
-		cpus = 32
-		memory = 128.GB
+		cpus = 16
+		memory = 64.GB
 	}
 	
 	input:

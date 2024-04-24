@@ -86,6 +86,7 @@ workflow {
         .groupTuple(by:0)
         .dump(tag: 'sample_peaks')
 
+    // peak report
     PEAK_REPORT(sample_peaks_ch)
 }
 

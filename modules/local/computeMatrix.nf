@@ -3,7 +3,7 @@ process COMPUTEMATRIX {
     publishDir "${params.outdir}/${meta_sample.caseid}/${meta_sample.id}/fragmentomics/processed/matrix/${meta_target.source}/${meta_target.name}", mode:'copy', overwrite:true	
 
 	if ( "${workflow.stubRun}" == "false" ) {
-		cpus = 32
+		cpus = 16
 		memory = 32.GB
 	}
 	
