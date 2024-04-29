@@ -1,6 +1,6 @@
 process PEAK_REPORT {
     debug true
-    publishDir "${params.outdir}/${caseid}/${sampleid[0]}/fragmentomics/reports/", mode:'copy', overwrite:true
+    publishDir "${params.outdir}/${meta_sample.caseid}/${meta_sample.id}/fragmentomics/reports/", mode:'copy', overwrite:true
 
     if ( "${workflow.stubRun}" == "false" ) {
 		cpus = 1
@@ -8,26 +8,18 @@ process PEAK_REPORT {
 	}
 
     input:
-    tuple val(caseid), val(sampleid), val(targets), val(sources), path(stats)
+    tuple val(meta_sample), val(meta_targets), path(stats_all), path(stats_gain), path(stats_neut)
     
     output:
-    path("${sampleid[0]}_all_peaks_stat.tsv")
+    tuple val(meta_sample), path("${meta_sample.id}_all_peaks_stat.tsv")
 
     script:
-    def target_data = "name,source,path\n"
-    for (int i=0; i<targets.size(); i++) {
-        target_data += "${targets[i]},${sources[i]},${stats[i]}\n"
-    }
+    """
+    fragmentomics_peakReport.py ${stats_all.join(' ')} ${stats_gain.join(' ')} ${stats_neut.join(' ')} > "${meta_sample.id}_all_peaks_stat.tsv"
+    """
     
-    """
-    cat <<EOT >> targets.csv
-${target_data}
-EOT
-    fragmentomics_peakReport.py targets.csv > ${sampleid[0]}_all_peaks_stat.tsv
-    """
-
     stub:
-	"""
-	touch ${sampleid[0]}_all_peaks_stat.tsv
-	"""
+    """
+    touch "${meta_sample.id}_all_peaks_stat.tsv"
+    """
 }

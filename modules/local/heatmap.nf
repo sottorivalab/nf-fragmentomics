@@ -8,26 +8,44 @@ process HEATMAP {
 	}
 
     input:
-    tuple val(meta_sample), val(meta_target), path(matrix)
+    tuple val(meta_sample), val(meta_target), path(matrix_all), path(matrix_gain), path(matrix_neut)
 
     output:
-	tuple val(meta_sample), val(meta_target), path("*_heatmap.png"), emit: heatmaps
+	tuple val(meta_sample), val(meta_target), path("*_heatmap.png"), emit: heatmap
 
     script:
     def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "${meta_sample.id}_${meta_target.name}"    
+    def prefix_all = matrix_all.baseName
+	def prefix_gain = matrix_gain.baseName
+	def prefix_neut = matrix_neut.baseName
     """
     plotHeatmap \\
-        -m $matrix \\
-        -o ${prefix}_heatmap.png \\
+        -m ${matrix_all} \\
+        -o ${prefix_all}_heatmap.png \\
         --dpi 200 \\
-        --plotTitle "Sample: ${meta_sample.id} - Target: ${meta_target.name}" \\
+        --plotTitle "Sample: ${meta_sample.id} - Target: ${meta_target.name} - Type: ALL" \\
+        $args
+    plotHeatmap \\
+        -m ${matrix_gain} \\
+        -o ${prefix_gain}_heatmap.png \\
+        --dpi 200 \\
+        --plotTitle "Sample: ${meta_sample.id} - Target: ${meta_target.name} - Type: GAIN" \\
+        $args
+    plotHeatmap \\
+        -m ${matrix_neut} \\
+        -o ${prefix_neut}_heatmap.png \\
+        --dpi 200 \\
+        --plotTitle "Sample: ${meta_sample.id} - Target: ${meta_target.name} - Type: NEUT" \\
         $args
     """
 
     stub:
-    def prefix = task.ext.prefix ?: "${meta_sample.id}_${meta_target.name}"    
+    def prefix_all = allbed.baseName
+	def prefix_gain = gainbed.baseName
+	def prefix_neut = neutbed.baseName
     """
-    touch ${prefix}_heatmap.png
+    touch ${prefix_all}_heatmap.png
+    touch ${prefix_gain}_heatmap.png
+    touch ${prefix_neut}_heatmap.png
     """
 }

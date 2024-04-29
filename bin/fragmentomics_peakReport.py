@@ -4,7 +4,9 @@ import sys
 import argparse
 import logging
 import csv
+import re
 from pathlib import Path
+from rich import print
 
 __author__    = "Davide Rambaldi"
 __copyright__ = "Davide Rambaldi"
@@ -17,7 +19,9 @@ def parse_args():
     
     parser.add_argument(
         dest="targets",
-        help="Targets csv annotation file."
+        help="peak report files.",
+        nargs='+',
+        type=Path
     )
 
     parser.add_argument(
@@ -55,21 +59,22 @@ def setup_logging(loglevel):
 
 def main():
     args = parse_args()
-    setup_logging(args.loglevel)    
-    with open(args.targets) as csvfile:
-        reader = csv.DictReader(csvfile)                
-        report_data = "name\tsource\tintegration\tlength\tymin\tymax\tx\tratio\n"
-        for row in reader:
-            mstat = Path(row['path'])            
-            with open(mstat) as fh:
-                statreader = csv.reader(fh, delimiter="\t")
-                next(fh)
-                for statrow in statreader:     
-                    mdata = "\t".join(statrow)
-                    report_data += f"{row['name']}\t{row['source']}\t{mdata}" 
+    setup_logging(args.loglevel)
 
-            report_data += "\n"
-        print(report_data.strip())
+    report_data = "name\tsource\ttype\tintegration\tlength\tymin\tymax\tx\tratio\n"
+    pattern = r"(?P<sample>.*)_(?P<name>[A-Z]*)_(?P<source>[A-Z]*)_(?P<type>ALL|GAIN|NEUT)_peak_stats$"
+    
+    for path in args.targets:
+        target_data = re.search(pattern, path.stem)
+        if target_data is not None:
+            with open(path) as peak_fh:
+                statreader = csv.reader(peak_fh, delimiter="\t")
+                next(peak_fh)
+                for statrow in statreader:
+                    mdata = "\t".join(statrow)
+                    report_data += f"{target_data['name']}\t{target_data['source']}\t{target_data['type']}\t{mdata}\n"
+
+    print(report_data.strip())
 
 if __name__ == "__main__":
     sys.exit(main())

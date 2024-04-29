@@ -16,12 +16,15 @@ workflow {
     log.info """\
         FRAGMENTOMICS P I P E L I N E    
         ===================================
-        outdir       : ${params.outdir}        
-        stubRun      : ${workflow.stubRun}
-        genome 2bit  : ${params.genome_2bit}
-        genome size  : ${params.genome_size}
-        chr sizes    : ${params.chr_sizes}
-        blacklist    : ${params.blacklist_bed}        
+        input         : ${params.input}
+        targets       : ${params.targets}
+        outdir        : ${params.outdir}        
+        stubRun       : ${workflow.stubRun}
+        genome 2bit   : ${params.genome_2bit}
+        genome size   : ${params.genome_size}
+        chr sizes     : ${params.chr_sizes}
+        blacklist     : ${params.blacklist_bed}
+        target expand : ${params.target_expand_sx} bp - ${params.target_expand_dx} bp
         """
         .stripIndent()
 
@@ -72,7 +75,7 @@ workflow {
 
     COVERAGEBAM(sample_gc_correct_ch)
 
-       // combine sample bw and targets
+    // combine sample bw and targets
     target_sample_ch = COVERAGEBAM.out.bw
         .combine(target_ch)
         .dump(tag: 'combine')
@@ -81,67 +84,45 @@ workflow {
     ploidy_target_sample_ch = COVERAGEBAM.out.bw
         .combine(SEGTARGETINTERSECT.out.targets_ploidy)
         .map{ it ->
-            [it[0], it[3], it[1], it[4], it[5]]
+            [it[0], it[3], it[1], it[4], it[5], it[6]]
         }
 
-    target_sample_ch = target_sample_ch
-        .map{ it ->
-            it[2]['type'] = 'all'
-            [it[0],it[2],it[1],it[3]]
-        }
+    COMPUTEMATRIX(ploidy_target_sample_ch)
+    HEATMAP(COMPUTEMATRIX.out.matrix)
+    PEAK_STATS(COMPUTEMATRIX.out.matrix)
 
-    gain_target_sample_ch = ploidy_target_sample_ch
-        .map{ it ->
-            it[1]['type'] = 'gain'
-            [it[0], it[1], it[2], it[3]]
-        }
-    
-    neut_target_sample_ch = ploidy_target_sample_ch
-        .map{ it ->
-            it[1]['type'] = 'neut'
-            [it[0], it[1], it[2], it[4]]
-        }
-    
-    all_target_sample_ch = target_sample_ch
-        .mix(gain_target_sample_ch, neut_target_sample_ch)
+    // collect all peak stats and build a report per sample    
+    sample_peaks_ch = PEAK_STATS.out.peaks
+        .map{ it -> 
+            return [
+                it[0],
+                it[1],
+                it[3],
+                it[6],
+                it[9]
+            ]
+        }        
+        .groupTuple(by:0)
+        .dump(tag: 'sample_peaks')
         .view()
 
-    // ALL TARGETS BRANCH
-    COMPUTEMATRIX(all_target_sample_ch)
-    
-    // HEATMAP(COMPUTEMATRIX.out.matrix)
-    // PEAK_STATS(COMPUTEMATRIX.out.matrix)
+    // peak report
+    PEAK_REPORT(sample_peaks_ch)
 
-    // // merge bw by timepoint
-    // timepoint_bw_ch = COVERAGEBAM.out.bw
-    //     .map{ sample ->
-    //         def tp = sample[0].timepoint
-    //         tuple(tp, sample[0], sample[1])
-    //     }
-    //     .groupTuple(by: 0)
-    //     .dump(tag: 'timepoints')
+    // merge bw by timepoint only when we have more than one sample
+    if (file(params.input).countLines() > 2) {
+        timepoint_bw_ch = COVERAGEBAM.out.bw
+            .map{ sample ->
+                def tp = sample[0].timepoint
+                tuple(tp, sample[0], sample[1])
+            }
+            .groupTuple(by: 0)
+            .dump(tag: 'timepoints')        
+        BIGWIG_MERGE(timepoint_bw_ch)
+        BEDGRAPHTOBIGWIG(BIGWIG_MERGE.out.bedgraph)
+    }
     
-    // BIGWIG_MERGE(timepoint_bw_ch)
-    // BEDGRAPHTOBIGWIG(BIGWIG_MERGE.out.bedgraph)
     
-    // // collect all peak stats and build a report per sample    
-    // sample_peaks_ch = PEAK_STATS.out.peak
-    //     .map { sample ->
-    //         def peak_meta = sample[1]
-    //         def peak_path = sample[3]
-    //         return [
-    //             sample[0]['caseid'],
-    //             sample[0]['id'], 
-    //             peak_meta['name'], 
-    //             peak_meta['source'], 
-    //             peak_path
-    //         ]
-    //     }
-    //     .groupTuple(by:0)
-    //     .dump(tag: 'sample_peaks')
-
-    // // peak report
-    // PEAK_REPORT(sample_peaks_ch)
 }
 
 def create_target_channel(LinkedHashMap row) {
