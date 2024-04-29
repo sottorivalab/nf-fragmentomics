@@ -1,14 +1,15 @@
-include { COMPUTEGCBIAS    } from './modules/local/computeGCbias.nf'
-include { CORRECTGCBIAS    } from './modules/local/correctGCbias.nf'
-include { SAMTOOLSINDEX    } from './modules/local/samtoolsIndex.nf'
-include { COVERAGEBAM      } from './modules/local/coverageBam.nf'
-include { COMPUTEMATRIX    } from './modules/local/computeMatrix.nf'
-include { HEATMAP          } from './modules/local/heatmap.nf'
-include { PEAK_STATS       } from './modules/local/peakStats.nf'
-include { PEAK_REPORT      } from './modules/local/peakReport.nf'
-include { BIGWIG_MERGE     } from './modules/local/bigWigMerge.nf'
-include { BEDGRAPHTOBIGWIG } from './modules/local/bedGraphToBigWig.nf'
-include { SEG2BED          } from './modules/local/seg2bed.nf'
+include { COMPUTEGCBIAS      } from './modules/local/computeGCbias.nf'
+include { CORRECTGCBIAS      } from './modules/local/correctGCbias.nf'
+include { SAMTOOLSINDEX      } from './modules/local/samtoolsIndex.nf'
+include { COVERAGEBAM        } from './modules/local/coverageBam.nf'
+include { COMPUTEMATRIX      } from './modules/local/computeMatrix.nf'
+include { HEATMAP            } from './modules/local/heatmap.nf'
+include { PEAK_STATS         } from './modules/local/peakStats.nf'
+include { PEAK_REPORT        } from './modules/local/peakReport.nf'
+include { BIGWIG_MERGE       } from './modules/local/bigWigMerge.nf'
+include { BEDGRAPHTOBIGWIG   } from './modules/local/bedGraphToBigWig.nf'
+include { SEG2BED            } from './modules/local/seg2bed.nf'
+include { SEGTARGETINTERSECT } from './modules/local/segTargetIntersect.nf'
 
 workflow {
     // info
@@ -44,36 +45,70 @@ workflow {
     
     SEG2BED(seg_ch)
 
-    // seg_ch = sample_ch
-    //     .combine(target_ch)
-    //     .map{ it ->
-    //         [it[0], it[4], it[3], it[5]]
-    //     }
-    //     .dump(tag: 'ploidy')
-    //     .view()
+    target_sample_ploidy_ch = SEG2BED.out.ploidy
+        .combine(target_ch)
+        .map{ it ->
+            [it[0], it[3], it[1], it[2], it[4]]
+        }
 
+    SEGTARGETINTERSECT(target_sample_ploidy_ch)
 
+    bam_sample_ch = sample_ch
+        .map { it ->
+            [it[0], it[1], it[2]]
+        }
 
-    // COMPUTEGCBIAS(sample_ch)
-    // sample_with_gc_computed_ch = COMPUTEGCBIAS.out.freqfile       
-    //     .combine(sample_ch, by: 0)
-    //     .dump(tag: 'bam_gc')
+    COMPUTEGCBIAS(bam_sample_ch)
+    bam_sample_with_gc_computed_ch = COMPUTEGCBIAS.out.freqfile       
+        .combine(bam_sample_ch, by: 0)
+        .dump(tag: 'bam_gc')
 
-    // CORRECTGCBIAS(sample_with_gc_computed_ch)    
-    // SAMTOOLSINDEX(CORRECTGCBIAS.out.gc_correct)
+    CORRECTGCBIAS(bam_sample_with_gc_computed_ch)    
+    SAMTOOLSINDEX(CORRECTGCBIAS.out.gc_correct)
     
-    // sample_gc_correct_ch = CORRECTGCBIAS.out.gc_correct
-    //     .combine(SAMTOOLSINDEX.out.bai, by: 0)
-    //     .dump(tag: 'bam_with_index')
+    sample_gc_correct_ch = CORRECTGCBIAS.out.gc_correct
+        .combine(SAMTOOLSINDEX.out.bai, by: 0)
+        .dump(tag: 'bam_with_index')
 
-    // COVERAGEBAM(sample_gc_correct_ch)
+    COVERAGEBAM(sample_gc_correct_ch)
 
-    // // combine sample bw and targets
-    // target_sample_ch = COVERAGEBAM.out.bw
-    //     .combine(target_ch)
-    //     .dump(tag: 'combine')
+       // combine sample bw and targets
+    target_sample_ch = COVERAGEBAM.out.bw
+        .combine(target_ch)
+        .dump(tag: 'combine')
+
+    // combine sample bw and ploidy targets
+    ploidy_target_sample_ch = COVERAGEBAM.out.bw
+        .combine(SEGTARGETINTERSECT.out.targets_ploidy)
+        .map{ it ->
+            [it[0], it[3], it[1], it[4], it[5]]
+        }
+
+    target_sample_ch = target_sample_ch
+        .map{ it ->
+            it[2]['type'] = 'all'
+            [it[0],it[2],it[1],it[3]]
+        }
+
+    gain_target_sample_ch = ploidy_target_sample_ch
+        .map{ it ->
+            it[1]['type'] = 'gain'
+            [it[0], it[1], it[2], it[3]]
+        }
     
-    // COMPUTEMATRIX(target_sample_ch)    
+    neut_target_sample_ch = ploidy_target_sample_ch
+        .map{ it ->
+            it[1]['type'] = 'neut'
+            [it[0], it[1], it[2], it[4]]
+        }
+    
+    all_target_sample_ch = target_sample_ch
+        .mix(gain_target_sample_ch, neut_target_sample_ch)
+        .view()
+
+    // ALL TARGETS BRANCH
+    COMPUTEMATRIX(all_target_sample_ch)
+    
     // HEATMAP(COMPUTEMATRIX.out.matrix)
     // PEAK_STATS(COMPUTEMATRIX.out.matrix)
 

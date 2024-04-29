@@ -15,7 +15,7 @@ process SEG2BED {
     script:
     def args = task.ext.args ?: ''
     """
-    fragmentomics_seg2bed.py $seg
+    fragmentomics_seg2bed.py $seg $args
     """
 
     stub:
