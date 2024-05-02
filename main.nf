@@ -74,19 +74,14 @@ workflow {
         .dump(tag: 'bam_with_index')
 
     COVERAGEBAM(sample_gc_correct_ch)
-
-    // combine sample bw and targets
-    target_sample_ch = COVERAGEBAM.out.bw
-        .combine(target_ch)
-        .dump(tag: 'combine')
-
-    // combine sample bw and ploidy targets
+    
+    // combine sample bw and ploidy t-argets
     ploidy_target_sample_ch = COVERAGEBAM.out.bw
-        .combine(SEGTARGETINTERSECT.out.targets_ploidy)
+        .combine(SEGTARGETINTERSECT.out.targets_ploidy, by: 0)
         .map{ it ->
-            [it[0], it[3], it[1], it[4], it[5], it[6]]
-        }
-
+            [it[0], it[2], it[1], it[3], it[4], it[5]]
+        }        
+    
     COMPUTEMATRIX(ploidy_target_sample_ch)
     HEATMAP(COMPUTEMATRIX.out.matrix)
     PEAK_STATS(COMPUTEMATRIX.out.matrix)
@@ -102,9 +97,8 @@ workflow {
                 it[9]
             ]
         }        
-        .groupTuple(by:0)
+        .groupTuple(by: [0])
         .dump(tag: 'sample_peaks')
-        .view()
 
     // peak report
     PEAK_REPORT(sample_peaks_ch)
@@ -116,12 +110,11 @@ workflow {
                 def tp = sample[0].timepoint
                 tuple(tp, sample[0], sample[1])
             }
-            .groupTuple(by: 0)
+            .groupTuple()
             .dump(tag: 'timepoints')        
         BIGWIG_MERGE(timepoint_bw_ch)
         BEDGRAPHTOBIGWIG(BIGWIG_MERGE.out.bedgraph)
     }
-    
     
 }
 
