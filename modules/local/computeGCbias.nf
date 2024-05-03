@@ -5,6 +5,7 @@ process COMPUTEGCBIAS {
     if ( "${workflow.stubRun}" == "false" ) {
 		cpus = 16
 		memory = 64.GB
+		time = '8h'
 	}
 	
 	input:

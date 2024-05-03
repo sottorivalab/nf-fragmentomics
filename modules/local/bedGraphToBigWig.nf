@@ -3,6 +3,7 @@ process BEDGRAPHTOBIGWIG {
     if ( "${workflow.stubRun}" == "false" ) {
 		cpus = 1
 		memory = 24.GB
+        time = '8h'
 	}
 
     input:

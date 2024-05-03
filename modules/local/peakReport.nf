@@ -5,6 +5,7 @@ process PEAK_REPORT {
     if ( "${workflow.stubRun}" == "false" ) {
 		cpus = 1
 		memory = 4.GB
+        time = '2h'
 	}
 
     input:

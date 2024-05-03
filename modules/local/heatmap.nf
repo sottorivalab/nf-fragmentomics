@@ -5,6 +5,7 @@ process HEATMAP {
     if ( "${workflow.stubRun}" == "false" ) {
 		cpus = 1
 		memory = 4.GB
+        time = '4h'
 	}
 
     input:

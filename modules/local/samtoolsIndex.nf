@@ -4,6 +4,7 @@ process SAMTOOLSINDEX {
 	if ( "${workflow.stubRun}" == "false" ) {
 		cpus = 4
 		memory = 16.GB
+		time = '2h'
 	}
 	
 	input:

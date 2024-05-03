@@ -5,6 +5,7 @@ process COMPUTEMATRIX {
 	if ( "${workflow.stubRun}" == "false" ) {
 		cpus = 16
 		memory = 32.GB
+		time = '12h'
 	}
 	
 	input:
