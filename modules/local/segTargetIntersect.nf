@@ -4,7 +4,7 @@ process SEGTARGETINTERSECT {
     if ( "${workflow.stubRun}" == "false" ) {
 		cpus = 1
 		memory = 16.GB
-        time = '1h'
+        time = '10m'
 	}
 
     input:

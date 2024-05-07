@@ -4,7 +4,7 @@ process SEG2BED {
     if ( "${workflow.stubRun}" == "false" ) {
 		cpus = 1
 		memory = 4.GB
-        time = '1h'
+        time = '10m'
 	}
 
     input:

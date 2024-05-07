@@ -14,6 +14,7 @@ include { SEGTARGETINTERSECT } from './modules/local/segTargetIntersect.nf'
 workflow {
     // info
     log.info """\
+        ===================================
         FRAGMENTOMICS P I P E L I N E    
         ===================================
         input         : ${params.input}
@@ -25,6 +26,7 @@ workflow {
         chr sizes     : ${params.chr_sizes}
         blacklist     : ${params.blacklist_bed}
         target expand : ${params.target_expand_sx} bp - ${params.target_expand_dx} bp
+        ===================================
         """
         .stripIndent()
 
