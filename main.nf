@@ -39,7 +39,10 @@ workflow {
     // targets channel
     target_ch = Channel.fromPath(params.targets)
         .splitCsv(header: true, sep:',')
-        .map{ create_target_channel(it) }        
+        .map{ create_target_channel(it) }
+        .filter{ it ->
+            it[1].size() > 0 
+        }
         .dump(tag: 'targets')
 
     // combine samples seg and target for GAIN vs NEUT
@@ -77,14 +80,19 @@ workflow {
 
     COVERAGEBAM(sample_gc_correct_ch)
     
-    // combine sample bw and ploidy t-argets
+    // combine sample bw and ploidy targets
     ploidy_target_sample_ch = COVERAGEBAM.out.bw
         .combine(SEGTARGETINTERSECT.out.targets_ploidy, by: 0)
         .map{ it ->
             [it[0], it[2], it[1], it[3], it[4], it[5]]
-        }        
+        }
+        .dump(tag: 'ploidy_targets')
     
+    // TODO add TSS HouseKeeping targets and random sets
+
+    // we should filter out empty targets
     COMPUTEMATRIX(ploidy_target_sample_ch)
+
     HEATMAP(COMPUTEMATRIX.out.matrix)
     PEAK_STATS(COMPUTEMATRIX.out.matrix)
 
