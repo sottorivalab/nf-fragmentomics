@@ -1,12 +1,7 @@
 process SEG2BED {
     publishDir "${params.outdir}/${sample.caseid}/${sample.id}/fragmentomics/processed/ploidy", mode:'copy', overwrite:true
-
-    if ( "${workflow.stubRun}" == "false" ) {
-		cpus = 1
-		memory = 4.GB
-        time = '10m'
-	}
-
+    label "local_executor"
+    
     input:
     tuple val(sample), path(seg)
 

@@ -1,6 +1,7 @@
 process COMPUTEGCBIAS {
-    conda '/home/davide.rambaldi/miniconda3/envs/deeptools'
+    conda '/home/davide.rambaldi/miniconda3/envs/deeptools'	
 	publishDir "${params.outdir}/${meta.caseid}/${meta.id}/fragmentomics/processed/bam", mode:'copy', overwrite:true
+	label 'hpc_executor'
 
     if ( "${workflow.stubRun}" == "false" ) {
 		cpus = 16

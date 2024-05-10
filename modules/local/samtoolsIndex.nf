@@ -1,6 +1,7 @@
 process SAMTOOLSINDEX {
 	publishDir "${params.outdir}/${meta.caseid}/${meta.id}/fragmentomics/processed/bam", mode:'copy', overwrite:true
-
+	label 'hpc_executor'
+	
 	if ( "${workflow.stubRun}" == "false" ) {
 		cpus = 4
 		memory = 16.GB

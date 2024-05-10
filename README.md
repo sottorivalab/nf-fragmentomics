@@ -1,5 +1,13 @@
 # NF-FRAGMENTOMICS
 
+## TODO
+
+1. Merge all timepoints in a single bw
+2. Get rid of empty targets and increase granularity
+3. Change resolution of bigwiggle to 2 bp to make the nucleosome region chr12 plot
+4. remove timon targets, I need to collapse them by TF
+5. 
+
 ## USAGE
 
 ### PARAMS

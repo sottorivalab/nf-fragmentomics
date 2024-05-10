@@ -1,5 +1,7 @@
 process BEDGRAPHTOBIGWIG {
     publishDir "${params.outdir}/TIMEPOINTS/processed/bw", mode:'copy', overwrite:true
+    label 'hpc_executor'
+    
     if ( "${workflow.stubRun}" == "false" ) {
 		cpus = 1
 		memory = 24.GB

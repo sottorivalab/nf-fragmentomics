@@ -1,17 +1,14 @@
 process SEGTARGETINTERSECT {
     publishDir "${params.outdir}/${meta_sample.caseid}/${meta_sample.id}/fragmentomics/processed/matrix/${meta_target.source}/${meta_target.name}/targets", mode:'copy', overwrite:true
-
-    if ( "${workflow.stubRun}" == "false" ) {
-		cpus = 1
-		memory = 16.GB
-        time = '10m'
-	}
+    label "local_executor"
 
     input:
     tuple val(meta_sample), val(meta_target), path(gainseg), path(neutseg), path(targets)
     
     output:
-    tuple val(meta_sample), val(meta_target), path("*_GAIN.bed"), path("*_NEUT.bed"), path("*_ALL.bed"), emit: targets_ploidy
+    tuple val(meta_sample), val(meta_target), path("*_GAIN.bed"), emit: gain_targets
+    tuple val(meta_sample), val(meta_target), path("*_NEUT.bed"), emit: neut_targets
+    tuple val(meta_sample), val(meta_target), path("*_ALL.bed"),  emit: all_targets
 
     script:
     def args = task.ext.args ?: ''

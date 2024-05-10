@@ -1,7 +1,8 @@
 process COVERAGEBAM {
 	conda '/home/davide.rambaldi/miniconda3/envs/deeptools'
 	publishDir "${params.outdir}/${meta.caseid}/${meta.id}/fragmentomics/processed/bw", mode:'copy', overwrite:true
-
+	label 'hpc_executor'
+	
 	if ( "${workflow.stubRun}" == "false" ) {
 		cpus = 16
 		memory = 64.GB
@@ -24,6 +25,7 @@ process COVERAGEBAM {
 		--numberOfProcessors ${task.cpus} \\
 		--blackListFileName ${params.blacklist_bed} \\
 		--centerReads \\
+		--binSize ${params.bin_size}
 		$args
 	"""
 
