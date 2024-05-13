@@ -113,7 +113,7 @@ workflow {
         .view()
     
     SAMTOOLS_SUBSAMPLE(sample_gc_correct_filter_ploidy_with_counts)
-
+    SAMTOOLS_SUBSAMPLE.out.subsample.view()
 
 
     // samtools to filter for intervals using 

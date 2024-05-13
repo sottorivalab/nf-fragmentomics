@@ -21,7 +21,7 @@ process SAMTOOLSCOUNTREADS {
     module load samtools
     NEUT=`samtools view -c ${neutbam}`
     GAIN=`samtools view -c ${gainbam}`
-    echo -e "${neutbam.baseName},\$NEUT\n${gainbam.baseName},\$GAIN\n" > ${prefix}.reads.csv
+    echo -e "${neutbam},\$NEUT\n${gainbam.name},\$GAIN\n" > ${prefix}.reads.csv
     """
 
     stub:
