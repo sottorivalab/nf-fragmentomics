@@ -12,7 +12,7 @@ process SAMTOOLSINDEX {
 	tuple val(meta), path(bam)
 
 	output:
-	tuple val(meta), path("*.bai"), emit: bai
+	tuple val(meta), path(bam), path("*.bai"), emit: indexed_bam
 	
 	script:
     def args = task.ext.args ?: ''

@@ -17,7 +17,7 @@ process COVERAGEBAM {
 
 	script:
     def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "${meta.id}"
+    def prefix = task.ext.prefix ?: "${bam.baseName}"
 	"""
 	bamCoverage \\
 		-b $bam \\
@@ -30,7 +30,7 @@ process COVERAGEBAM {
 	"""
 
 	stub:    
-    def prefix = task.ext.prefix ?: "${meta.id}"
+    def prefix = task.ext.prefix ?: "${bam.baseName}"
 	"""
 	touch "${prefix}.bw"
 	"""
