@@ -11,13 +11,38 @@ include { BIGWIG_MERGE       } from './modules/local/bigWigMerge.nf'
 include { BEDGRAPHTOBIGWIG   } from './modules/local/bedGraphToBigWig.nf'
 include { SEG2BED            } from './modules/local/seg2bed.nf'
 include { SEGTARGETINTERSECT } from './modules/local/segTargetIntersect.nf'
-include { SAMTOOLSFILTERSEG  } from "./modules/local/samtoolsFilterWithSeg.nf"
+include { SAMTOOLSFILTERSEG  } from "./modules/local/samtoolsFilterSeg.nf"
 include { SAMTOOLSCOUNTREADS } from "./modules/local/samtoolsCountReads.nf"
 include { SAMTOOLS_SUBSAMPLE } from "./modules/local/samtoolsSubSample.nf"
-include { SAMTOOLSINDEX as SAMTOOLSINDEX_SUBSAMPLE } from './modules/local/samtoolsIndex.nf'
+
+def create_target_channel(LinkedHashMap row) {
+    def meta = [
+        name: row.name,
+        source: row.source
+    ]
+    
+    def target = []
+    target = [meta, row.bed]
+    return target
+}
+
+def create_sample_channel(LinkedHashMap row) {
+    // create all at once
+    def meta = [
+        caseid: row.caseid,
+        sampleid: row.sampleid,
+        timepoint: row.timepoint
+    ]
+
+    def sample = []
+    sample = [meta, file(row.bam), file(row.bai), file(row.seg)]
+    return sample
+}
 
 workflow {
-    // info
+    /////////////////////////////////////////////////
+    // PIPELINE INFO
+    /////////////////////////////////////////////////
     log.info """\
         ===================================
         FRAGMENTOMICS P I P E L I N E    
@@ -36,7 +61,7 @@ workflow {
         .stripIndent()
 
     /////////////////////////////////////////////////
-    // SAMPLES
+    // SAMPLES meta: [ caseid, sampleid, timepoint ]
     /////////////////////////////////////////////////
 
     // samples channel
@@ -45,27 +70,20 @@ workflow {
         .map{ create_sample_channel(it) }
         .dump(tag: 'samples')
 
-    // combine samples seg and target for GAIN vs NEUT
-    seg_ch = sample_ch
-        .map{ it ->
-            [it[0],it[3]]
-        }
-        .dump(tag: 'seqments')
-
     /////////////////////////////////////////////////
-    // TARGETS
+    // TARGETS meta: [ name, source ]
     /////////////////////////////////////////////////
 
     // HouseKeeping genes
     housekeeping_ch = Channel.fromPath(params.housekeeping_bed)
         .map{ it ->
-            [['name': 'HouseKeeping', 'source': 'GENEHANCER'], it]
+            [ ['name': 'HouseKeeping', 'source': 'GENEHANCER'], it ]
         }
     
     // random TSS
     random_tss_ch = Channel.fromPath(params.random_tss_bed)
         .map{ it ->            
-            [['name': it.baseName.replaceFirst(/^.*_/,""), 'source': 'GENEHANCER'], it]
+            [ ['name': it.baseName.replaceFirst(/^.*_/,""), 'source': 'GENEHANCER'], it ]
         }
 
     // targets channel
@@ -77,70 +95,143 @@ workflow {
         }
         .concat(housekeeping_ch, random_tss_ch)
         .dump(tag: 'targets')
-
-
-    // GC CORRECTIONS
-    bam_sample_ch = sample_ch
-        .map { it ->
-            [it[0], it[1], it[2]]
-        }
-        .dump(tag: 'sample_bams')
-
-
-    // SEG2BED(seg_ch)
-
-    // target_sample_ploidy_ch = SEG2BED.out.ploidy
-    //     .combine(target_ch)
-    //     .map{ it ->
-    //         [it[0], it[3], it[1], it[2], it[4]]
-    //     }
         
-    // SEGTARGETINTERSECT(target_sample_ploidy_ch)
+    /////////////////////////////////////////////////
+    // GC CORRECTIONS
+    /////////////////////////////////////////////////
+    COMPUTEGCBIAS(sample_ch)    
+    CORRECTGCBIAS(COMPUTEGCBIAS.out.bam_with_freq)
+    // generate bed files for segments
+    SEG2BED(CORRECTGCBIAS.out.gc_correct)
+    
+    /////////////////////////////////////////////////
+    // SUBSAMPLE BED FILES
+    /////////////////////////////////////////////////   
+    
+    gain_bam_ch = SEG2BED.out
+        .map{ it ->
+            [it[0], it[1], it[2], it[3]]
+        }
+    
+    neut_bam_ch = SEG2BED.out
+        .map{ it ->
+            [it[0], it[1], it[2], it[4]]
+        }
+
+    ploidy_bam_ch = gain_bam_ch
+        .concat(neut_bam_ch)
+
+    SAMTOOLSFILTERSEG(ploidy_bam_ch)
+    neut_and_gain_bam_ch = SAMTOOLSFILTERSEG.out.ploidy_bam
+        .groupTuple(by: 0)
+        .map{ it ->
+            [it[0], it[1][0], it[1][1]]
+        }
+
+    SAMTOOLSCOUNTREADS(neut_and_gain_bam_ch)
+    SAMTOOLS_SUBSAMPLE(SAMTOOLSCOUNTREADS.out.counts)
+
+    // BAM CHANNELS WITH PLOIDY
+    sample_bam_ch = CORRECTGCBIAS.out.gc_correct
+        .map{ it ->
+            def ploidy = [ type: 'ALL' ]
+            [it[0], ploidy, it[1], it[2]]
+        }
+    
+    split_subsample_multiMap = SAMTOOLS_SUBSAMPLE.out.subsample_bam
+        .multiMap{ it ->
+            neut: [it[0], it[2]]
+            gain: [it[0], it[1]]
+        }
+
+    neut_bam_ch = split_subsample_multiMap.neut
+        .map{ it -> 
+            def ploidy_neut = [ type: 'NEUT' ]
+            [it[0], ploidy_neut, it[1]]
+        }
+
+    gain_bam_ch = split_subsample_multiMap.gain
+        .map{ it -> 
+            def ploidy_gain = [ type: 'GAIN' ]
+            [it[0], ploidy_gain, it[1]]
+        }
 
     
+    all_subsample_bam_ch = neut_bam_ch
+        .concat(gain_bam_ch)
+        .view()
+        
+    // SAMTOOLSINDEX(all_subsample_bam_ch)
 
-    // COMPUTEGCBIAS(bam_sample_ch)
-    // bam_sample_with_gc_computed_ch = COMPUTEGCBIAS.out.freqfile       
-    //     .combine(bam_sample_ch, by: 0)
-    //     .dump(tag: 'bam_gc')
-
-    // CORRECTGCBIAS(bam_sample_with_gc_computed_ch)    
-    // SAMTOOLSINDEX(CORRECTGCBIAS.out.gc_correct)
-    
-    // all_targets_ch = SEGTARGETINTERSECT.out.all_targets
-    //     .concat(
-    //         SEGTARGETINTERSECT.out.gain_targets.filter{ it -> it[2].size() > 0},
-    //         SEGTARGETINTERSECT.out.neut_targets.filter{ it -> it[2].size() > 0},
-    //     )
-
-    // // TODO extract the same number of reads from GAIN and NEUT wd: same_number_of_reads
-    // sample_gc_correct_filter_ploidy = SAMTOOLSINDEX.out.indexed_bam
-    //     .combine(SEG2BED.out.ploidy, by: 0)
-    //     .dump(tag: 'filtered_bam_ploidy')
-
-    // SAMTOOLSFILTERSEG(sample_gc_correct_filter_ploidy)
-    // SAMTOOLSCOUNTREADS(SAMTOOLSFILTERSEG.out.ploidy_bam)
-    
-    // sample_gc_correct_filter_ploidy_with_counts = SAMTOOLSFILTERSEG.out.ploidy_bam
-    //     .combine(SAMTOOLSCOUNTREADS.out.counts, by: 0)
-    
-    // SAMTOOLS_SUBSAMPLE(sample_gc_correct_filter_ploidy_with_counts)
-    // split_subsample_multiMap = SAMTOOLS_SUBSAMPLE.out.subsample
-    //     .multiMap{ it ->
-    //         neut: [it[0], it[1]]
-    //         gain: [it[0], it[2]]
+    // concat all produced bams
+    // all_sample_bams_ch = CORRECTGCBIAS.out.gc_correct
+    //     .map{ it ->
+    //         [it[0], it[1], it[2]]
     //     }
-
-    // split_subsample_ch = split_subsample_multiMap.neut
-    //     .concat(split_subsample_multiMap.gain)
-    
-    // SAMTOOLSINDEX_SUBSAMPLE(split_subsample_ch)
-    
-    // all_sample_bams_ch = SAMTOOLSINDEX.out.indexed_bam
-    //     .concat(SAMTOOLSINDEX_SUBSAMPLE.out.indexed_bam)
-    //     .dump(tag: 'all_sample_bams')
+    //     .concat(SAMTOOLSINDEX.out.indexed_bam)
 
     // COVERAGEBAM(all_sample_bams_ch)
+
+    // split again by ALL, NEUT, GAIN
+    // split_bw_ch = COVERAGEBAM.out.bw
+    //     .multiMap { it ->
+    //         all: [it, it[1].baseName =~ 'gc_correct']
+    //     }
+    
+    // split_bw_ch.all.view()
+
+    /////////////////////////////////////////////////
+    // TARGET SEGMENTS
+    /////////////////////////////////////////////////
+    // combine segments and targets
+    // SEG2BED.out.ploidy.view()
+    // target_sample_ploidy_ch = SEG2BED.out.ploidy
+    //     .combine(target_ch)
+    //     .view()
+    
+    // betools intersect segments and targets
+    // SEGTARGETINTERSECT(target_sample_ploidy_ch)
+    
+    // all_targets_ch = SEGTARGETINTERSECT.out.all_targets
+    //     .map { it ->
+    //         def meta_target = [
+    //             name: it[3].name,
+    //             source: it[3].source,
+    //             ploidy: 'ALL'
+    //         ]
+    //         [ it[0], it[1], it[2], meta_target, it[4] ]
+    //     }
+
+    // gain_targets_ch = SEGTARGETINTERSECT.out.gain_targets
+    //     .map { it ->
+    //         def meta_target = [
+    //             name: it[3].name,
+    //             source: it[3].source,
+    //             ploidy: 'GAIN'
+    //         ]
+    //         [ it[0], it[1], it[2], meta_target, it[4] ]
+    //     }
+
+    // neut_targets_ch = SEGTARGETINTERSECT.out.neut_targets
+    //     .map { it ->
+    //         def meta_target = [
+    //             name: it[3].name,
+    //             source: it[3].source,
+    //             ploidy: 'NEUT'
+    //         ]
+    //         [ it[0], it[1], it[2], meta_target, it[4] ]
+    //     }
+
+    // // concat all targets in a single channel
+    // sample_with_targets_ch = all_targets_ch
+    //     .concat(neut_targets_ch, gain_targets_ch)
+    //     .dump(tag: 'sample_with_targets')
+    //     .view()
+    
+    
+    // TODO REFACTOR
+
+    
     
     // // combine sample bw and ploidy targets
     // ploidy_target_sample_ch = COVERAGEBAM.out.bw
@@ -182,25 +273,4 @@ workflow {
     //     BIGWIG_MERGE(timepoint_bw_ch)
     //     BEDGRAPHTOBIGWIG(BIGWIG_MERGE.out.bedgraph)
     // }
-}
-
-def create_target_channel(LinkedHashMap row) {
-    def meta = [:]
-    meta.name = row.name
-    meta.source = row.source
-    def target = []
-    target = [meta, row.bed]
-    return target
-}
-
-def create_sample_channel(LinkedHashMap row) {
-    // create all at once
-    def meta = [:]
-    meta.caseid = row.caseid
-    meta.id = row.sampleid
-    meta.timepoint = row.timepoint
-
-    def sample = []
-    sample = [meta, file(row.bam), file(row.bai), file(row.seg)]
-    return sample
 }

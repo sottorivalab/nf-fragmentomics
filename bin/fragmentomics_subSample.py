@@ -101,7 +101,7 @@ def main():
     if maxres[0] == neut_bam.name:        
         target_file = neut_bam
         copy_file = gain_bam
-    elif maxres[0] == neut_bam.name:
+    elif maxres[0] == gain_bam.name:
         target_file = gain_bam
         copy_file = neut_bam
     else:        

@@ -1,31 +1,30 @@
 process SAMTOOLSCOUNTREADS {
-    publishDir "${params.outdir}/${sample.caseid}/${sample.id}/fragmentomics/processed/bam", mode:'copy', overwrite:true
-    label "hpc_executor"
 
-     if ( "${workflow.stubRun}" == "false" ) {
-		cpus = 4
-		memory = 16.GB
-		time = '4h'
-	}
+    publishDir "${params.outdir}/${meta.caseid}/${meta.sampleid}/fragmentomics/processed/bam",
+        mode:'copy', 
+        pattern: "*.csv",
+        overwrite:true
+
+    label "normal_process"
 
     input:
-    tuple val(sample), path(neutbam), path(gainbam)
+    tuple val(meta), path(bamgain), path(bamneut)
 
     output:
-    tuple val(sample), path("*.csv"), emit: counts
+    tuple val(meta), path(bamgain), path(bamneut), path("*.csv"), emit: counts
 
     script:
     def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "${sample.id}"
+    def prefix = task.ext.prefix ?: "${meta.sampleid}"
     """
     module load samtools
-    NEUT=`samtools view -c ${neutbam}`
-    GAIN=`samtools view -c ${gainbam}`
-    echo -e "${neutbam},\$NEUT\n${gainbam.name},\$GAIN\n" > ${prefix}.reads.csv
+    NEUT=`samtools view -c ${bamneut}`
+    GAIN=`samtools view -c ${bamgain}`
+    echo -e "${bamneut.name},\$NEUT\n${bamgain.name},\$GAIN" > ${prefix}.reads.csv
     """
 
     stub:
-    def prefix = task.ext.prefix ?: "${sample.id}"
+    def prefix = task.ext.prefix ?: "${meta.sampleid}"
 	"""
 	touch ${prefix}.reads.csv
 	"""

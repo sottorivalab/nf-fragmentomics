@@ -1,23 +1,17 @@
 process COMPUTEGCBIAS {
     conda '/home/davide.rambaldi/miniconda3/envs/deeptools'	
-	publishDir "${params.outdir}/${meta.caseid}/${meta.id}/fragmentomics/processed/bam", mode:'copy', overwrite:true
-	label 'hpc_executor'
-
-    if ( "${workflow.stubRun}" == "false" ) {
-		cpus = 16
-		memory = 64.GB
-		time = '8h'
-	}
 	
+	label 'heavy_process'
+
 	input:
-	tuple val(meta), file(bam), file(bai)
+	tuple val(meta), path(bam), path(bai), path(seg)
 
 	output:
-	tuple val(meta), path("*.freq.txt"), emit: freqfile
+	tuple val(meta), path(bam), path(bai), path(seg), path("*.freq.txt"), emit: bam_with_freq
 
 	script:
     def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "${meta.id}"
+    def prefix = task.ext.prefix ?: "${meta.sampleid}"
 	"""
 	computeGCBias \\
         -b ${bam} \\
@@ -29,7 +23,7 @@ process COMPUTEGCBIAS {
 	"""
 
 	stub:
-    def prefix = task.ext.prefix ?: "${meta.id}"
+    def prefix = task.ext.prefix ?: "${meta.sampleid}"
 	"""
 	touch ${prefix}.freq.txt
 	"""

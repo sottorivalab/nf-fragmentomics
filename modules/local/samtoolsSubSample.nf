@@ -1,18 +1,11 @@
 process SAMTOOLS_SUBSAMPLE {
-    publishDir "${params.outdir}/${sample.caseid}/${sample.id}/fragmentomics/processed/bam", mode:'copy', overwrite:true
-    label "hpc_executor"
-    
-    if ( "${workflow.stubRun}" == "false" ) {
-		cpus = 4
-		memory = 16.GB
-		time = '4h'
-	}
+    label "heavy_process"
     
     input:
-    tuple val(sample), path(neutbam), path(gainbam), path(table)
+    tuple val(meta), path(gainbam), path(neutbam), path(table)
 
     output:
-    tuple val(sample), path("*NEUT.subsample.bam"), path("*GAIN.subsample.bam"), emit: subsample
+    tuple val(meta), path("${gainbam.baseName}.subsample.bam"), path("${neutbam.baseName}.subsample.bam"), emit: subsample_bam
 
     script:
     """

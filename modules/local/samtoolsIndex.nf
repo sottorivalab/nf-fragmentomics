@@ -1,12 +1,10 @@
 process SAMTOOLSINDEX {
-	publishDir "${params.outdir}/${meta.caseid}/${meta.id}/fragmentomics/processed/bam", mode:'copy', overwrite:true
-	label 'hpc_executor'
 	
-	if ( "${workflow.stubRun}" == "false" ) {
-		cpus = 4
-		memory = 16.GB
-		time = '2h'
-	}
+	publishDir "${params.outdir}/${meta.caseid}/${meta.sampleid}/fragmentomics/processed/bam", 
+		mode:'copy', 
+		overwrite:true
+
+	label 'normal_process'
 	
 	input:
 	tuple val(meta), path(bam)
@@ -16,16 +14,15 @@ process SAMTOOLSINDEX {
 	
 	script:
     def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "${meta.id}"
 	"""
 	module load samtools
 	samtools index -@ ${task.cpus} ${bam} $args
 	"""
 
 	stub:
-    def prefix = task.ext.prefix ?: "${meta.id}"
+    def prefix = task.ext.prefix ?: "${bam.baseName}"
 	"""
-	touch ${prefix}.gc_correct.bam.bai
+	touch ${prefix}.bam.bai
 	"""
 	
 }

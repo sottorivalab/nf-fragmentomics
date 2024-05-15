@@ -9,4 +9,4 @@
 #SBATCH --mail-type=none
 
 module load nextflow
-nextflow run main.nf -params-file params.yaml -profile hpc -resume
+nextflow run main.nf -params-file params.yaml -profile production -resume

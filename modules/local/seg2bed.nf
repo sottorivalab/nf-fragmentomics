@@ -1,12 +1,12 @@
 process SEG2BED {
-    publishDir "${params.outdir}/${sample.caseid}/${sample.id}/fragmentomics/processed/ploidy", mode:'copy', overwrite:true
+    
     label "local_executor"
     
     input:
-    tuple val(sample), path(seg)
+    tuple val(meta), path(bam), path(bai), path(seg), path(freq)
 
     output:
-    tuple val(sample), path("${sample.id}_GAIN.bed"), path("${sample.id}_NEUT.bed"), emit: ploidy
+    tuple val(meta), path(bam), path(bai), path("${meta.sampleid}_GAIN.bed"), path("${meta.sampleid}_NEUT.bed"), emit: ploidy
 
     script:
     def args = task.ext.args ?: ''
@@ -16,7 +16,7 @@ process SEG2BED {
 
     stub:
     """
-    touch ${sample.id}_NEUT.bed
-    touch ${sample.id}_GAIN.bed
+    touch ${meta.sampleid}_NEUT.bed
+    touch ${meta.sampleid}_GAIN.bed
     """
 }
