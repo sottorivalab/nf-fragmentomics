@@ -7,10 +7,10 @@ process SAMTOOLSINDEX {
 	label 'normal_process'
 	
 	input:
-	tuple val(meta), path(bam)
+	tuple val(meta), val(ploidy), path(bam)
 
 	output:
-	tuple val(meta), path(bam), path("*.bai"), emit: indexed_bam
+	tuple val(meta), val(ploidy), path(bam), path("*.bai"), emit: indexed_bam
 	
 	script:
     def args = task.ext.args ?: ''

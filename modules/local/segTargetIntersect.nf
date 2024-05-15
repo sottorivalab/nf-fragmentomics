@@ -2,7 +2,6 @@ process SEGTARGETINTERSECT {
     
     publishDir "${params.outdir}/${meta_sample.caseid}/${meta_sample.sampleid}/fragmentomics/processed/targets/${meta_target.source}/${meta_target.name}",
         mode:'copy', 
-        pattern: "*.bed",
         overwrite:true
 
     label "local_executor"
@@ -13,7 +12,7 @@ process SEGTARGETINTERSECT {
     output:
     tuple val(meta_sample), val(meta_target), path("*_GAIN.bed"), emit: gain_targets
     tuple val(meta_sample), val(meta_target), path("*_NEUT.bed"), emit: neut_targets
-    tuple val(meta_sample), pval(meta_target), path("*_ALL.bed"),  emit: all_targets
+    tuple val(meta_sample), val(meta_target), path("*_ALL.bed"),  emit: all_targets
 
     script:
     def args = task.ext.args ?: ''

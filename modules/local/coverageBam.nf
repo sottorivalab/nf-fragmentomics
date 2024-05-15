@@ -8,10 +8,10 @@ process COVERAGEBAM {
 	label 'heavy_process'
 	
 	input:
-	tuple val(meta), path(bam), path(bai)
+	tuple val(meta), val(ploidy), path(bam), path(bai)
 	
 	output:
-	tuple val(meta), path("*.bw"), emit: bw
+	tuple val(meta), val(ploidy), path("*.bw"), emit: bw
 
 	script:
     def args = task.ext.args ?: ''

@@ -1,19 +1,17 @@
 process COMPUTEMATRIX {
 	conda '/home/davide.rambaldi/miniconda3/envs/deeptools'
-    publishDir "${params.outdir}/${meta_sample.caseid}/${meta_sample.id}/fragmentomics/processed/matrix/${meta_target.source}/${meta_target.name}", mode:'copy', overwrite:true	
-	label 'hpc_executor'
 
-	if ( "${workflow.stubRun}" == "false" ) {
-		cpus = 16
-		memory = 32.GB
-		time = '3h'
-	}
+    publishDir "${params.outdir}/${meta_sample.caseid}/${meta_sample.sampleid}/fragmentomics/processed/matrix/${meta_target.source}/${meta_target.name}/${meta_ploidy.type}", 
+		mode:'copy', 
+		overwrite:true
 	
+	label 'heavy_process'
+
 	input:
-	tuple val(meta_sample), val(meta_target), path(bw), path(bed)
+	tuple val(meta_sample), val(meta_ploidy), path(bw), val(meta_target), val(meta_ploidy_target), path(bed)
 	
 	output:
-	tuple val(meta_sample), val(meta_target), path("*_matrix.gz"), emit: matrix
+	tuple val(meta_sample), val(meta_ploidy), val(meta_target), val(meta_ploidy_target), path("*_matrix.gz"), emit: matrix
 
 	script:
     def args = task.ext.args ?: ''

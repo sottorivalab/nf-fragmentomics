@@ -156,94 +156,81 @@ workflow {
             [it[0], ploidy_gain, it[1]]
         }
 
-    
     all_subsample_bam_ch = neut_bam_ch
         .concat(gain_bam_ch)
-        .view()
-        
-    // SAMTOOLSINDEX(all_subsample_bam_ch)
+
+    SAMTOOLSINDEX(all_subsample_bam_ch)
 
     // concat all produced bams
-    // all_sample_bams_ch = CORRECTGCBIAS.out.gc_correct
-    //     .map{ it ->
-    //         [it[0], it[1], it[2]]
-    //     }
-    //     .concat(SAMTOOLSINDEX.out.indexed_bam)
-
-    // COVERAGEBAM(all_sample_bams_ch)
+    all_sample_bams_ch = sample_bam_ch
+        .concat(SAMTOOLSINDEX.out.indexed_bam)
+    
+    
+    COVERAGEBAM(all_sample_bams_ch)
 
     // split again by ALL, NEUT, GAIN
-    // split_bw_ch = COVERAGEBAM.out.bw
-    //     .multiMap { it ->
-    //         all: [it, it[1].baseName =~ 'gc_correct']
-    //     }
+    split_bw_ch = COVERAGEBAM.out.bw
+        .branch{
+            all:  it[1].type == 'ALL'
+            neut: it[1].type == 'NEUT'
+            gain: it[1].type == 'GAIN'
+        }
     
+    // TODO THIS ARE THE BW CHANNELS!
     // split_bw_ch.all.view()
+    // split_bw_ch.gain.view()
+    // split_bw_ch.neut.view()
 
     /////////////////////////////////////////////////
     // TARGET SEGMENTS
     /////////////////////////////////////////////////
     // combine segments and targets
-    // SEG2BED.out.ploidy.view()
-    // target_sample_ploidy_ch = SEG2BED.out.ploidy
-    //     .combine(target_ch)
-    //     .view()
+    target_sample_ploidy_ch = SEG2BED.out.ploidy
+        .map{
+            [it[0], it[3], it[4]]        
+        }
+        .combine(target_ch)
     
     // betools intersect segments and targets
-    // SEGTARGETINTERSECT(target_sample_ploidy_ch)
-    
-    // all_targets_ch = SEGTARGETINTERSECT.out.all_targets
-    //     .map { it ->
-    //         def meta_target = [
-    //             name: it[3].name,
-    //             source: it[3].source,
-    //             ploidy: 'ALL'
-    //         ]
-    //         [ it[0], it[1], it[2], meta_target, it[4] ]
-    //     }
+    SEGTARGETINTERSECT(target_sample_ploidy_ch)
+   
+    all_targets_ch = SEGTARGETINTERSECT.out.all_targets
+        .map { it ->
+            def ploidy = [ type: 'ALL' ]
+            [ it[0], it[1], ploidy, it[2] ]
+        }
 
-    // gain_targets_ch = SEGTARGETINTERSECT.out.gain_targets
-    //     .map { it ->
-    //         def meta_target = [
-    //             name: it[3].name,
-    //             source: it[3].source,
-    //             ploidy: 'GAIN'
-    //         ]
-    //         [ it[0], it[1], it[2], meta_target, it[4] ]
-    //     }
+    gain_targets_ch = SEGTARGETINTERSECT.out.gain_targets
+        .map { it ->
+            def ploidy = [ type: 'GAIN' ]
+            [ it[0], it[1], ploidy, it[2] ]
+        }
 
-    // neut_targets_ch = SEGTARGETINTERSECT.out.neut_targets
-    //     .map { it ->
-    //         def meta_target = [
-    //             name: it[3].name,
-    //             source: it[3].source,
-    //             ploidy: 'NEUT'
-    //         ]
-    //         [ it[0], it[1], it[2], meta_target, it[4] ]
-    //     }
+    neut_targets_ch = SEGTARGETINTERSECT.out.neut_targets
+        .map { it ->
+            def ploidy = [ type: 'NEUT' ]
+            [ it[0], it[1], ploidy, it[2] ]
+        }
 
-    // // concat all targets in a single channel
-    // sample_with_targets_ch = all_targets_ch
-    //     .concat(neut_targets_ch, gain_targets_ch)
-    //     .dump(tag: 'sample_with_targets')
-    //     .view()
+    // combine bams (ALL) with targets (all)
+    all_signal_target_ch = split_bw_ch.all
+        .combine(all_targets_ch, by: 0)
     
-    
+    gain_signal_target_ch = split_bw_ch.gain
+        .combine(gain_targets_ch, by: 0)
+
+    neut_signal_target_ch = split_bw_ch.neut
+        .combine(neut_targets_ch, by: 0)
+
+    // concat all
+    signal_target_ch = all_signal_target_ch.concat(gain_signal_target_ch, neut_signal_target_ch)
+
+    COMPUTEMATRIX(signal_target_ch)
+    HEATMAP(COMPUTEMATRIX.out.matrix)
+
     // TODO REFACTOR
-
     
     
-    // // combine sample bw and ploidy targets
-    // ploidy_target_sample_ch = COVERAGEBAM.out.bw
-    //     .combine(all_targets_ch, by: 0)
-    //     .map{ it ->
-    //         [it[0], it[2], it[1], it[3]]
-    //     }
-    //     .dump(tag: 'ploidy_targets')
-    
-    // // TODO add TSS HouseKeeping targets and random sets
-    // COMPUTEMATRIX(ploidy_target_sample_ch)
-    // HEATMAP(COMPUTEMATRIX.out.matrix)
     // PEAK_STATS(COMPUTEMATRIX.out.matrix)
 
     // // collect all peak stats and build a report per sample  
