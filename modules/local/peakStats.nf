@@ -1,18 +1,17 @@
 process PEAK_STATS {
-    publishDir "${params.outdir}/${meta_sample.caseid}/${meta_sample.id}/fragmentomics/processed/matrix/${meta_target.source}/${meta_target.name}", mode:'copy', overwrite:true
-	label 'hpc_executor'
+    
+	publishDir "${params.outdir}/${meta_sample.caseid}/${meta_sample.sampleid}/fragmentomics/processed/matrix/${meta_target.source}/${meta_target.name}/${meta_ploidy.type}", 
+		mode:'copy', 
+		overwrite:true
+
+	label 'light_process'
 	
-    if ( "${workflow.stubRun}" == "false" ) {
-		cpus = 1
-		memory = 4.GB
-		time = '1h'
-	}
 
     input:
-    tuple val(meta_sample), val(meta_target), path(matrix)
+    tuple val(meta_sample), val(meta_ploidy), val(meta_target), val(meta_ploidy_target), path(matrix)
 
     output:
-    tuple val(meta_sample), val(meta_target), path("*_peak_data.tsv"), path("*_peak_stats.tsv"), path("*_PeakIntegration.pdf"),	emit: peaks
+    tuple val(meta_sample), val(meta_ploidy), val(meta_target), val(meta_ploidy_target), path("*_peak_data.tsv"), path("*_peak_stats.tsv"), path("*_PeakIntegration.pdf"),	emit: peaks
 
     script:
 	"""

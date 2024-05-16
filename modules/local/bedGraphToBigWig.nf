@@ -9,21 +9,21 @@ process BEDGRAPHTOBIGWIG {
 	}
 
     input:
-    tuple val(timepoint), path(bedgraph)
+    tuple val(timepoint), val(ploidy), path(bedgraph)
 
     output:
-    tuple val(timepoint), path("COHORT_${timepoint}.bw"), emit: bw
+    tuple val(timepoint), val(ploidy), path("*.bw"), emit: bw
 
     script:
     def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "COHORT_${timepoint}"
+    def prefix = task.ext.prefix ?: "COHORT_${timepoint}_${ploidy}"
     """
     module load ucsc-tools
     bedGraphToBigWig ${bedgraph} ${params.chr_sizes} ${prefix}.bw 
     """
 
     stub:
-    def prefix = task.ext.prefix ?: "COHORT_${timepoint}"
+    def prefix = task.ext.prefix ?: "COHORT_${timepoint}_${ploidy}"
     """
     touch ${prefix}.bw
     """

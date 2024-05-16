@@ -57,7 +57,9 @@ def main():
         timepoint = re.sub(".*[0-9]+_","",sample_name)
         bai_file = Path(str(bam).replace("bam","bai"))
         if not bai_file.is_file():
-            print("ERROR!")
+            bai_file = Path(f"{str(bam)}.bai")
+        if not bai_file.is_file():
+            print(f"ERROR missing bai file: {bai_file}")
             return 1
         # search for seg file
         low_pass_dir = bam.parents[1]

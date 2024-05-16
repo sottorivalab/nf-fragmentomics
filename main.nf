@@ -176,7 +176,7 @@ workflow {
             gain: it[1].type == 'GAIN'
         }
     
-    // TODO THIS ARE THE BW CHANNELS!
+    // THIS ARE THE BW CHANNELS:
     // split_bw_ch.all.view()
     // split_bw_ch.gain.view()
     // split_bw_ch.neut.view()
@@ -227,37 +227,53 @@ workflow {
 
     COMPUTEMATRIX(signal_target_ch)
     HEATMAP(COMPUTEMATRIX.out.matrix)
-
-    // TODO REFACTOR
-    
-    
-    // PEAK_STATS(COMPUTEMATRIX.out.matrix)
-
-    // // collect all peak stats and build a report per sample  
-    // sample_peaks_ch = PEAK_STATS.out.peaks
-    //     .map{ it -> 
-    //         return [
-    //             it[0],
-    //             it[1],
-    //             it[3]
-    //         ]
-    //     }        
-    //     .groupTuple(by: 0)
-    //     .dump(tag: 'sample_peaks')
+    PEAK_STATS(COMPUTEMATRIX.out.matrix)
+    sample_peaks_ch = PEAK_STATS.out.peaks
+        .map{ it ->
+            [ it[0], it[1], it[2], it[3], it[5] ]
+        }
+        .groupTuple(by: 0)
+        .dump(tag: 'sample_peaks')
 
     // peak report
-    // PEAK_REPORT(sample_peaks_ch)
+    PEAK_REPORT(sample_peaks_ch)
 
     // merge bw by timepoint only when we have more than one sample
-    // if (file(params.input).countLines() > 2) {
-    //     timepoint_bw_ch = COVERAGEBAM.out.bw
-    //         .map{ sample ->
-    //             def tp = sample[0].timepoint
-    //             tuple(tp, sample[0], sample[1])
-    //         }
-    //         .groupTuple()
-    //         .dump(tag: 'timepoints')        
-    //     BIGWIG_MERGE(timepoint_bw_ch)
-    //     BEDGRAPHTOBIGWIG(BIGWIG_MERGE.out.bedgraph)
-    // }
+    if (file(params.input).countLines() > 2) {
+        
+        timepoint_all_bw_ch = split_bw_ch.all
+            .map{ it ->
+                def tp = it[0].timepoint
+                tuple(tp, it[0], it[2])
+            }
+            .groupTuple(by: 0)
+            .map{ it ->                
+                tuple(it[0], 'ALL', it[1], it[2])
+            }
+
+        timepoint_gain_bw_ch = split_bw_ch.gain
+            .map{ it ->
+                def tp = it[0].timepoint                
+                tuple(tp, it[0], it[2])
+            }
+            .groupTuple(by: 0)
+            .map{ it ->                
+                tuple(it[0], 'GAIN', it[1], it[2])
+            }
+
+        timepoint_neut_bw_ch = split_bw_ch.neut
+            .map{ it ->
+                def tp = it[0].timepoint
+                tuple(tp, it[0], it[2])
+            }
+            .groupTuple(by: 0)
+            .map{ it ->                
+                tuple(it[0], 'NEUT', it[1], it[2])
+            }
+
+        timepoints_ch = timepoint_all_bw_ch.concat(timepoint_gain_bw_ch, timepoint_neut_bw_ch).view()
+
+        BIGWIG_MERGE(timepoints_ch)
+        BEDGRAPHTOBIGWIG(BIGWIG_MERGE.out.bedgraph)
+    }
 }

@@ -6,7 +6,6 @@ import logging
 import csv
 import re
 from pathlib import Path
-from rich import print
 
 __author__    = "Davide Rambaldi"
 __copyright__ = "Davide Rambaldi"
