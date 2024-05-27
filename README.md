@@ -1,14 +1,51 @@
 # NF-FRAGMENTOMICS
 
-## TODO
-
-1. Merge all timepoints in a single bw
-2. Get rid of empty targets and increase granularity
-3. Change resolution of bigwiggle to 2 bp to make the nucleosome region chr12 plot
-4. remove timon targets, I need to collapse them by TF
-5. 
-
 ## USAGE
+
+## BUGS
+
+### PEAK STATS AND PEAK DATA
+
+Save target infos in peak stats and peak data table. Build a better report in R (PEAKREPORT)
+
+
+
+### BAM EMPTY in bamCoverage
+
+Work dir:
+
+```
+/scratch/davide.rambaldi/nf-fragmentomics_MAYA/work/43/74a37a21a0ea00a56816502d575d79
+```
+
+Error:
+
+```
+Command error:
+  WARNING! 'MAYA_244_PD_GAIN.subsample.bam' does not have any mapped reads. Please check that the file is properly indexed and that it contains mapped reads.
+  WARNING! 'MAYA_244_PD_GAIN.subsample.bam' does not have any mapped reads. Please check that the file is properly indexed and that it contains mapped reads.
+  Traceback (most recent call last):
+    File "/home/davide.rambaldi/miniconda3/envs/deeptools/bin/bamCoverage", line 10, in <module>
+      sys.exit(main())
+    File "/home/davide.rambaldi/miniconda3/envs/deeptools/lib/python3.7/site-packages/deeptools/bamCoverage.py", line 258, in main
+      format=args.outFileFormat, smoothLength=args.smoothLength)
+    File "/home/davide.rambaldi/miniconda3/envs/deeptools/lib/python3.7/site-packages/deeptools/writeBedGraph.py", line 131, in run
+      genome_chunk_length = getGenomeChunkLength(bam_handles, self.binLength, self.mappedList)
+    File "/home/davide.rambaldi/miniconda3/envs/deeptools/lib/python3.7/site-packages/deeptools/writeBedGraph.py", line 337, in getGenomeChunkLength
+      genomeChunkLength = int(min(5e6, int(2e6 / (max_reads_per_bp * len(bamHandles)))))
+  ZeroDivisionError: float division by zero
+```
+
+
+```
+  bamCoverage \
+        -b MAYA_244_PD_GAIN.subsample.bam \
+        -o MAYA_244_PD_GAIN.subsample.bw \
+        --numberOfProcessors 16 \
+        --blackListFileName /scratch/davide.rambaldi/nf-fragmentomics_sandbox/references/ENCODE_Blacklist_V2.bed \
+        --centerReads \
+        --binSize 2
+```
 
 ### PARAMS
 
