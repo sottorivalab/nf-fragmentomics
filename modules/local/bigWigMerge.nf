@@ -1,5 +1,8 @@
 process BIGWIG_MERGE {    
-    publishDir "${params.outdir}/TIMEPOINTS/processed/bedgraph/${ploidy}", mode:'copy', overwrite:true
+    publishDir "${params.outdir}/TIMEPOINTS/processed/bedgraph/${ploidy}", 
+        mode:'copy', 
+        overwrite:true
+        
     label 'hpc_executor'
     
     if ( "${workflow.stubRun}" == "false" ) {

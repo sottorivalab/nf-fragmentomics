@@ -89,10 +89,6 @@ mdata <- fortify(as.data.frame(mdata)) %>%
 
 rownames(mdata) <- NULL
 
-# write summarized datas as peak_data.tsv
-output.data.file.name <- paste(opt$signal, opt$ploidy, opt$target, opt$source, "peak_data.tsv", sep="_")
-write_delim(mdata, output.data.file.name, delim="\t")
-
 # create random points. 1<x<800 (number of bins of matrix)
 x1 = runif(opt$random.points, min=1, max=(ncol(alldata)-6))
 y1 = runif(opt$random.points, min=min(mdata$raw) , max=max(mdata$raw))
@@ -103,10 +99,17 @@ mIntegrationData <- mpoints |> left_join(mdata,join_by(closest(x >= bin)))
 
 # background using limits
 mBackgroundData <- mIntegrationData |> filter(bin <= opt$bg.limit.left | bin >= opt$bg.limit.right)
-upper.limit <- median(mBackgroundData$raw)
+background.median <- median(mBackgroundData$raw)
+
+# relative signal
+mdata <- mdata %>% mutate(relative=raw/background.median, background_median=background.median)
+
+# write summarized datas as peak_data.tsv
+output.data.file.name <- paste(opt$signal, opt$ploidy, opt$target, opt$source, "peak_data.tsv", sep="_")
+write_delim(mdata, output.data.file.name, delim="\t")
 
 # annotate the points above and below
-mIntegrationData <- mIntegrationData |> mutate(above=(y >= raw & y <= upper.limit))
+mIntegrationData <- mIntegrationData |> mutate(above=(y >= raw & y <= background.median))
 
 # monte carlo integration
 mintegration <- length(which(mIntegrationData$above)) / opt$random.points
@@ -115,9 +118,9 @@ mintegration <- length(which(mIntegrationData$above)) / opt$random.points
 min.peak.position <- nrow(mdata) / 2
 min.peak.value <- (mIntegrationData %>% filter(bin == min.peak.position))[1,]$raw
 
-mpeak.length <- upper.limit - min.peak.value
+mpeak.length <- background.median - min.peak.value
 mpeak.limits <- tibble(
-  y=c(min(mIntegrationData$raw), upper.limit),
+  y=c(min(mIntegrationData$raw), background.median),
   x=c(min.peak.position,min.peak.position)
 )
 mpeak.ratio <- mintegration/mpeak.length
@@ -130,7 +133,7 @@ peak.stats <- tibble(
   integration=mintegration,
   length=mpeak.length,
   ymin=min(mIntegrationData$raw),
-  ymax=upper.limit,
+  ymax=background.median,
   x=min.peak.position,
   ratio=mpeak.ratio
 )
@@ -150,7 +153,7 @@ peak.limits <- tibble(
 ggplot() +
   geom_line(data=mIntegrationData,aes(y=raw, x=bin)) +
   geom_point(data=mIntegrationData,aes(x = x, y = y, colour=above), size = .2) +
-  geom_hline(yintercept = upper.limit, color="blue") +
+  geom_hline(yintercept = background.median, color="blue") +
   geom_vline(xintercept = opt$bg.limit.left, color="blue") +
   geom_vline(xintercept = opt$bg.limit.right, color="blue") +
   geom_point(data=peak.limits, aes(x=x, y=y), color="green", size=1) +

@@ -18,13 +18,13 @@ process PEAK_STATS {
 	module unload R/rstudio-dependencies
 	module load R/4.3.1
     module load nlopt
-	fragmentomics_peakStats.R ${matrix}
+	fragmentomics_peakStats.R -s ${meta_sample.sampleid} -t ${meta_target.name} -p ${meta_ploidy.type} -S ${meta_target.source} ${matrix}
 	"""
 
 	stub:
 	"""
-	touch ${meta_sample.id}_${meta_target.name}_peak_data.tsv
-	touch ${meta_sample.id}_${meta_target.name}_peak_stats.tsv
-	touch ${meta_sample.id}_${meta_target.name}_PeakIntegration.pdf
+	touch ${meta_sample.sampleid}_${meta_ploidy.type}_${meta_target.name}_${meta_target.source}_peak_data.tsv
+	touch ${meta_sample.sampleid}_${meta_ploidy.type}_${meta_target.name}_${meta_target.source}_peak_stats.tsv
+	touch ${meta_sample.sampleid}_${meta_ploidy.type}_${meta_target.name}_${meta_target.source}_PeakIntegration.pdf
 	"""
 }
