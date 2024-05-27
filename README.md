@@ -2,13 +2,13 @@
 
 ## USAGE
 
+
+
 ## BUGS
 
 ### PEAK STATS AND PEAK DATA
 
 Save target infos in peak stats and peak data table. Build a better report in R (PEAKREPORT)
-
-
 
 ### BAM EMPTY in bamCoverage
 

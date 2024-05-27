@@ -228,6 +228,7 @@ workflow {
     HEATMAP(COMPUTEMATRIX.out.matrix)
     PEAK_STATS(COMPUTEMATRIX.out.matrix)
     
+    /*
     sample_peaks_ch = PEAK_STATS.out.peaks
         .map{ it ->
             [ it[0], it[1], it[2], it[3], it[5] ]
@@ -276,4 +277,5 @@ workflow {
         BIGWIG_MERGE(timepoints_ch)
         BEDGRAPHTOBIGWIG(BIGWIG_MERGE.out.bedgraph)
     }
+    */
 }
