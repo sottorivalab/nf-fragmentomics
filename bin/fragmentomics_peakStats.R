@@ -1,4 +1,4 @@
-2#!/usr/bin/env Rscript
+#!/usr/bin/env Rscript
 library(stringr)
 library(tibble)
 library(dplyr)

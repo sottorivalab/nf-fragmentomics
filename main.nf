@@ -165,7 +165,6 @@ workflow {
     all_sample_bams_ch = sample_bam_ch
         .concat(SAMTOOLSINDEX.out.indexed_bam)
     
-    
     COVERAGEBAM(all_sample_bams_ch)
 
     // split again by ALL, NEUT, GAIN
@@ -228,6 +227,7 @@ workflow {
     COMPUTEMATRIX(signal_target_ch)
     HEATMAP(COMPUTEMATRIX.out.matrix)
     PEAK_STATS(COMPUTEMATRIX.out.matrix)
+    
     sample_peaks_ch = PEAK_STATS.out.peaks
         .map{ it ->
             [ it[0], it[1], it[2], it[3], it[5] ]
