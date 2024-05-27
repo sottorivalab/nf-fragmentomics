@@ -24,6 +24,14 @@ def parse_args():
     )
 
     parser.add_argument(
+        "-s",
+        "--sample",
+        dest="sample",
+        help="Sample ID",
+        required=True
+    )
+
+    parser.add_argument(
         "-v",
         "--verbose",
         dest="loglevel",
@@ -59,22 +67,17 @@ def setup_logging(loglevel):
 def main():
     args = parse_args()
     setup_logging(args.loglevel)
-
-    report_data = "name\tsource\ttype\tintegration\tlength\tymin\tymax\tx\tratio\n"
-    pattern = r"(?P<sample>.*)_(?P<name>[A-Z]*)regions_(?P<source>[a-z]*)_(?P<type>ALL|GAIN|NEUT)_peak_stats$"
+    report_data = "name\tsource\tploidy\tintegration\tlength\tymin\tymax\tx\tratio\n"
     
     for path in args.targets:
-        target_data = re.search(pattern, path.stem)
-        print(path.stem)
-        if target_data is not None:
-            with open(path) as peak_fh:
-                statreader = csv.reader(peak_fh, delimiter="\t")
-                next(peak_fh)
-                for statrow in statreader:
-                    mdata = "\t".join(statrow)                
-                    report_data += f"{target_data['name']}\t{target_data['source']}\t{target_data['type']}\t{mdata}\n"
-        
-    # print(report_data.strip())
+        with open(path) as peak_fh:
+            statreader = csv.reader(peak_fh)     
+            next(peak_fh)       
+            for statrow in statreader:
+                report_data += "\t".join(statrow)
+                report_data += "\n"
+                
+    print(report_data.strip())
 
 if __name__ == "__main__":
     sys.exit(main())

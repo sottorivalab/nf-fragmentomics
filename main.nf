@@ -20,10 +20,7 @@ def create_target_channel(LinkedHashMap row) {
         name: row.name,
         source: row.source
     ]
-    
-    def target = []
-    target = [meta, row.bed]
-    return target
+    return [meta, row.bed]
 }
 
 def create_sample_channel(LinkedHashMap row) {
@@ -33,10 +30,7 @@ def create_sample_channel(LinkedHashMap row) {
         sampleid: row.sampleid,
         timepoint: row.timepoint
     ]
-
-    def sample = []
-    sample = [meta, file(row.bam), file(row.bai), file(row.seg)]
-    return sample
+    return [meta, file(row.bam), file(row.bai), file(row.seg)]
 }
 
 workflow {
@@ -86,7 +80,7 @@ workflow {
             [ ['name': it.baseName.replaceFirst(/^.*_/,""), 'source': 'GENEHANCER'], it ]
         }
 
-    // targets channel
+    // targets channel and filter by size
     target_ch = Channel.fromPath(params.targets)
         .splitCsv(header: true, sep:',')
         .map{ create_target_channel(it) }
@@ -101,13 +95,13 @@ workflow {
     /////////////////////////////////////////////////
     COMPUTEGCBIAS(sample_ch)    
     CORRECTGCBIAS(COMPUTEGCBIAS.out.bam_with_freq)
+
     // generate bed files for segments
     SEG2BED(CORRECTGCBIAS.out.gc_correct)
     
     /////////////////////////////////////////////////
     // SUBSAMPLE BED FILES
-    /////////////////////////////////////////////////   
-    
+    /////////////////////////////////////////////////       
     gain_bam_ch = SEG2BED.out
         .map{ it ->
             [it[0], it[1], it[2], it[3]]
@@ -133,9 +127,8 @@ workflow {
 
     // BAM CHANNELS WITH PLOIDY
     sample_bam_ch = CORRECTGCBIAS.out.gc_correct
-        .map{ it ->
-            def ploidy = [ type: 'ALL' ]
-            [it[0], ploidy, it[1], it[2]]
+        .map{ it ->            
+            [it[0], [ type: 'ALL' ], it[1], it[2]]
         }
     
     split_subsample_multiMap = SAMTOOLS_SUBSAMPLE.out.subsample_bam
@@ -146,14 +139,12 @@ workflow {
 
     neut_bam_ch = split_subsample_multiMap.neut
         .map{ it -> 
-            def ploidy_neut = [ type: 'NEUT' ]
-            [it[0], ploidy_neut, it[1]]
+            [it[0], [ type: 'NEUT' ], it[1]]
         }
 
     gain_bam_ch = split_subsample_multiMap.gain
         .map{ it -> 
-            def ploidy_gain = [ type: 'GAIN' ]
-            [it[0], ploidy_gain, it[1]]
+            [it[0], [ type: 'GAIN' ], it[1]]
         }
 
     all_subsample_bam_ch = neut_bam_ch
@@ -195,20 +186,17 @@ workflow {
    
     all_targets_ch = SEGTARGETINTERSECT.out.all_targets
         .map { it ->
-            def ploidy = [ type: 'ALL' ]
-            [ it[0], it[1], ploidy, it[2] ]
+            [ it[0], it[1], [ type: 'ALL' ], it[2] ]
         }
 
     gain_targets_ch = SEGTARGETINTERSECT.out.gain_targets
         .map { it ->
-            def ploidy = [ type: 'GAIN' ]
-            [ it[0], it[1], ploidy, it[2] ]
+            [ it[0], it[1], [ type: 'GAIN' ], it[2] ]
         }
 
     neut_targets_ch = SEGTARGETINTERSECT.out.neut_targets
         .map { it ->
-            def ploidy = [ type: 'NEUT' ]
-            [ it[0], it[1], ploidy, it[2] ]
+            [ it[0], it[1], [ type: 'NEUT' ], it[2] ]
         }
 
     // combine bams (ALL) with targets (all)
