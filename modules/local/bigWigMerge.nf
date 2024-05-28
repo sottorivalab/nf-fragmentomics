@@ -3,7 +3,7 @@ process BIGWIG_MERGE {
         mode:'copy', 
         overwrite:true
         
-    label 'hpc_executor'
+    label 'heavy_process'
     
     if ( "${workflow.stubRun}" == "false" ) {
 		cpus = 1

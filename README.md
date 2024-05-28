@@ -2,13 +2,25 @@
 
 ## USAGE
 
-## BUGS
+TODO
 
-### PEAK STATS AND PEAK DATA
+### DEBUG
 
-Save target infos in peak stats and peak data table. Build a better report in R (PEAKREPORT)
+use `-dump-channels` to see channels.
 
-### BAM EMPTY in bamCoverage
+
+## PARAMS
+
+TODO
+
+### BUGS
+
+#### NF cache
+
+Sometimes it repeat cached from SAMTOOLSINDEX
+
+
+#### BAM EMPTY in bamCoverage
 
 Work dir:
 
@@ -45,12 +57,17 @@ Command error:
         --binSize 2
 ```
 
-### PARAMS
+-----------
 
 
-### DEBUG
 
-use `-dump-channels` to see channels.
+
+
+
+
+
+
+
 
 
 ### SCRIPTS
@@ -70,7 +87,6 @@ use `-dump-channels` to see channels.
 faToTwoBit /scratch/chela.james/references/Homo_sapiens/GATK/GRCh38/Sequence/WholeGenomeFasta/Homo_sapiens_assembly38.fasta GRCh38.2bit
 
 twoBitInfo GRCh38.2bit GRCh38.sizes
-
 
 
 ### BLACKLIST IN BAM COVERAGE
@@ -100,12 +116,6 @@ https://pubmed.ncbi.nlm.nih.gov/31249361/
 ```
 bamCoverage -b MAYA_12_BL.gc_correct.bam -o MAYA_12_BL.mappability.bw --blackListFileName ../../references/to_exclude.bed
 ```
-
-
-
-
-
-
 
 
 cd /home/davide.rambaldi/my_scratch/nf-fragmentomics_sandbox/test_bw_manipulation/test_3

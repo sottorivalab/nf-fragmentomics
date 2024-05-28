@@ -24,14 +24,6 @@ def parse_args():
     )
 
     parser.add_argument(
-        "-s",
-        "--sample",
-        dest="sample",
-        help="Sample ID",
-        required=True
-    )
-
-    parser.add_argument(
         "-v",
         "--verbose",
         dest="loglevel",
@@ -76,7 +68,7 @@ def main():
             for statrow in statreader:
                 report_data += "\t".join(statrow)
                 report_data += "\n"
-                
+
     print(report_data.strip())
 
 if __name__ == "__main__":

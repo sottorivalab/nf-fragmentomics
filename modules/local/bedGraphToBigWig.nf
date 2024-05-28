@@ -1,6 +1,9 @@
 process BEDGRAPHTOBIGWIG {
-    publishDir "${params.outdir}/TIMEPOINTS/processed/bw", mode:'copy', overwrite:true
-    label 'hpc_executor'
+    publishDir "${params.outdir}/TIMEPOINTS/processed/bw", 
+        mode:'copy', 
+        overwrite:true
+                
+    label 'heavy_process'
     
     if ( "${workflow.stubRun}" == "false" ) {
 		cpus = 1

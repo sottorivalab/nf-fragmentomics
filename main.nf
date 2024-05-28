@@ -148,8 +148,10 @@ workflow {
         }
 
     all_subsample_bam_ch = neut_bam_ch
-        .concat(gain_bam_ch)
+        .concat(gain_bam_ch)        
 
+    // TODO FIXME
+    // Here sometimes it ignore cached bam files
     SAMTOOLSINDEX(all_subsample_bam_ch)
 
     // concat all produced bams
@@ -167,9 +169,9 @@ workflow {
         }
     
     // THIS ARE THE BW CHANNELS:
-    // split_bw_ch.all.view()
-    // split_bw_ch.gain.view()
-    // split_bw_ch.neut.view()
+    split_bw_ch.all.dump(tag: 'all_bw')
+    split_bw_ch.gain.dump(tag: 'gain_bw')
+    split_bw_ch.neut.dump(tag: 'neut_bw')
 
     /////////////////////////////////////////////////
     // TARGET SEGMENTS
@@ -216,7 +218,6 @@ workflow {
     HEATMAP(COMPUTEMATRIX.out.matrix)
     PEAK_STATS(COMPUTEMATRIX.out.matrix)
     
-    /*
     sample_peaks_ch = PEAK_STATS.out.peaks
         .map{ it ->
             [ it[0], it[1], it[2], it[3], it[5] ]
@@ -224,16 +225,44 @@ workflow {
         .groupTuple(by: 0)
         .dump(tag: 'sample_peaks')
 
-    // peak report
+    // peak report with ./bin/fragmentomics_peakReport.py
     PEAK_REPORT(sample_peaks_ch)
 
+    /*
+    ----- PEAK STATS CHANNEL ----------
+
+        [
+            [caseid:MAYA_12, sampleid:MAYA_12_BL, timepoint:BL], 
+            [type:NEUT], 
+            [name:YY1, source:GRIFFIN], 
+            [type:NEUT], 
+            /scratch/davide.rambaldi/nf-fragmentomics_sandbox/work/26/c3e9f55f4b2334f6c0bbbf01370401/MAYA_12_BL_NEUT_YY1_GRIFFIN_peak_data.tsv, 
+            /scratch/davide.rambaldi/nf-fragmentomics_sandbox/work/26/c3e9f55f4b2334f6c0bbbf01370401/MAYA_12_BL_NEUT_YY1_GRIFFIN_peak_stats.csv, 
+            /scratch/davide.rambaldi/nf-fragmentomics_sandbox/work/26/c3e9f55f4b2334f6c0bbbf01370401/MAYA_12_BL_NEUT_YY1_GRIFFIN_PeakIntegration.pdf
+        ]
+    */
+    
+    /////////////////////////////////////////////////
+    // MULTI SAMPLES
+    /////////////////////////////////////////////////
+
+    if (file(params.input).countLines() > 2) {
+        // regroup peak data from different samples by target and target ploidy
+        target_peaks_ch = PEAK_STATS.out.peaks
+            .map{ it ->
+                [ it[0], it[1], it[2], it[3], it[4] ]
+            }
+            .groupTuple(by: [2,3])
+            .view()
+    }
+    
+    /*
     // merge bw by timepoint only when we have more than one sample
     if (file(params.input).countLines() > 2) {
         
         timepoint_all_bw_ch = split_bw_ch.all
             .map{ it ->
-                def tp = it[0].timepoint
-                tuple(tp, it[0], it[2])
+                tuple(it[0].timepoint, it[0], it[2])
             }
             .groupTuple(by: 0)
             .map{ it ->                
@@ -242,8 +271,7 @@ workflow {
 
         timepoint_gain_bw_ch = split_bw_ch.gain
             .map{ it ->
-                def tp = it[0].timepoint                
-                tuple(tp, it[0], it[2])
+                tuple(it[0].timepoint, it[0], it[2])
             }
             .groupTuple(by: 0)
             .map{ it ->                
@@ -252,8 +280,7 @@ workflow {
 
         timepoint_neut_bw_ch = split_bw_ch.neut
             .map{ it ->
-                def tp = it[0].timepoint
-                tuple(tp, it[0], it[2])
+                tuple(it[0].timepoint, it[0], it[2])
             }
             .groupTuple(by: 0)
             .map{ it ->                
