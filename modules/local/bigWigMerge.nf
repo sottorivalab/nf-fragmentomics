@@ -1,5 +1,5 @@
 process BIGWIG_MERGE {    
-    publishDir "${params.outdir}/TIMEPOINTS/processed/bedgraph/${ploidy}", 
+    publishDir "${params.outdir}/TIMEPOINTS/fragmentomics/processed/bedgraph/${ploidy}", 
         mode:'copy', 
         overwrite:true
         

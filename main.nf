@@ -14,6 +14,9 @@ include { SEGTARGETINTERSECT } from './modules/local/segTargetIntersect.nf'
 include { SAMTOOLSFILTERSEG  } from "./modules/local/samtoolsFilterSeg.nf"
 include { SAMTOOLSCOUNTREADS } from "./modules/local/samtoolsCountReads.nf"
 include { SAMTOOLS_SUBSAMPLE } from "./modules/local/samtoolsSubSample.nf"
+include { TARGETPLOT         } from "./modules/local/targetPlot.nf"
+
+
 
 def create_target_channel(LinkedHashMap row) {
     def meta = [
@@ -229,7 +232,7 @@ workflow {
     PEAK_REPORT(sample_peaks_ch)
 
     /*
-    ----- PEAK STATS CHANNEL ----------
+        ----- PEAK STATS CHANNEL ----------
 
         [
             [caseid:MAYA_12, sampleid:MAYA_12_BL, timepoint:BL], 
@@ -253,10 +256,10 @@ workflow {
                 [ it[0], it[1], it[2], it[3], it[4] ]
             }
             .groupTuple(by: [2,3])
-            .view()
+        
+        TARGETPLOT(target_peaks_ch)
     }
     
-    /*
     // merge bw by timepoint only when we have more than one sample
     if (file(params.input).countLines() > 2) {
         
@@ -287,10 +290,9 @@ workflow {
                 tuple(it[0], 'NEUT', it[1], it[2])
             }
 
-        timepoints_ch = timepoint_all_bw_ch.concat(timepoint_gain_bw_ch, timepoint_neut_bw_ch).view()
+        timepoints_ch = timepoint_all_bw_ch.concat(timepoint_gain_bw_ch, timepoint_neut_bw_ch)
 
         BIGWIG_MERGE(timepoints_ch)
         BEDGRAPHTOBIGWIG(BIGWIG_MERGE.out.bedgraph)
     }
-    */
 }
