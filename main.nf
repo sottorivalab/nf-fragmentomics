@@ -233,7 +233,7 @@ workflow {
 
     /*
         ----- PEAK STATS CHANNEL ----------
-
+        
         [
             [caseid:MAYA_12, sampleid:MAYA_12_BL, timepoint:BL], 
             [type:NEUT], 
@@ -243,13 +243,15 @@ workflow {
             /scratch/davide.rambaldi/nf-fragmentomics_sandbox/work/26/c3e9f55f4b2334f6c0bbbf01370401/MAYA_12_BL_NEUT_YY1_GRIFFIN_peak_stats.csv, 
             /scratch/davide.rambaldi/nf-fragmentomics_sandbox/work/26/c3e9f55f4b2334f6c0bbbf01370401/MAYA_12_BL_NEUT_YY1_GRIFFIN_PeakIntegration.pdf
         ]
+        
     */
     
     /////////////////////////////////////////////////
     // MULTI SAMPLES
     /////////////////////////////////////////////////
-
-    if (file(params.input).countLines() > 2) {
+    
+    if (params.multisamples) {
+        // when we have more than one sample (target peak analysis)
         // regroup peak data from different samples by target and target ploidy
         target_peaks_ch = PEAK_STATS.out.peaks
             .map{ it ->
@@ -258,10 +260,6 @@ workflow {
             .groupTuple(by: [2,3])
         
         TARGETPLOT(target_peaks_ch)
-    }
-    
-    // merge bw by timepoint only when we have more than one sample
-    if (file(params.input).countLines() > 2) {
         
         timepoint_all_bw_ch = split_bw_ch.all
             .map{ it ->
@@ -294,5 +292,6 @@ workflow {
 
         BIGWIG_MERGE(timepoints_ch)
         BEDGRAPHTOBIGWIG(BIGWIG_MERGE.out.bedgraph)
+        
     }
 }
