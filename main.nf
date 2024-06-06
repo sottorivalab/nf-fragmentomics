@@ -214,8 +214,12 @@ workflow {
     neut_signal_target_ch = split_bw_ch.neut
         .combine(neut_targets_ch, by: 0)
 
-    // concat all
-    signal_target_ch = all_signal_target_ch.concat(gain_signal_target_ch, neut_signal_target_ch)
+    // concat all and filter for size > 0
+    signal_target_ch = all_signal_target_ch
+        .concat(gain_signal_target_ch, neut_signal_target_ch)
+        .filter{ it ->
+            it[5].size() > 0 
+        }
 
     COMPUTEMATRIX(signal_target_ch)
     HEATMAP(COMPUTEMATRIX.out.matrix)
@@ -250,6 +254,7 @@ workflow {
     // MULTI SAMPLES
     /////////////////////////////////////////////////
     
+	/*
     if (params.multisamples) {
         // when we have more than one sample (target peak analysis)
         // regroup peak data from different samples by target and target ploidy
@@ -294,4 +299,5 @@ workflow {
         BEDGRAPHTOBIGWIG(BIGWIG_MERGE.out.bedgraph)
         
     }
+	*/
 }

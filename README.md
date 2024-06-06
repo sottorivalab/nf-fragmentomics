@@ -57,6 +57,28 @@ Command error:
         --binSize 2
 ```
 
+Error compute matrix
+
+```
+Command error:
+  Traceback (most recent call last):
+    File "/home/davide.rambaldi/miniconda3/envs/deeptools/bin/computeMatrix", line 10, in <module>
+      sys.exit(main())
+    File "/home/davide.rambaldi/miniconda3/envs/deeptools/lib/python3.7/site-packages/deeptools/computeMatrix.py", line 428, in main
+      hm.computeMatrix(scores_file_list, args.regionsFileName, parameters, blackListFileName=args.blackListFileName, verbose=args.verbose, allArgs=args)
+    File "/home/davide.rambaldi/miniconda3/envs/deeptools/lib/python3.7/site-packages/deeptools/heatmapper.py", line 264, in computeMatrix
+      verbose=verbose)
+    File "/home/davide.rambaldi/miniconda3/envs/deeptools/lib/python3.7/site-packages/deeptools/mapReduce.py", line 85, in mapReduce
+      bed_interval_tree = GTF(bedFile, defaultGroup=defaultGroup, transcriptID=transcriptID, exonID=exonID, transcript_id_designator=transcript_id_designator, keepExons=keepExons)
+    File "/home/davide.rambaldi/miniconda3/envs/deeptools/lib/python3.7/site-packages/deeptoolsintervals/parse.py", line 591, in __init__
+      ftype = self.inferType(fp, line, labelColumn)
+    File "/home/davide.rambaldi/miniconda3/envs/deeptools/lib/python3.7/site-packages/deeptoolsintervals/parse.py", line 166, in inferType
+      raise RuntimeError('{0} does not seem to be a recognized file type!'.format(self.filename))
+  RuntimeError: MAYA_282_ON_ICI_CENPA_regions_griffin_NEUT.bed does not seem to be a recognized file type!
+```
+
+And bed file is empty (lines: 0)
+
 -----------
 
 
