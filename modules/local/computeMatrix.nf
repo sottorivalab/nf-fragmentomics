@@ -5,7 +5,7 @@ process COMPUTEMATRIX {
 		mode:'copy', 
 		overwrite:true
 	
-	label 'normal_process'
+	label 'fast_process'
 
 	input:
 	tuple val(meta_sample), val(meta_ploidy), path(bw), val(meta_target), val(meta_ploidy_target), path(bed)

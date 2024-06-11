@@ -15,6 +15,9 @@ process TARGETPLOT {
     def samples = meta_samples.collect{it['sampleid']}.join(',')
     def prefix = task.ext.prefix ?: "COHORT_${meta_target['name']}_${meta_target['source']}_${meta_ploidy_target['type']}"
     """
+    module unload R/rstudio-dependencies
+	module load R/4.3.1
+    module load nlopt
     fragmentomics_targetPlots.R ${peakdata.join(' ')} -s ${samples} -o ${prefix}_peak_plot.pdf
     """
 

@@ -254,8 +254,9 @@ workflow {
     // MULTI SAMPLES
     /////////////////////////////////////////////////
     
-	/*
     if (params.multisamples) {
+
+        // GROUP BY TARGET
         // when we have more than one sample (target peak analysis)
         // regroup peak data from different samples by target and target ploidy
         target_peaks_ch = PEAK_STATS.out.peaks
@@ -266,6 +267,7 @@ workflow {
         
         TARGETPLOT(target_peaks_ch)
         
+        // GROUP BY TIMEPOINT
         timepoint_all_bw_ch = split_bw_ch.all
             .map{ it ->
                 tuple(it[0].timepoint, it[0], it[2])
@@ -293,11 +295,18 @@ workflow {
                 tuple(it[0], 'NEUT', it[1], it[2])
             }
 
-        timepoints_ch = timepoint_all_bw_ch.concat(timepoint_gain_bw_ch, timepoint_neut_bw_ch)
+        // merge only when we have more than 1 sample (filter)
+        timepoints_ch = timepoint_all_bw_ch
+            .concat(timepoint_gain_bw_ch, timepoint_neut_bw_ch)
+            .filter{ it ->
+                it[2].size() > 1
+            }
+            .view()
 
-        BIGWIG_MERGE(timepoints_ch)
-        BEDGRAPHTOBIGWIG(BIGWIG_MERGE.out.bedgraph)
-        
+    
+    
+        //BIGWIG_MERGE(timepoints_ch)
+        //BEDGRAPHTOBIGWIG(BIGWIG_MERGE.out.bedgraph)
     }
-	*/
+	
 }
