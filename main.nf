@@ -249,62 +249,71 @@ workflow {
         ]
         
     */
+
+    /////////////////////////////////////////////////
+    // HOUSEKEEPING TSS
+    /////////////////////////////////////////////////
+    housekeeping_report_ch = PEAK_STATS.out.peaks
+        .filter{ it ->
+            it[2].source == "GENEHANCER"
+        }
+        .view()
     
     /////////////////////////////////////////////////
     // MULTI SAMPLES
     /////////////////////////////////////////////////
-    
     if (params.multisamples) {
-
         // GROUP BY TARGET
         // when we have more than one sample (target peak analysis)
         // regroup peak data from different samples by target and target ploidy
+        // remove GeneHancer targets
         target_peaks_ch = PEAK_STATS.out.peaks
             .map{ it ->
                 [ it[0], it[1], it[2], it[3], it[4] ]
             }
             .groupTuple(by: [2,3])
-        
-        TARGETPLOT(target_peaks_ch)
+            .filter{ it ->
+                it[2].source != 'GENEHANCER'
+            }
+            .view()        
+        // TARGETPLOT(target_peaks_ch)
         
         // GROUP BY TIMEPOINT
-        timepoint_all_bw_ch = split_bw_ch.all
-            .map{ it ->
-                tuple(it[0].timepoint, it[0], it[2])
-            }
-            .groupTuple(by: 0)
-            .map{ it ->                
-                tuple(it[0], 'ALL', it[1], it[2])
-            }
+        // timepoint_all_bw_ch = split_bw_ch.all
+        //     .map{ it ->
+        //         tuple(it[0].timepoint, it[0], it[2])
+        //     }
+        //     .groupTuple(by: 0)
+        //     .map{ it ->                
+        //         tuple(it[0], 'ALL', it[1], it[2])
+        //     }
 
-        timepoint_gain_bw_ch = split_bw_ch.gain
-            .map{ it ->
-                tuple(it[0].timepoint, it[0], it[2])
-            }
-            .groupTuple(by: 0)
-            .map{ it ->                
-                tuple(it[0], 'GAIN', it[1], it[2])
-            }
+        // timepoint_gain_bw_ch = split_bw_ch.gain
+        //     .map{ it ->
+        //         tuple(it[0].timepoint, it[0], it[2])
+        //     }
+        //     .groupTuple(by: 0)
+        //     .map{ it ->                
+        //         tuple(it[0], 'GAIN', it[1], it[2])
+        //     }
 
-        timepoint_neut_bw_ch = split_bw_ch.neut
-            .map{ it ->
-                tuple(it[0].timepoint, it[0], it[2])
-            }
-            .groupTuple(by: 0)
-            .map{ it ->                
-                tuple(it[0], 'NEUT', it[1], it[2])
-            }
+        // timepoint_neut_bw_ch = split_bw_ch.neut
+        //     .map{ it ->
+        //         tuple(it[0].timepoint, it[0], it[2])
+        //     }
+        //     .groupTuple(by: 0)
+        //     .map{ it ->                
+        //         tuple(it[0], 'NEUT', it[1], it[2])
+        //     }
 
-        // merge only when we have more than 1 sample (filter)
-        timepoints_ch = timepoint_all_bw_ch
-            .concat(timepoint_gain_bw_ch, timepoint_neut_bw_ch)
-            .filter{ it ->
-                it[2].size() > 1
-            }
-            .view()
+        // // merge only when we have more than 1 sample (filter)
+        // timepoints_ch = timepoint_all_bw_ch
+        //     .concat(timepoint_gain_bw_ch, timepoint_neut_bw_ch)
+        //     .filter{ it ->
+        //         it[2].size() > 1
+        //     }
+        //     .view()
 
-    
-    
         //BIGWIG_MERGE(timepoints_ch)
         //BEDGRAPHTOBIGWIG(BIGWIG_MERGE.out.bedgraph)
     }
