@@ -2,20 +2,21 @@ process SAMTOOLS_SUBSAMPLE {
     label "heavy_process"
     
     input:
-    tuple val(meta), path(gainbam), path(neutbam), path(table)
+    tuple val(meta), path(gainbam), path(neutbam), path(lossbam), path(table)
 
     output:
-    tuple val(meta), path("${gainbam.baseName}.subsample.bam"), path("${neutbam.baseName}.subsample.bam"), emit: subsample_bam
+    tuple val(meta), path("${gainbam.baseName}.subsample.bam"), path("${neutbam.baseName}.subsample.bam"), path("${lossbam.baseName}.subsample.bam"), emit: subsample_bam
 
     script:
     """
     module load samtools
-    fragmentomics_subSample.py --cpu ${task.cpus} ${neutbam} ${gainbam} ${table}
+    fragmentomics_subSample.py --cpu ${task.cpus} ${neutbam} ${gainbam} ${lossbam} ${table}
     """
 
     stub:
     """
     touch ${neutbam.baseName}.subsample.bam
     touch ${gainbam.baseName}.subsample.bam
+    touch ${lossbam.baseName}.subsample.bam
     """
 }

@@ -8,10 +8,10 @@ process SAMTOOLSCOUNTREADS {
     label "normal_process"
 
     input:
-    tuple val(meta), path(bamgain), path(bamneut)
+    tuple val(meta), path(bamgain), path(bamneut), path(bamloss)
 
     output:
-    tuple val(meta), path(bamgain), path(bamneut), path("*.csv"), emit: counts
+    tuple val(meta), path(bamgain), path(bamneut), path(bamloss), path("*.csv"), emit: counts
 
     script:
     def args = task.ext.args ?: ''
@@ -20,7 +20,8 @@ process SAMTOOLSCOUNTREADS {
     module load samtools
     NEUT=`samtools view -c ${bamneut}`
     GAIN=`samtools view -c ${bamgain}`
-    echo -e "${bamneut.name},\$NEUT\n${bamgain.name},\$GAIN" > ${prefix}.reads.csv
+    LOSS=`samtools view -c ${bamloss}`
+    echo -e "${bamloss.name},\$LOSS\n${bamneut.name},\$NEUT\n${bamgain.name},\$GAIN" > ${prefix}.reads.csv
     """
 
     stub:

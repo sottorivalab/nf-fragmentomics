@@ -1,4 +1,5 @@
 process COMPUTEGCBIAS {
+	tag "${meta.sampleid}"
     conda '/home/davide.rambaldi/miniconda3/envs/deeptools'	
 	
 	label 'heavy_process'

@@ -1,4 +1,6 @@
 
+include { BAMPEFRAGMENTSIZE  } from './modules/local/bamPEfragmentSize.nf'
+include { PLOTCOVERAGE       } from './modules/local/plotCoverage.nf'
 include { COMPUTEGCBIAS      } from './modules/local/computeGCbias.nf'
 include { CORRECTGCBIAS      } from './modules/local/correctGCbias.nf'
 include { SAMTOOLSINDEX      } from './modules/local/samtoolsIndex.nf'
@@ -15,8 +17,6 @@ include { SAMTOOLSFILTERSEG  } from "./modules/local/samtoolsFilterSeg.nf"
 include { SAMTOOLSCOUNTREADS } from "./modules/local/samtoolsCountReads.nf"
 include { SAMTOOLS_SUBSAMPLE } from "./modules/local/samtoolsSubSample.nf"
 include { TARGETPLOT         } from "./modules/local/targetPlot.nf"
-
-
 
 def create_target_channel(LinkedHashMap row) {
     def meta = [
@@ -60,7 +60,7 @@ workflow {
     /////////////////////////////////////////////////
     // SAMPLES meta: [ caseid, sampleid, timepoint ]
     /////////////////////////////////////////////////
-
+    
     // samples channel
     sample_ch = Channel.fromPath(params.input)
         .splitCsv(header:true, sep:',')
@@ -68,9 +68,22 @@ workflow {
         .dump(tag: 'samples')
 
     /////////////////////////////////////////////////
+    // BAMQC AND FILTER READS BY SIZE 
+    /////////////////////////////////////////////////
+    BAMPEFRAGMENTSIZE(sample_ch)
+    PLOTCOVERAGE(sample_ch)
+
+    /////////////////////////////////////////////////
+    // GC CORRECTIONS
+    /////////////////////////////////////////////////
+    //COMPUTEGCBIAS(sample_ch)    
+    //CORRECTGCBIAS(COMPUTEGCBIAS.out.bam_with_freq)
+    // generate bed files for segments
+    //SEG2BED(CORRECTGCBIAS.out.gc_correct)
+
+    /////////////////////////////////////////////////
     // TARGETS meta: [ name, source ]
     /////////////////////////////////////////////////
-
     // HouseKeeping genes
     housekeeping_ch = Channel.fromPath(params.housekeeping_bed)
         .map{ it ->
@@ -92,15 +105,9 @@ workflow {
         }
         .concat(housekeeping_ch, random_tss_ch)
         .dump(tag: 'targets')
-        
-    /////////////////////////////////////////////////
-    // GC CORRECTIONS
-    /////////////////////////////////////////////////
-    COMPUTEGCBIAS(sample_ch)    
-    CORRECTGCBIAS(COMPUTEGCBIAS.out.bam_with_freq)
-
-    // generate bed files for segments
-    SEG2BED(CORRECTGCBIAS.out.gc_correct)
+    
+    /*        
+   
     
     /////////////////////////////////////////////////
     // SUBSAMPLE BED FILES
@@ -115,19 +122,27 @@ workflow {
             [it[0], it[1], it[2], it[4]]
         }
 
-    ploidy_bam_ch = gain_bam_ch
-        .concat(neut_bam_ch)
-
-    SAMTOOLSFILTERSEG(ploidy_bam_ch)
-    neut_and_gain_bam_ch = SAMTOOLSFILTERSEG.out.ploidy_bam
-        .groupTuple(by: 0)
+    loss_bam_ch = SEG2BED.out
         .map{ it ->
-            [it[0], it[1][0], it[1][1]]
+            [it[0], it[1], it[2], it[5]]
         }
 
-    SAMTOOLSCOUNTREADS(neut_and_gain_bam_ch)
-    SAMTOOLS_SUBSAMPLE(SAMTOOLSCOUNTREADS.out.counts)
+    ploidy_bam_ch = gain_bam_ch
+        .concat(neut_bam_ch, loss_bam_ch)
+        .view()
 
+    SAMTOOLSFILTERSEG(ploidy_bam_ch)
+
+    ploidy_sub_bam_ch = SAMTOOLSFILTERSEG.out.ploidy_bam
+        .groupTuple(by: 0)
+        .map{ it ->
+            [it[0], it[1][0], it[1][1], it[1][2]]
+        }
+
+    SAMTOOLSCOUNTREADS(ploidy_sub_bam_ch)
+    SAMTOOLSCOUNTREADS.out.counts.view()
+    SAMTOOLS_SUBSAMPLE(SAMTOOLSCOUNTREADS.out.counts)
+    
     // BAM CHANNELS WITH PLOIDY
     sample_bam_ch = CORRECTGCBIAS.out.gc_correct
         .map{ it ->            
@@ -234,6 +249,7 @@ workflow {
 
     // peak report with ./bin/fragmentomics_peakReport.py
     PEAK_REPORT(sample_peaks_ch)
+    */
 
     /*
         ----- PEAK STATS CHANNEL ----------
@@ -253,12 +269,15 @@ workflow {
     /////////////////////////////////////////////////
     // HOUSEKEEPING TSS
     /////////////////////////////////////////////////
-    housekeeping_report_ch = PEAK_STATS.out.peaks
-        .filter{ it ->
-            it[2].source == "GENEHANCER"
-        }
-        .view()
+    // TODO
+    // housekeeping_report_ch = PEAK_STATS.out.peaks
+    //     .filter{ it ->
+    //         it[2].source == "GENEHANCER"
+    //     }
+    //     .view()
     
+
+    /*
     /////////////////////////////////////////////////
     // MULTI SAMPLES
     /////////////////////////////////////////////////
@@ -275,47 +294,46 @@ workflow {
             .filter{ it ->
                 it[2].source != 'GENEHANCER'
             }
-            .view()        
-        // TARGETPLOT(target_peaks_ch)
+        TARGETPLOT(target_peaks_ch)
         
         // GROUP BY TIMEPOINT
-        // timepoint_all_bw_ch = split_bw_ch.all
-        //     .map{ it ->
-        //         tuple(it[0].timepoint, it[0], it[2])
-        //     }
-        //     .groupTuple(by: 0)
-        //     .map{ it ->                
-        //         tuple(it[0], 'ALL', it[1], it[2])
-        //     }
+        timepoint_all_bw_ch = split_bw_ch.all
+            .map{ it ->
+                tuple(it[0].timepoint, it[0], it[2])
+            }
+            .groupTuple(by: 0)
+            .map{ it ->                
+                tuple(it[0], 'ALL', it[1], it[2])
+            }
 
-        // timepoint_gain_bw_ch = split_bw_ch.gain
-        //     .map{ it ->
-        //         tuple(it[0].timepoint, it[0], it[2])
-        //     }
-        //     .groupTuple(by: 0)
-        //     .map{ it ->                
-        //         tuple(it[0], 'GAIN', it[1], it[2])
-        //     }
+        timepoint_gain_bw_ch = split_bw_ch.gain
+            .map{ it ->
+                tuple(it[0].timepoint, it[0], it[2])
+            }
+            .groupTuple(by: 0)
+            .map{ it ->                
+                tuple(it[0], 'GAIN', it[1], it[2])
+            }
 
-        // timepoint_neut_bw_ch = split_bw_ch.neut
-        //     .map{ it ->
-        //         tuple(it[0].timepoint, it[0], it[2])
-        //     }
-        //     .groupTuple(by: 0)
-        //     .map{ it ->                
-        //         tuple(it[0], 'NEUT', it[1], it[2])
-        //     }
+        timepoint_neut_bw_ch = split_bw_ch.neut
+            .map{ it ->
+                tuple(it[0].timepoint, it[0], it[2])
+            }
+            .groupTuple(by: 0)
+            .map{ it ->                
+                tuple(it[0], 'NEUT', it[1], it[2])
+            }
 
-        // // merge only when we have more than 1 sample (filter)
-        // timepoints_ch = timepoint_all_bw_ch
-        //     .concat(timepoint_gain_bw_ch, timepoint_neut_bw_ch)
-        //     .filter{ it ->
-        //         it[2].size() > 1
-        //     }
-        //     .view()
+        // merge only when we have more than 1 sample (filter)
+        timepoints_ch = timepoint_all_bw_ch
+            .concat(timepoint_gain_bw_ch, timepoint_neut_bw_ch)
+            .filter{ it ->
+                it[2].size() > 1
+            }
+            .view()
 
-        //BIGWIG_MERGE(timepoints_ch)
-        //BEDGRAPHTOBIGWIG(BIGWIG_MERGE.out.bedgraph)
+        BIGWIG_MERGE(timepoints_ch)
+        BEDGRAPHTOBIGWIG(BIGWIG_MERGE.out.bedgraph)
     }
-	
+	*/
 }

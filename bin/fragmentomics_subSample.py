@@ -28,13 +28,19 @@ def parse_args():
     )
 
     parser.add_argument(
+        dest="loss",
+        help="Loss bam"
+    )
+
+    parser.add_argument(
         dest="counts",
         help="Counts table"
     )
 
     parser.add_argument(
         "--cpus",
-        dest="cpus"
+        dest="cpus",
+        default=1
     )
 
     parser.add_argument(
@@ -72,7 +78,6 @@ def setup_logging(loglevel):
 def main():
     args = parse_args()
     setup_logging(args.loglevel)
-
     counts_table = Path(args.counts)
 
     segmented = {}
@@ -83,42 +88,58 @@ def main():
             if len(row) > 0:
                 segmented[row[0]] = int(row[1])
 
-    print(segmented)
-
     minval = min(segmented.values())
-    minres = [key for key in segmented if segmented[key] == minval]
-    
     maxval = max(segmented.values())
-    maxres = [key for key in segmented if segmented[key] == maxval]
     ratio = minval/maxval
 
-    # get file withput path
+    minres = [key for key in segmented if segmented[key] == minval]
+    therest = [key for key in segmented if segmented[key] != minval]
+    
     neut_bam = Path(args.neut)
     gain_bam = Path(args.gain)
+    loss_bam = Path(args.loss)
 
-    print(f"maxres: {maxres[0]}")
-    # find file to downsize
-    if maxres[0] == neut_bam.name:        
-        target_file = neut_bam
-        copy_file = gain_bam
-    elif maxres[0] == gain_bam.name:
-        target_file = gain_bam
-        copy_file = neut_bam
-    else:        
-        print("file not found!")
-        sys.exit(1)
+    # get file withput path
+    ploidy_bams = {
+        neut_bam.name: neut_bam.absolute(),
+        gain_bam.name: gain_bam.absolute(),
+        loss_bam.name: loss_bam.absolute()
+    }
+    
+    # print(ploidy_bams)
+    # print(f"minval: {minval} minres: {ploidy_bams[minres[0]]}")
+    # print(f"The rest: {therest}")
 
-    output_file = f"{target_file.stem}.subsample.bam"
-    output_copy_file = f"{copy_file.stem}.subsample.bam"
-
-    print(f"I will downsample {target_file.absolute()} by {str(ratio)} to output: {output_file}")
-    cmd = ["samtools","view","-s",str(ratio),str(target_file.absolute()),"-O","bam","-o",output_file,"-@",args.cpus]
-    print(cmd)
-    print(f"Copying new file with subsample: {copy_file} to {output_copy_file}")
-    copy_cmd = ["cp", str(copy_file.absolute()), output_copy_file]
-    print(copy_cmd)
-    subprocess.run(cmd)
+    # extract file Path by name.
+    source_file = ploidy_bams[minres[0]]
+    target_files = dict((k, ploidy_bams[k]) for k in therest if k in ploidy_bams)
+    
+    s = Path(source_file)
+    output_s_file = f"{s.stem}.subsample.bam"
+    print(f"Copying new file with subsample: {s} to {output_s_file}")
+    copy_cmd = ["cp", str(s.absolute()), output_s_file]
     subprocess.run(copy_cmd)
+    # print(copy_cmd)
+
+    for file in target_files:
+        p = Path(file)
+        output_file = f"{p.stem}.subsample.bam"
+        print(f"I will downsample {p.absolute()} by {str(ratio)} to output: {output_file}")
+        cmd = [
+            "samtools",
+            "view",
+            "-s",
+            str(ratio),
+            str(p.absolute()),
+            "-O",
+            "bam",
+            "-o",
+            output_file,
+            "-@",
+            args.cpus
+        ]
+        # print(cmd)
+        subprocess.run(cmd)
 
 if __name__ == "__main__":
     sys.exit(main())
