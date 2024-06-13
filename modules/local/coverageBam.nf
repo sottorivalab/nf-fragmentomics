@@ -1,4 +1,5 @@
 process COVERAGEBAM {
+	
 	conda '/home/davide.rambaldi/miniconda3/envs/deeptools'
 
 	publishDir "${params.outdir}/${meta.caseid}/${meta.sampleid}/fragmentomics/processed/bw", 

@@ -1,5 +1,5 @@
-caseid,sampleid,timepoint,bam,bai
-MAYA_12,MAYA_12_BL,BL,/path/to/bam.bam,/path/to/bam.bai
-MAYA_12,MAYA_12_BR,BR,/path/to/bam.bam,/path/to/bam.bai
-MAYA_102,MAYA_102_BR,BR,/path/to/bam.bam,/path/to/bam.bai
-MAYA_102,MAYA_102_BL,BL,/path/to/bam.bam,/path/to/bam.bai
+caseid,sampleid,timepoint,bam,bai,seg
+MAYA_12,MAYA_12_BL,BL,/path/to/bam.bam,/path/to/bam.bai,/path/to/seg
+MAYA_12,MAYA_12_BR,BR,/path/to/bam.bam,/path/to/bam.bai,/path/to/seg
+MAYA_102,MAYA_102_BR,BR,/path/to/bam.bam,/path/to/bam.bai,/path/to/seg
+MAYA_102,MAYA_102_BL,BL,/path/to/bam.bam,/path/to/bam.bai,/path/to/seg

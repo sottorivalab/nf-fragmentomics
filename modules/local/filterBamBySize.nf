@@ -1,5 +1,4 @@
 process FILTERBAMBYSIZE {
-    tag "${meta.sampleid}"
     
     label "heavy_process"
 

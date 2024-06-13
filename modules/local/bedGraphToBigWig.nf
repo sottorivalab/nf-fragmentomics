@@ -1,4 +1,5 @@
 process BEDGRAPHTOBIGWIG {
+
     publishDir "${params.outdir}/TIMEPOINTS/fragmentomics/processed/bw/${ploidy}", 
         mode:'copy', 
         overwrite:true
