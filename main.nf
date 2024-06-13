@@ -1,6 +1,7 @@
 
 include { BAMPEFRAGMENTSIZE  } from './modules/local/bamPEfragmentSize.nf'
 include { PLOTCOVERAGE       } from './modules/local/plotCoverage.nf'
+include { FILTERBAMBYSIZE    } from './modules/local/filterBamBySize.nf'
 include { COMPUTEGCBIAS      } from './modules/local/computeGCbias.nf'
 include { CORRECTGCBIAS      } from './modules/local/correctGCbias.nf'
 include { SAMTOOLSINDEX      } from './modules/local/samtoolsIndex.nf'
@@ -72,14 +73,103 @@ workflow {
     /////////////////////////////////////////////////
     BAMPEFRAGMENTSIZE(sample_ch)
     PLOTCOVERAGE(sample_ch)
+    FILTERBAMBYSIZE(sample_ch)
 
     /////////////////////////////////////////////////
     // GC CORRECTIONS
     /////////////////////////////////////////////////
-    //COMPUTEGCBIAS(sample_ch)    
-    //CORRECTGCBIAS(COMPUTEGCBIAS.out.bam_with_freq)
+    COMPUTEGCBIAS(FILTERBAMBYSIZE.out.filtered)
+    CORRECTGCBIAS(COMPUTEGCBIAS.out.bam_with_freq)
+    
+    /////////////////////////////////////////////////
+    // SUBSAMPLE BED FILES
+    /////////////////////////////////////////////////
     // generate bed files for segments
-    //SEG2BED(CORRECTGCBIAS.out.gc_correct)
+    SEG2BED(CORRECTGCBIAS.out.gc_correct)
+    gain_bam_ch = SEG2BED.out
+        .map{ it ->
+            [it[0], it[1], it[2], it[3]]
+        }
+    neut_bam_ch = SEG2BED.out
+        .map{ it ->
+            [it[0], it[1], it[2], it[4]]
+        }
+    loss_bam_ch = SEG2BED.out
+        .map{ it ->
+            [it[0], it[1], it[2], it[5]]
+        }
+    ploidy_bam_ch = gain_bam_ch.concat(neut_bam_ch, loss_bam_ch)
+    
+    SAMTOOLSFILTERSEG(ploidy_bam_ch)
+    ploidy_sub_bam_ch = SAMTOOLSFILTERSEG.out.ploidy_bam
+        .groupTuple(by: 0)
+        .map{ it ->
+            [it[0], it[1][0], it[1][1], it[1][2]]
+        }
+
+    // FIXME resume BUG HERE
+    // Here sometimes it ignore cached bam files
+    // see also: https://www.nextflow.io/blog/2019/troubleshooting-nextflow-resume.html
+    
+    SAMTOOLSCOUNTREADS(ploidy_sub_bam_ch)    
+    SAMTOOLS_SUBSAMPLE(SAMTOOLSCOUNTREADS.out.counts)
+
+    // BAM CHANNELS WITH PLOIDY
+    sample_bam_ch = CORRECTGCBIAS.out.gc_correct
+        .map{ it ->            
+            [it[0], [ type: 'ALL' ], it[1], it[2]]
+        }
+    
+    split_subsample_multiMap = SAMTOOLS_SUBSAMPLE.out.subsample_bam
+        .multiMap{ it ->
+            neut: [it[0], it[2]]
+            gain: [it[0], it[1]]
+            loss: [it[0], it[3]]
+        }
+    
+    neut_bam_ch = split_subsample_multiMap.neut
+        .map{ it -> 
+            def T = [ type: 'NEUT' ]
+            [it[0], T , it[1]]
+        }
+
+    gain_bam_ch = split_subsample_multiMap.gain
+        .map{ it -> 
+            def T = [ type: 'GAIN' ]
+            [it[0], T, it[1]]
+        }
+    
+    loss_bam_ch = split_subsample_multiMap.loss
+        .map{ it ->
+            def T = [ type: 'LOSS' ]
+            [it[0], T, it[1]]
+        }
+
+    all_subsample_bam_ch = neut_bam_ch
+        .concat(gain_bam_ch, loss_bam_ch)
+        .dump(tag: 'subsamples')        
+    
+    SAMTOOLSINDEX(all_subsample_bam_ch)
+
+    // concat all produced bams
+    all_sample_bams_ch = sample_bam_ch
+        .concat(SAMTOOLSINDEX.out.indexed_bam)
+        .dump(tag: 'allbams')
+    
+    COVERAGEBAM(all_sample_bams_ch)
+    
+    // split again by ALL, NEUT, GAIN
+    split_bw_ch = COVERAGEBAM.out.bw
+        .branch{
+            all:  it[1].type == 'ALL'
+            neut: it[1].type == 'NEUT'
+            gain: it[1].type == 'GAIN'
+        }
+    
+    // THIS ARE THE BW CHANNELS:
+    split_bw_ch.all.dump(tag: 'all_bw')
+    split_bw_ch.gain.dump(tag: 'gain_bw')
+    split_bw_ch.neut.dump(tag: 'neut_bw')
 
     /////////////////////////////////////////////////
     // TARGETS meta: [ name, source ]
@@ -106,91 +196,6 @@ workflow {
         .concat(housekeeping_ch, random_tss_ch)
         .dump(tag: 'targets')
     
-    /*        
-   
-    
-    /////////////////////////////////////////////////
-    // SUBSAMPLE BED FILES
-    /////////////////////////////////////////////////       
-    gain_bam_ch = SEG2BED.out
-        .map{ it ->
-            [it[0], it[1], it[2], it[3]]
-        }
-    
-    neut_bam_ch = SEG2BED.out
-        .map{ it ->
-            [it[0], it[1], it[2], it[4]]
-        }
-
-    loss_bam_ch = SEG2BED.out
-        .map{ it ->
-            [it[0], it[1], it[2], it[5]]
-        }
-
-    ploidy_bam_ch = gain_bam_ch
-        .concat(neut_bam_ch, loss_bam_ch)
-        .view()
-
-    SAMTOOLSFILTERSEG(ploidy_bam_ch)
-
-    ploidy_sub_bam_ch = SAMTOOLSFILTERSEG.out.ploidy_bam
-        .groupTuple(by: 0)
-        .map{ it ->
-            [it[0], it[1][0], it[1][1], it[1][2]]
-        }
-
-    SAMTOOLSCOUNTREADS(ploidy_sub_bam_ch)
-    SAMTOOLSCOUNTREADS.out.counts.view()
-    SAMTOOLS_SUBSAMPLE(SAMTOOLSCOUNTREADS.out.counts)
-    
-    // BAM CHANNELS WITH PLOIDY
-    sample_bam_ch = CORRECTGCBIAS.out.gc_correct
-        .map{ it ->            
-            [it[0], [ type: 'ALL' ], it[1], it[2]]
-        }
-    
-    split_subsample_multiMap = SAMTOOLS_SUBSAMPLE.out.subsample_bam
-        .multiMap{ it ->
-            neut: [it[0], it[2]]
-            gain: [it[0], it[1]]
-        }
-
-    neut_bam_ch = split_subsample_multiMap.neut
-        .map{ it -> 
-            [it[0], [ type: 'NEUT' ], it[1]]
-        }
-
-    gain_bam_ch = split_subsample_multiMap.gain
-        .map{ it -> 
-            [it[0], [ type: 'GAIN' ], it[1]]
-        }
-
-    all_subsample_bam_ch = neut_bam_ch
-        .concat(gain_bam_ch)        
-
-    // TODO FIXME
-    // Here sometimes it ignore cached bam files
-    SAMTOOLSINDEX(all_subsample_bam_ch)
-
-    // concat all produced bams
-    all_sample_bams_ch = sample_bam_ch
-        .concat(SAMTOOLSINDEX.out.indexed_bam)
-    
-    COVERAGEBAM(all_sample_bams_ch)
-
-    // split again by ALL, NEUT, GAIN
-    split_bw_ch = COVERAGEBAM.out.bw
-        .branch{
-            all:  it[1].type == 'ALL'
-            neut: it[1].type == 'NEUT'
-            gain: it[1].type == 'GAIN'
-        }
-    
-    // THIS ARE THE BW CHANNELS:
-    split_bw_ch.all.dump(tag: 'all_bw')
-    split_bw_ch.gain.dump(tag: 'gain_bw')
-    split_bw_ch.neut.dump(tag: 'neut_bw')
-
     /////////////////////////////////////////////////
     // TARGET SEGMENTS
     /////////////////////////////////////////////////
@@ -249,7 +254,6 @@ workflow {
 
     // peak report with ./bin/fragmentomics_peakReport.py
     PEAK_REPORT(sample_peaks_ch)
-    */
 
     /*
         ----- PEAK STATS CHANNEL ----------
@@ -277,7 +281,6 @@ workflow {
     //     .view()
     
 
-    /*
     /////////////////////////////////////////////////
     // MULTI SAMPLES
     /////////////////////////////////////////////////
@@ -335,5 +338,4 @@ workflow {
         BIGWIG_MERGE(timepoints_ch)
         BEDGRAPHTOBIGWIG(BIGWIG_MERGE.out.bedgraph)
     }
-	*/
 }
