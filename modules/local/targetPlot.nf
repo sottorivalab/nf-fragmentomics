@@ -23,7 +23,7 @@ process TARGETPLOT {
 
 
     stub:
-    def prefix = task.ext.prefix ?: "COHORT_${meta_target[0]['name']}_${meta_target[0]['source']}_${meta_ploidy_target[0]['type']}"
+    def prefix = task.ext.prefix ?: "COHORT_${meta_target['name']}_${meta_target['source']}_${meta_ploidy_target['type']}"
     """
     touch ${prefix}_peak_plot.pdf
     """
