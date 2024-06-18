@@ -29,6 +29,8 @@ workflow {
         ===================================
         FRAGMENTOMICS P I P E L I N E    
         ===================================
+        multi samples : ${params.multisamples}
+        ploidy split  : ${params.ploidysplit}
         input         : ${params.input}
         targets       : ${params.targets}
         outdir        : ${params.outdir}        
@@ -79,6 +81,7 @@ workflow {
         .concat(housekeeping_ch, random_tss_ch)
         .dump(tag: 'targets')
     
+    /*
     // BAM_PREPROCESS.out.all_bw_ch.view()
     // BAM_PREPROCESS.out.gain_bw_ch.view()
     // BAM_PREPROCESS.out.neut_bw_ch.view()
@@ -93,4 +96,5 @@ workflow {
         BAM_PREPROCESS.out.neut_bw_ch,
         BAM_PREPROCESS.out.loss_bw_ch
     )
+    */
 }
