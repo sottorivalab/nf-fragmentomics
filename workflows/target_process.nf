@@ -18,52 +18,72 @@ workflow TARGET_PROCESS {
     /////////////////////////////////////////////////
     // TARGET SEGMENTS
     /////////////////////////////////////////////////
-    // combine segments and targets
-    target_sample_ploidy_ch = ploidy_ch
-        .map{
-            [it[0], it[3], it[4], it[5]]        
+    
+    if (params.ploidysplit) 
+    {
+        // combine segments and targets
+        target_sample_ploidy_ch = ploidy_ch
+            .map{
+                [it[0], it[3], it[4], it[5]]        
+            }
+            .combine(target_ch)
+            
+        // betools intersect segments and targets
+        SEGTARGETINTERSECT(target_sample_ploidy_ch)
+
+        all_targets_ch = SEGTARGETINTERSECT.out.all_targets
+            .map { it ->
+                [ it[0], it[1], [ type: 'ALL' ], it[2] ]
+            }
+
+        gain_targets_ch = SEGTARGETINTERSECT.out.gain_targets
+            .map { it ->
+                [ it[0], it[1], [ type: 'GAIN' ], it[2] ]
+            }
+
+        neut_targets_ch = SEGTARGETINTERSECT.out.neut_targets
+            .map { it ->
+                [ it[0], it[1], [ type: 'NEUT' ], it[2] ]
+            }
+
+        loss_targets_ch = SEGTARGETINTERSECT.out.loss_targets
+            .map { it ->
+                [ it[0], it[1], [ type: 'LOSS' ], it[2] ]
+            }
+
+        // combine bams (ALL) with targets (all)
+        all_signal_target_ch = all_bw_ch
+            .combine(all_targets_ch, by: 0)
+            
+        gain_signal_target_ch = gain_bw_ch
+            .combine(gain_targets_ch, by: 0)
+
+        neut_signal_target_ch = neut_bw_ch
+            .combine(neut_targets_ch, by: 0)
+
+        loss_signal_target_ch = loss_bw_ch
+            .combine(loss_targets_ch, by: 0)
+
+        // concat all and filter for size > 0
+        signal_target_ch = all_signal_target_ch
+            .concat(gain_signal_target_ch, neut_signal_target_ch, loss_signal_target_ch)
+
+        if (workflow.stubRun == false) {
+            signal_target_ch = signal_target_ch
+                .filter{ it ->
+                    it[5].size() > 0 
+                }
         }
-        .combine(target_ch)
-        
-    // betools intersect segments and targets
-    SEGTARGETINTERSECT(target_sample_ploidy_ch)
-
-    all_targets_ch = SEGTARGETINTERSECT.out.all_targets
-        .map { it ->
-            [ it[0], it[1], [ type: 'ALL' ], it[2] ]
-        }
-
-    gain_targets_ch = SEGTARGETINTERSECT.out.gain_targets
-        .map { it ->
-            [ it[0], it[1], [ type: 'GAIN' ], it[2] ]
-        }
-
-    neut_targets_ch = SEGTARGETINTERSECT.out.neut_targets
-        .map { it ->
-            [ it[0], it[1], [ type: 'NEUT' ], it[2] ]
-        }
-
-    // combine bams (ALL) with targets (all)
-    all_signal_target_ch = all_bw_ch
-        .combine(all_targets_ch, by: 0)
-        
-    gain_signal_target_ch = gain_bw_ch
-        .combine(gain_targets_ch, by: 0)
-
-    neut_signal_target_ch = neut_bw_ch
-        .combine(neut_targets_ch, by: 0)
-
-    // concat all and filter for size > 0
-    signal_target_ch = all_signal_target_ch.concat(gain_signal_target_ch, neut_signal_target_ch)
-
-    if (workflow.stubRun == false) {
-        signal_target_ch = signal_target_ch
-            .filter{ it ->
-                it[5].size() > 0 
+    }
+    else
+    {
+        // target_ch.view()
+        signal_target_ch = all_bw_ch
+            .combine(target_ch)
+            .map{ it ->
+                [ it[0], it[1], it[2], it[3], [type: 'ALL'], it[4]]
             }
     }
-        
-    // signal_target_ch.view()
     
     COMPUTEMATRIX(signal_target_ch)
     HEATMAP(COMPUTEMATRIX.out.matrix)
@@ -75,8 +95,9 @@ workflow TARGET_PROCESS {
         }
         .groupTuple(by: 0)
         .dump(tag: 'sample_peaks')
+        .view()
     
-    // ----- EAK_STATS.out.peaks ----------
+    // ----- PEAK_STATS.out.peaks ----------
     // [
     //     [caseid:MAYA_12, sampleid:MAYA_12_BL, timepoint:BL], 
     //     [type:NEUT], 

@@ -81,13 +81,12 @@ workflow {
         .concat(housekeeping_ch, random_tss_ch)
         .dump(tag: 'targets')
     
-    /*
     // BAM_PREPROCESS.out.all_bw_ch.view()
     // BAM_PREPROCESS.out.gain_bw_ch.view()
     // BAM_PREPROCESS.out.neut_bw_ch.view()
     // BAM_PREPROCESS.out.loss_bw_ch.view()
     // BAM_PREPROCESS.out.ploidy.view()
-
+    
     TARGET_PROCESS(
         target_ch, 
         BAM_PREPROCESS.out.ploidy, 
@@ -96,5 +95,4 @@ workflow {
         BAM_PREPROCESS.out.neut_bw_ch,
         BAM_PREPROCESS.out.loss_bw_ch
     )
-    */
 }
