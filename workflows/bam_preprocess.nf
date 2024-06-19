@@ -112,6 +112,8 @@ workflow BAM_PREPROCESS {
             .concat(SAMTOOLSINDEX.out.indexed_bam)        
             .dump(tag: 'allbams')
     
+        // FIXME filter for bam size
+        
         // Coverage bam
         COVERAGEBAM(all_sample_bams_ch)
     
