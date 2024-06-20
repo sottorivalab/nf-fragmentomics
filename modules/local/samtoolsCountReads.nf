@@ -1,32 +1,24 @@
-process SAMTOOLSCOUNTREADS {
-
-    publishDir "${params.outdir}/${meta.caseid}/${meta.sampleid}/fragmentomics/processed/bam",
-        mode:'copy', 
-        pattern: "*.csv",
-        overwrite:true
-
+process SAMTOOLS_COUNTREADS {
+    
     label "normal_process"
 
     input:
-    tuple val(meta), path(bamgain), path(bamneut), path(bamloss)
+    tuple val(meta_sample), val(meta_ploidy), path(bam), path(bai)
 
     output:
-    tuple val(meta), path(bamgain), path(bamneut), path(bamloss), path("*.csv"), emit: counts
+    tuple val(meta_sample), val(meta_ploidy), path(bam), path(bai), path("${bam.baseName}_count.txt"), emit: bamcount
 
     script:
-    def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "${meta.sampleid}"
+    def prefix = task.ext.prefix ?: "${bam.baseName}"
     """
     module load samtools
-    NEUT=`samtools view -c ${bamneut}`
-    GAIN=`samtools view -c ${bamgain}`
-    LOSS=`samtools view -c ${bamloss}`
-    echo -e "${bamloss.name},\$LOSS\n${bamneut.name},\$NEUT\n${bamgain.name},\$GAIN" > ${prefix}.reads.csv
+    samtools view -c ${bam} > ${bam.baseName}_count.txt
     """
 
     stub:
-    def prefix = task.ext.prefix ?: "${meta.sampleid}"
-	"""
-	touch ${prefix}.reads.csv
-	"""
+    def prefix = task.ext.prefix ?: "${bam.baseName}"
+    """
+    touch ${bam.baseName}_count.txt
+    """
+
 }

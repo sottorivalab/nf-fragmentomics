@@ -1,16 +1,17 @@
-include { BAMPEFRAGMENTSIZE  } from '../modules/local/bamPEfragmentSize.nf'
-include { PLOTCOVERAGE       } from '../modules/local/plotCoverage.nf'
-include { FILTERBAMBYSIZE    } from '../modules/local/filterBamBySize.nf'
-include { COMPUTEGCBIAS      } from '../modules/local/computeGCbias.nf'
-include { CORRECTGCBIAS      } from '../modules/local/correctGCbias.nf'
-include { SAMTOOLSINDEX      } from '../modules/local/samtoolsIndex.nf'
-include { COVERAGEBAM        } from '../modules/local/coverageBam.nf'
-include { SEG2BED            } from '../modules/local/seg2bed.nf'
-include { SAMTOOLSFILTERSEG  } from "../modules/local/samtoolsFilterSeg.nf"
-include { SAMTOOLSCOUNTREADS } from "../modules/local/samtoolsCountReads.nf"
-include { SAMTOOLS_SUBSAMPLE } from "../modules/local/samtoolsSubSample.nf"
-include { BIGWIG_MERGE       } from '../modules/local/bigWigMerge.nf'
-include { BEDGRAPHTOBIGWIG   } from '../modules/local/bedGraphToBigWig.nf'
+include { BAMPEFRAGMENTSIZE          } from '../modules/local/bamPEfragmentSize.nf'
+include { PLOTCOVERAGE               } from '../modules/local/plotCoverage.nf'
+include { FILTERBAMBYSIZE            } from '../modules/local/filterBamBySize.nf'
+include { COMPUTEGCBIAS              } from '../modules/local/computeGCbias.nf'
+include { CORRECTGCBIAS              } from '../modules/local/correctGCbias.nf'
+include { SAMTOOLSINDEX              } from '../modules/local/samtoolsIndex.nf'
+include { COVERAGEBAM                } from '../modules/local/coverageBam.nf'
+include { SEG2BED                    } from '../modules/local/seg2bed.nf'
+include { SAMTOOLSFILTERSEG          } from "../modules/local/samtoolsFilterSeg.nf"
+include { SAMTOOLS_PLOIDY_COUNTREADS } from "../modules/local/samtoolsPloidyCountReads.nf"
+include { SAMTOOLS_COUNTREADS        } from "../modules/local/samtoolsCountReads.nf"
+include { SAMTOOLS_SUBSAMPLE         } from "../modules/local/samtoolsSubSample.nf"
+include { BIGWIG_MERGE               } from '../modules/local/bigWigMerge.nf'
+include { BEDGRAPHTOBIGWIG           } from '../modules/local/bedGraphToBigWig.nf'
 
 workflow BAM_PREPROCESS {
     take:
@@ -66,8 +67,9 @@ workflow BAM_PREPROCESS {
                 return X
             }
 
-        SAMTOOLSCOUNTREADS(ploidy_sub_bam_ch)    
-        SAMTOOLS_SUBSAMPLE(SAMTOOLSCOUNTREADS.out.counts)
+        SAMTOOLS_PLOIDY_COUNTREADS(ploidy_sub_bam_ch)   
+
+        SAMTOOLS_SUBSAMPLE(SAMTOOLS_PLOIDY_COUNTREADS.out.counts)
 
         // BAM CHANNELS WITH PLOIDY
         sample_bam_ch = CORRECTGCBIAS.out.gc_correct
@@ -111,11 +113,22 @@ workflow BAM_PREPROCESS {
         all_sample_bams_ch = sample_bam_ch
             .concat(SAMTOOLSINDEX.out.indexed_bam)        
             .dump(tag: 'allbams')
-    
-        // FIXME filter for bam size
+
+        // filter for bam size        
+        SAMTOOLS_COUNTREADS(all_sample_bams_ch)
         
+        filtered_bams_ch = SAMTOOLS_COUNTREADS.out.bamcount
+            .filter{ it ->                
+                int read_count = file(it[4]).readLines()[0].toInteger()
+                if (read_count <= 0) println ">>> WARNING: file ${it[2]} does not have enough reads and will not be included"
+                read_count > 0
+            }
+            .map{ it ->
+                [it[0], it[1], it[2], it[3]]
+            }            
+
         // Coverage bam
-        COVERAGEBAM(all_sample_bams_ch)
+        COVERAGEBAM(filtered_bams_ch)
     
         // split again by ALL, NEUT, GAIN
         split_bw_ch = COVERAGEBAM.out.bw
