@@ -1,9 +1,10 @@
-include { SEGTARGETINTERSECT } from '../modules/local/segTargetIntersect.nf'
-include { COMPUTEMATRIX      } from '../modules/local/computeMatrix.nf'
-include { HEATMAP            } from '../modules/local/heatmap.nf'
-include { PEAK_STATS         } from '../modules/local/peakStats.nf'
-include { PEAK_REPORT        } from '../modules/local/peakReport.nf'
-include { TARGETPLOT         } from "../modules/local/targetPlot.nf"
+include { SEGTARGETINTERSECT     } from '../modules/local/segTargetIntersect.nf'
+include { COMPUTEMATRIX          } from '../modules/local/computeMatrix.nf'
+include { HEATMAP                } from '../modules/local/heatmap.nf'
+include { PEAK_STATS             } from '../modules/local/peakStats.nf'
+include { PEAK_REPORT            } from '../modules/local/peakReport.nf'
+include { TARGETPLOT             } from "../modules/local/targetPlot.nf"
+include { BIGWIG_AVERAGE_OVERBED } from "../modules/local/bigWigAverageOverBed.nf"
 
 workflow TARGET_PROCESS {
     take:
@@ -71,7 +72,7 @@ workflow TARGET_PROCESS {
         if (workflow.stubRun == false) {
             signal_target_ch = signal_target_ch
                 .filter{ it ->
-                    it[5].size() > 0 
+                    it[5].readLines().size() > 1
                 }
         }
     }
@@ -83,9 +84,37 @@ workflow TARGET_PROCESS {
             .map{ it ->
                 [ it[0], it[1], it[2], it[3], [type: 'ALL'], it[4]]
             }
+
+        if (workflow.stubRun == false) {
+            signal_target_ch = signal_target_ch
+                .filter{ it ->
+                    it[5].readLines().size() > 1
+                }
+        }
     }
+
+    //
+    // need to verify if there is signal on targets regions otherwise computeMatrix return:
+    // ValueError: need at least one array to concatenate end EXIT STATUS 1
+    // because there are no reads on target
+
+    BIGWIG_AVERAGE_OVERBED(signal_target_ch)
+
+    signal_target_filtered_ch = BIGWIG_AVERAGE_OVERBED.out.bwtab
+        .filter{ it ->
+            def count = 0;
+            it[6].eachLine { line ->
+                count += line.split("\t")[3].toInteger()
+            }
+            count > 0
+        }
+        .map {
+            [it[0],it[1],it[2],it[3],it[4],it[5]]
+        }
+        
+
     
-    COMPUTEMATRIX(signal_target_ch)
+    COMPUTEMATRIX(signal_target_filtered_ch)
     HEATMAP(COMPUTEMATRIX.out.matrix)
     PEAK_STATS(COMPUTEMATRIX.out.matrix)
     
@@ -95,7 +124,6 @@ workflow TARGET_PROCESS {
         }
         .groupTuple(by: 0)
         .dump(tag: 'sample_peaks')
-        .view()
     
     // ----- PEAK_STATS.out.peaks ----------
     // [

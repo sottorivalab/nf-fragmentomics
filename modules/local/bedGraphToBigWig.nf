@@ -6,12 +6,6 @@ process BEDGRAPHTOBIGWIG {
                 
     label 'heavy_process'
     
-    if ( "${workflow.stubRun}" == "false" ) {
-		cpus = 1
-		memory = 24.GB
-        time = '8h'
-	}
-
     input:
     tuple val(timepoint), val(ploidy), path(bedgraph)
 
