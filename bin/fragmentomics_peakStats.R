@@ -117,6 +117,7 @@ mintegration <- length(which(mIntegrationData$above)) / opt$random.points
 # min peak value
 min.peak.position <- nrow(mdata) / 2
 min.peak.value <- (mIntegrationData %>% filter(bin == min.peak.position))[1,]$raw
+min.peak.relative <- (mdata %>% filter(bin == min.peak.position))[1,]$relative
 
 mpeak.length <- background.median - min.peak.value
 mpeak.limits <- tibble(
@@ -132,6 +133,7 @@ peak.stats <- tibble(
   source=opt$source,
   integration=mintegration,
   length=mpeak.length,
+  rlength=min.peak.relative,
   ymin=min(mIntegrationData$raw),
   ymax=background.median,
   x=min.peak.position,

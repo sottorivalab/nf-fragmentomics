@@ -59,7 +59,8 @@ def setup_logging(loglevel):
 def main():
     args = parse_args()
     setup_logging(args.loglevel)
-    report_data = "name\tsource\tploidy\tintegration\tlength\tymin\tymax\tx\tratio\n"
+
+    report_data = "signal\tploidy\tname\tsource\tintegration\tlength\trlength\tymin\tymax\tx\tratio\n"
     
     for path in args.targets:
         with open(path) as peak_fh:
