@@ -50,14 +50,21 @@ workflow BAM_PREPROCESS {
             .map{ it ->
                 [it[0], it[1], it[2], it[5]]
             }
+        
         ploidy_bam_ch = gain_bam_ch.concat(neut_bam_ch, loss_bam_ch)
         
-        SAMTOOLSFILTERSEG(ploidy_bam_ch)
+        // FIXME this can reduce a lot the sample size in case of a very small group:
+        // VALE_38:
+        //  VALE_38_BR_LOSS.bam, 64.126
+        //  VALE_38_BR_NEUT.bam, 677.806.402
+        //  VALE_38_BR_GAIN.bam, 11.121.902                
 
-        // FIXME is here that things are mixed
+        SAMTOOLSFILTERSEG(ploidy_bam_ch)
+        
+        SAMTOOLSFILTERSEG.out.ploidy_bam.view()
+
         ploidy_sub_bam_ch = SAMTOOLSFILTERSEG.out.ploidy_bam
             .groupTuple(by: 0)
-            // FIXME I should search file by TAG here DO NOT TRSUT ORDER
             .map{ it ->
                 def meta = it[0]
                 def gain = it[1].find { el -> el =~ "GAIN" }
@@ -67,24 +74,25 @@ workflow BAM_PREPROCESS {
                 return X
             }
 
-        SAMTOOLS_PLOIDY_COUNTREADS(ploidy_sub_bam_ch)   
+        if (params.subsample_ploidy) {
 
-        SAMTOOLS_SUBSAMPLE(SAMTOOLS_PLOIDY_COUNTREADS.out.counts)
+            SAMTOOLS_PLOIDY_COUNTREADS(ploidy_sub_bam_ch)   
+            SAMTOOLS_SUBSAMPLE(SAMTOOLS_PLOIDY_COUNTREADS.out.counts)
+            split_subsample_multiMap = SAMTOOLS_SUBSAMPLE.out.subsample_bam
+                .multiMap{ it ->            
+                    gain: [it[0], it[1]]
+                    neut: [it[0], it[2]]
+                    loss: [it[0], it[3]]
+                }                        
 
-        // BAM CHANNELS WITH PLOIDY
-        sample_bam_ch = CORRECTGCBIAS.out.gc_correct
-            .map{ it ->     
-                def T = [ type: 'ALL' ]       
-                [it[0], T, it[1], it[2]]
-            }
-        
-        split_subsample_multiMap = SAMTOOLS_SUBSAMPLE.out.subsample_bam
-            .multiMap{ it ->            
+        } else {
+            split_subsample_multiMap = ploidy_sub_bam_ch.multiMap{ it ->
                 gain: [it[0], it[1]]
                 neut: [it[0], it[2]]
                 loss: [it[0], it[3]]
             }
-            
+        }
+        
         neut_bam_ch = split_subsample_multiMap.neut
             .map{ it -> 
                 def T = [ type: 'NEUT' ]
@@ -101,6 +109,13 @@ workflow BAM_PREPROCESS {
             .map{ it ->
                 def T = [ type: 'LOSS' ]
                 [it[0], T, it[1]]
+            }
+            
+        // BAM CHANNELS WITH PLOIDY
+        sample_bam_ch = CORRECTGCBIAS.out.gc_correct
+            .map{ it ->     
+                def T = [ type: 'ALL' ]       
+                [it[0], T, it[1], it[2]]
             }
 
         all_subsample_bam_ch = neut_bam_ch

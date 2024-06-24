@@ -56,6 +56,7 @@ workflow {
     
     BAM_PREPROCESS(sample_ch)
 
+    /*
     /////////////////////////////////////////////////
     // TARGETS meta: [ name, source ]
     /////////////////////////////////////////////////
@@ -95,4 +96,5 @@ workflow {
         BAM_PREPROCESS.out.neut_bw_ch,
         BAM_PREPROCESS.out.loss_bw_ch
     )
+    */
 }
