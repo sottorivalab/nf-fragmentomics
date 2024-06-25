@@ -157,15 +157,38 @@ workflow TARGET_PROCESS {
     }
 
     /////////////////////////////////////////////////
-    // HOUSEKEEPING TSS
+    // HOUSEKEEPING TSS for ploidy ALL
     /////////////////////////////////////////////////
-    // TODO
-    // housekeeping_report_ch = PEAK_STATS.out.peaks
-    //     .filter{ it ->
-    //         it[2].source == "GENEHANCER"
-    //     }
-    //     .view()
+    
+    housekeeping_report_ch = PEAK_STATS.out.peaks
+        .filter{ it -> 
+            it[2].name == "HouseKeeping" && it[2].source == "GENEHANCER" && it[3].type == "ALL"
+        }
+        .map{ it ->
+            [ it[0], it[4] ]
+        }
+        .view()
 
+    random_report_ch = PEAK_STATS.out.peaks
+        .filter{ 
+            it[2].source == "GENEHANCER" && it[3].type == "ALL" && it[2].name != "HouseKeeping"
+        }
+        .map {
+            [ it[0], it[4]]
+        }        
+        .view()
+
+    tss_report_ch = housekeeping_report_ch
+        .concat(random_report_ch)
+        .groupTuple(by: 0)
+        .map{ it ->
+            def hk   = it[1].find { el -> el =~ "HouseKeeping" }
+            def rand = it[1].find { el -> el =~ "rand" }
+            return [it[0], hk, rand]
+        }
+        .view()
+
+    
     // emit:
 
 }
