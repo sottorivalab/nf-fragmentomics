@@ -124,7 +124,10 @@ mpeak.limits <- tibble(
   y=c(min(mIntegrationData$raw), background.median),
   x=c(min.peak.position,min.peak.position)
 )
+
 mpeak.ratio <- mintegration/mpeak.length
+# Given 1 == median value length is 1 - value (1-1=0) (1-1.2=-0.2) 
+mpeak.rlength <- 1 - min.peak.relative
 
 peak.stats <- tibble(
   signal=opt$signal,
@@ -133,7 +136,7 @@ peak.stats <- tibble(
   source=opt$source,
   integration=mintegration,
   length=mpeak.length,
-  rlength=min.peak.relative,
+  rlength=mpeak.rlength,
   ymin=min(mIntegrationData$raw),
   ymax=background.median,
   x=min.peak.position,
