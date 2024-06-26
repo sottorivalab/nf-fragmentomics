@@ -10,8 +10,6 @@ include { SAMTOOLSFILTERSEG          } from "../modules/local/samtoolsFilterSeg.
 include { SAMTOOLS_PLOIDY_COUNTREADS } from "../modules/local/samtoolsPloidyCountReads.nf"
 include { SAMTOOLS_COUNTREADS        } from "../modules/local/samtoolsCountReads.nf"
 include { SAMTOOLS_SUBSAMPLE         } from "../modules/local/samtoolsSubSample.nf"
-include { BIGWIG_MERGE               } from '../modules/local/bigWigMerge.nf'
-include { BEDGRAPHTOBIGWIG           } from '../modules/local/bedGraphToBigWig.nf'
 
 workflow BAM_PREPROCESS {
     take:
@@ -159,58 +157,6 @@ workflow BAM_PREPROCESS {
         bw_loss = split_bw_ch.loss
         bw_neut = split_bw_ch.neut
         ploidy_ch = SEG2BED.out.ploidy
-
-        /////////////////////////////////////////////////
-        // MULTI SAMPLES with PLOIDY SPLIT
-        /////////////////////////////////////////////////
-        // if (params.multisamples) {
-        //     // GROUP BY TIMEPOINT
-        //     timepoint_all_bw_ch = split_bw_ch.all
-        //         .map{ it ->
-        //             tuple(it[0].timepoint, it[0], it[2])
-        //         }
-        //         .groupTuple(by: 0)
-        //         .map{ it ->                
-        //             tuple(it[0], 'ALL', it[1], it[2])
-        //         }
-
-        //     timepoint_gain_bw_ch = split_bw_ch.gain
-        //         .map{ it ->
-        //             tuple(it[0].timepoint, it[0], it[2])
-        //         }
-        //         .groupTuple(by: 0)
-        //         .map{ it ->                
-        //             tuple(it[0], 'GAIN', it[1], it[2])
-        //         }
-
-        //     timepoint_neut_bw_ch = split_bw_ch.neut
-        //         .map{ it ->
-        //             tuple(it[0].timepoint, it[0], it[2])
-        //         }
-        //         .groupTuple(by: 0)
-        //         .map{ it ->                
-        //             tuple(it[0], 'NEUT', it[1], it[2])
-        //         }
-            
-        //     timepoint_loss_bw_ch = split_bw_ch.loss
-        //         .map{ it ->
-        //             tuple(it[0].timepoint, it[0], it[2])
-        //         }
-        //         .groupTuple(by: 0)
-        //         .map{ it ->                
-        //             tuple(it[0], 'LOSS', it[1], it[2])
-        //         }
-
-        //     // merge only when we have more than 1 sample (filter)
-        //     timepoints_ch = timepoint_all_bw_ch
-        //         .concat(timepoint_gain_bw_ch, timepoint_neut_bw_ch, timepoint_loss_bw_ch)
-        //         .filter{ it ->
-        //             it[2].size() > 1
-        //         }
-
-        //     BIGWIG_MERGE(timepoints_ch)
-        //     BEDGRAPHTOBIGWIG(BIGWIG_MERGE.out.bedgraph)
-        // }
     } 
     // no ploidy split
     else 
@@ -229,27 +175,6 @@ workflow BAM_PREPROCESS {
         bw_loss = Channel.empty()
         bw_neut = Channel.empty()
         ploidy_ch = Channel.empty()
-
-        /////////////////////////////////////////////////
-        // MULTI SAMPLES with NO PLOIDY SPLIT
-        /////////////////////////////////////////////////
-        // if (params.multisamples) {
-        //     // GROUP BY TIMEPOINT
-        //     timepoints_ch = bw_all
-        //         .map{ it ->
-        //             tuple(it[0].timepoint, it[0], it[2])
-        //         }
-        //         .groupTuple(by: 0)
-        //         .map{ it ->                
-        //             tuple(it[0], 'ALL', it[1], it[2])
-        //         }
-        //         .filter{ it ->
-        //             it[2].size() > 1
-        //         }
-            
-        //     BIGWIG_MERGE(timepoints_ch)
-        //     BEDGRAPHTOBIGWIG(BIGWIG_MERGE.out.bedgraph)
-        // }
     }
     
     emit:

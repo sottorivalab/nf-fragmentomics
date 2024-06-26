@@ -1,6 +1,7 @@
 // FRAGMENTOMICS PIPELINE
 include { BAM_PREPROCESS     } from './workflows/bam_preprocess.nf'
 include { TARGET_PROCESS     } from './workflows/target_process.nf'
+include { BAM_MERGE          } from './workflows/bam_merge.nf'
 
 def create_target_channel(LinkedHashMap row) {
     def meta = [
@@ -56,7 +57,21 @@ workflow {
     
     BAM_PREPROCESS(sample_ch)
 
+    // BAM_PREPROCESS.out.all_bw_ch.view()
+    // BAM_PREPROCESS.out.gain_bw_ch.view()
+    // BAM_PREPROCESS.out.neut_bw_ch.view()
+    // BAM_PREPROCESS.out.loss_bw_ch.view()
+    // BAM_PREPROCESS.out.ploidy.view()
     
+    if (params.multisamples) {
+        BAM_MERGE(
+            BAM_PREPROCESS.out.all_bw_ch,
+            BAM_PREPROCESS.out.gain_bw_ch,
+            BAM_PREPROCESS.out.neut_bw_ch,
+            BAM_PREPROCESS.out.loss_bw_ch
+        )
+    }
+
     /////////////////////////////////////////////////
     // TARGETS meta: [ name, source ]
     /////////////////////////////////////////////////
@@ -82,18 +97,12 @@ workflow {
         .concat(housekeeping_ch, random_tss_ch)
         .dump(tag: 'targets')
     
-    // BAM_PREPROCESS.out.all_bw_ch.view()
-    // BAM_PREPROCESS.out.gain_bw_ch.view()
-    // BAM_PREPROCESS.out.neut_bw_ch.view()
-    // BAM_PREPROCESS.out.loss_bw_ch.view()
-    // BAM_PREPROCESS.out.ploidy.view()
-    
-    TARGET_PROCESS(
-        target_ch, 
-        BAM_PREPROCESS.out.ploidy, 
-        BAM_PREPROCESS.out.all_bw_ch,
-        BAM_PREPROCESS.out.gain_bw_ch,
-        BAM_PREPROCESS.out.neut_bw_ch,
-        BAM_PREPROCESS.out.loss_bw_ch
-    )
+    // TARGET_PROCESS(
+    //     target_ch, 
+    //     BAM_PREPROCESS.out.ploidy, 
+    //     BAM_PREPROCESS.out.all_bw_ch,
+    //     BAM_PREPROCESS.out.gain_bw_ch,
+    //     BAM_PREPROCESS.out.neut_bw_ch,
+    //     BAM_PREPROCESS.out.loss_bw_ch
+    // )
 }
