@@ -59,8 +59,6 @@ workflow BAM_PREPROCESS {
 
         SAMTOOLSFILTERSEG(ploidy_bam_ch)
         
-        //SAMTOOLSFILTERSEG.out.ploidy_bam.view()
-
         ploidy_sub_bam_ch = SAMTOOLSFILTERSEG.out.ploidy_bam
             .groupTuple(by: 0)
             .map{ it ->

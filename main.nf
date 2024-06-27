@@ -57,12 +57,6 @@ workflow {
     
     BAM_PREPROCESS(sample_ch)
 
-    // BAM_PREPROCESS.out.all_bw_ch.view()
-    // BAM_PREPROCESS.out.gain_bw_ch.view()
-    // BAM_PREPROCESS.out.neut_bw_ch.view()
-    // BAM_PREPROCESS.out.loss_bw_ch.view()
-    // BAM_PREPROCESS.out.ploidy.view()
-    
     if (params.multisamples) {
         BAM_MERGE(
             BAM_PREPROCESS.out.all_bw_ch,
@@ -75,6 +69,7 @@ workflow {
     /////////////////////////////////////////////////
     // TARGETS meta: [ name, source ]
     /////////////////////////////////////////////////
+
     // HouseKeeping genes
     housekeeping_ch = Channel.fromPath(params.housekeeping_bed)
         .map{ it ->
@@ -97,12 +92,12 @@ workflow {
         .concat(housekeeping_ch, random_tss_ch)
         .dump(tag: 'targets')
     
-    // TARGET_PROCESS(
-    //     target_ch, 
-    //     BAM_PREPROCESS.out.ploidy, 
-    //     BAM_PREPROCESS.out.all_bw_ch,
-    //     BAM_PREPROCESS.out.gain_bw_ch,
-    //     BAM_PREPROCESS.out.neut_bw_ch,
-    //     BAM_PREPROCESS.out.loss_bw_ch
-    // )
+    TARGET_PROCESS(
+        target_ch, 
+        BAM_PREPROCESS.out.ploidy, 
+        BAM_PREPROCESS.out.all_bw_ch,
+        BAM_PREPROCESS.out.gain_bw_ch,
+        BAM_PREPROCESS.out.neut_bw_ch,
+        BAM_PREPROCESS.out.loss_bw_ch
+    )
 }

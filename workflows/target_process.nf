@@ -3,8 +3,9 @@ include { COMPUTEMATRIX          } from '../modules/local/computeMatrix.nf'
 include { HEATMAP                } from '../modules/local/heatmap.nf'
 include { PEAK_STATS             } from '../modules/local/peakStats.nf'
 include { PEAK_REPORT            } from '../modules/local/peakReport.nf'
-include { TARGETPLOT             } from "../modules/local/targetPlot.nf"
-include { BIGWIG_AVERAGE_OVERBED } from "../modules/local/bigWigAverageOverBed.nf"
+include { TARGETPLOT             } from '../modules/local/targetPlot.nf'
+include { BIGWIG_AVERAGE_OVERBED } from '../modules/local/bigWigAverageOverBed.nf'
+include { HOUSEKEEPING_PLOT      } from '../modules/local/houseKeepingPlot.nf'
 
 workflow TARGET_PROCESS {
     take:
@@ -78,7 +79,6 @@ workflow TARGET_PROCESS {
     }
     else
     {
-        // target_ch.view()
         signal_target_ch = all_bw_ch
             .combine(target_ch)
             .map{ it ->
@@ -167,7 +167,6 @@ workflow TARGET_PROCESS {
         .map{ it ->
             [ it[0], it[4] ]
         }
-        .view()
 
     random_report_ch = PEAK_STATS.out.peaks
         .filter{ 
@@ -176,18 +175,18 @@ workflow TARGET_PROCESS {
         .map {
             [ it[0], it[4]]
         }        
-        .view()
 
     tss_report_ch = housekeeping_report_ch
         .concat(random_report_ch)
         .groupTuple(by: 0)
         .map{ it ->
             def hk   = it[1].find { el -> el =~ "HouseKeeping" }
-            def rand = it[1].find { el -> el =~ "rand" }
+            def rand = it[1].findAll { el -> el =~ "rand" }
             return [it[0], hk, rand]
         }
         .view()
 
+    HOUSEKEEPING_PLOT(tss_report_ch)
     
     // emit:
 

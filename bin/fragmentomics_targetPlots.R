@@ -4,6 +4,8 @@ suppressPackageStartupMessages(library(stringr))
 suppressPackageStartupMessages(library(readr))
 suppressPackageStartupMessages(library(dplyr))
 suppressPackageStartupMessages(library(ggplot2))
+suppressPackageStartupMessages(library(forcats))
+
 
 # specify our desired options in a list
 option_list <- list(
