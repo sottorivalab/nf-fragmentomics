@@ -184,7 +184,6 @@ workflow TARGET_PROCESS {
             def rand = it[1].findAll { el -> el =~ "rand" }
             return [it[0], hk, rand]
         }
-        .view()
 
     HOUSEKEEPING_PLOT(tss_report_ch)
     

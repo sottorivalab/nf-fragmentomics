@@ -16,6 +16,7 @@ process HOUSEKEEPING_PLOT {
     """
     module unload R/rstudio-dependencies
 	module load R/4.3.1
+    module load nlopt
     fragmentomics_HouseKeepingPlot.R -s ${meta.sampleid}_ALL ${hk} ${rand}
     """
 

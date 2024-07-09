@@ -17,6 +17,7 @@ process TARGETPLOT {
     """
     module unload R/rstudio-dependencies
 	module load R/4.3.1
+    module load nlopt
     fragmentomics_targetPlots.R ${peakdata.join(' ')} -s ${samples} -o ${prefix}_peak_plot.pdf
     """
 

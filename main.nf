@@ -91,7 +91,7 @@ workflow {
         }
         .concat(housekeeping_ch, random_tss_ch)
         .dump(tag: 'targets')
-    
+
     TARGET_PROCESS(
         target_ch, 
         BAM_PREPROCESS.out.ploidy, 
