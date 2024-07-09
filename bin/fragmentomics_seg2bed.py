@@ -4,7 +4,6 @@ import sys
 import argparse
 import logging
 import csv
-from rich import print
 from pathlib import Path
 
 __author__    = "Davide Rambaldi"
