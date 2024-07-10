@@ -1,5 +1,5 @@
-    include { BAMPEFRAGMENTSIZE          } from '../modules/local/bamPEfragmentSize.nf'
-include { PLOTCOVERAGE               } from '../modules/local/plotCoverage.nf'
+include { BAMPEFRAGMENTSIZE          } from '../modules/local/deeptools/bamPEfragmentSize/main.nf'
+include { PLOTCOVERAGE               } from '../modules/local/deeptools/plotCoverage/main.nf'
 include { FILTERBAMBYSIZE            } from '../modules/local/filterBamBySize.nf'
 include { COMPUTEGCBIAS              } from '../modules/local/computeGCbias.nf'
 include { CORRECTGCBIAS              } from '../modules/local/correctGCbias.nf'
@@ -20,8 +20,7 @@ workflow BAM_PREPROCESS {
     // BAMQC AND FILTER READS BY SIZE 
     /////////////////////////////////////////////////
     BAMPEFRAGMENTSIZE(sample_ch)
-    
-    // PLOTCOVERAGE(sample_ch)
+    PLOTCOVERAGE(sample_ch)
     // FILTERBAMBYSIZE(sample_ch)
 
     // /////////////////////////////////////////////////
