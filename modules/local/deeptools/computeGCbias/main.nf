@@ -1,6 +1,9 @@
 process COMPUTEGCBIAS {
 	
-    conda '/home/davide.rambaldi/miniconda3/envs/deeptools'	
+    conda "${moduleDir}/environment.yml"
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'https://depot.galaxyproject.org/singularity/deeptools:3.5.4--pyhdfd78af_1 ' :
+        'biocontainers/deeptools:3.5.4--pyhdfd78af_1' }"
 	
 	label 'heavy_process'
 

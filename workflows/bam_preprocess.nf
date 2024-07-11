@@ -1,8 +1,8 @@
 include { BAMPEFRAGMENTSIZE          } from '../modules/local/deeptools/bamPEfragmentSize/main.nf'
 include { PLOTCOVERAGE               } from '../modules/local/deeptools/plotCoverage/main.nf'
-include { FILTERBAMBYSIZE            } from '../modules/local/filterBamBySize.nf'
-include { COMPUTEGCBIAS              } from '../modules/local/computeGCbias.nf'
-include { CORRECTGCBIAS              } from '../modules/local/correctGCbias.nf'
+include { FILTERBAMBYSIZE            } from '../modules/local/samtools/filterBamBySize/main.nf'
+include { COMPUTEGCBIAS              } from '../modules/local/deeptools/computeGCbias/main.nf'
+include { CORRECTGCBIAS              } from '../modules/local/deeptools/correctGCbias/main.nf'
 include { SAMTOOLSINDEX              } from '../modules/local/samtoolsIndex.nf'
 include { COVERAGEBAM                } from '../modules/local/coverageBam.nf'
 include { SEG2BED                    } from '../modules/local/seg2bed.nf'
@@ -21,19 +21,19 @@ workflow BAM_PREPROCESS {
     /////////////////////////////////////////////////
     BAMPEFRAGMENTSIZE(sample_ch)
     PLOTCOVERAGE(sample_ch)
-    // FILTERBAMBYSIZE(sample_ch)
+    FILTERBAMBYSIZE(sample_ch)
 
-    // /////////////////////////////////////////////////
-    // // GC CORRECTIONS
-    // /////////////////////////////////////////////////
-    // COMPUTEGCBIAS(FILTERBAMBYSIZE.out.filtered)
-    // CORRECTGCBIAS(COMPUTEGCBIAS.out.bam_with_freq)
+    /////////////////////////////////////////////////
+    // GC CORRECTIONS
+    /////////////////////////////////////////////////
+    COMPUTEGCBIAS(FILTERBAMBYSIZE.out.filtered)
+    CORRECTGCBIAS(COMPUTEGCBIAS.out.bam_with_freq)
     
-    // /////////////////////////////////////////////////
-    // // SUBSAMPLE BED FILES
-    // /////////////////////////////////////////////////
-    // if (params.ploidysplit) 
-    // {
+    /////////////////////////////////////////////////
+    // SUBSAMPLE BED FILES
+    /////////////////////////////////////////////////
+    if (params.ploidysplit) 
+    {
     //     // generate bed files for segments
     //     SEG2BED(CORRECTGCBIAS.out.gc_correct)
     //     gain_bam_ch = SEG2BED.out
@@ -156,9 +156,9 @@ workflow BAM_PREPROCESS {
     //     bw_neut = split_bw_ch.neut
     //     ploidy_ch = SEG2BED.out.ploidy
     // } 
-    // // no ploidy split
-    // else 
-    // {
+    // no ploidy split
+    else 
+    {
     //      // BAM CHANNELS WITH PLOIDY ALL only
     //     sample_bam_ch = CORRECTGCBIAS.out.gc_correct
     //         .map{ it ->     
@@ -173,7 +173,7 @@ workflow BAM_PREPROCESS {
     //     bw_loss = Channel.empty()
     //     bw_neut = Channel.empty()
     //     ploidy_ch = Channel.empty()
-    // }
+    }
     
     // emit:
     // all_bw_ch  = bw_all

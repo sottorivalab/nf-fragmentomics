@@ -1,4 +1,4 @@
-name: deeptools-plot-coverage
+name: deeptools-correct-gc-bias
 channels:
   - conda-forge
   - bioconda
