@@ -1,5 +1,10 @@
 process SAMTOOLS_COUNTREADS {
     
+    conda "${moduleDir}/environment.yml"
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'https://depot.galaxyproject.org/singularity/samtools:1.19.2--h50ea8bc_0' :
+        'biocontainers/samtools:1.19.2--h50ea8bc_0' }"
+
     label "normal_process"
 
     input:
@@ -11,7 +16,6 @@ process SAMTOOLS_COUNTREADS {
     script:
     def prefix = task.ext.prefix ?: "${bam.baseName}"
     """
-    module load samtools
     samtools view -c ${bam} > ${bam.baseName}_count.txt
     """
 

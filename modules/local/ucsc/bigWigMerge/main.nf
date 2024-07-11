@@ -1,5 +1,9 @@
 process BIGWIG_MERGE {    
     
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'https://depot.galaxyproject.org/singularity/ucsc-bigwigmerge%3A377--h446ed27_1' :
+        'biocontainers/ucsc-bigwigmerge%3A377--h446ed27_1' }"
+
     publishDir "${params.outdir}/TIMEPOINTS/fragmentomics/processed/bedgraph/${ploidy}", 
         mode:'copy', 
         overwrite:true
@@ -16,7 +20,6 @@ process BIGWIG_MERGE {
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "COHORT_${timepoint}_${ploidy}"
     """
-    module load ucsc-tools    
     bigWigMerge ${bws.join(' ')} ${prefix}.bedGraph
     """
 

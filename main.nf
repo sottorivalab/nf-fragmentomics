@@ -30,21 +30,30 @@ workflow {
         ===================================
         FRAGMENTOMICS P I P E L I N E    
         ===================================
-        multi samples : ${params.multisamples}
-        ploidy split  : ${params.ploidysplit}
         input         : ${params.input}
         targets       : ${params.targets}
         outdir        : ${params.outdir}        
+
+        multi samples : ${params.multisamples}
+        ploidy split  : ${params.ploidysplit}        
         stubRun       : ${workflow.stubRun}
-        genome 2bit   : ${params.genome_2bit}
         genome size   : ${params.genome_size}
-        chr sizes     : ${params.chr_sizes}
-        blacklist     : ${params.blacklist_bed}
         target expand : ${params.target_expand_sx} bp - ${params.target_expand_dx} bp
+
+        genome 2bit   : ${params.genome_2bit} 
+        chr sizes     : ${params.chr_sizes}
+        blacklist     : ${params.blacklist_bed}        
         ===================================
         """
         .stripIndent()
     
+    /////////////////////////////////////////////////
+    // PARAMS files
+    /////////////////////////////////////////////////
+    genome_2bit = Channel.fromPath(params.genome_2bit)
+    chr_sizes = Channel.fromPath(params.chr_sizes)
+    blacklist_bed = Channel.fromPath(params.blacklist_bed)
+
     /////////////////////////////////////////////////
     // SAMPLES meta: [ caseid, sampleid, timepoint ]
     /////////////////////////////////////////////////
@@ -55,16 +64,16 @@ workflow {
         .map{ create_sample_channel(it) }
         .dump(tag: 'samples')
     
-    BAM_PREPROCESS(sample_ch)
+    BAM_PREPROCESS(sample_ch, genome_2bit, blacklist_bed)
 
-    // if (params.multisamples) {
-    //     BAM_MERGE(
-    //         BAM_PREPROCESS.out.all_bw_ch,
-    //         BAM_PREPROCESS.out.gain_bw_ch,
-    //         BAM_PREPROCESS.out.neut_bw_ch,
-    //         BAM_PREPROCESS.out.loss_bw_ch
-    //     )
-    // }
+    if (params.multisamples) {
+        BAM_MERGE(
+            BAM_PREPROCESS.out.all_bw_ch,
+            BAM_PREPROCESS.out.gain_bw_ch,
+            BAM_PREPROCESS.out.neut_bw_ch,
+            BAM_PREPROCESS.out.loss_bw_ch
+        )
+    }
 
     // /////////////////////////////////////////////////
     // // TARGETS meta: [ name, source ]

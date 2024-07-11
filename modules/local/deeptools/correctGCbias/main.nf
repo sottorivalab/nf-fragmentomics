@@ -12,7 +12,7 @@ process CORRECTGCBIAS {
 	label 'heavy_process'
 	
     input:
-	tuple val(meta), path(bam), path(bai), path(seg), path(freq)
+	tuple val(meta), path(bam), path(bai), path(seg), path(freq), path(genome_2bit)
 
 	output:
 	tuple val(meta), path("*.gc_correct.bam"), path("*.gc_correct.bam.bai"), path(seg), path(freq), emit: gc_correct
@@ -24,7 +24,7 @@ process CORRECTGCBIAS {
 	correctGCBias \\
         -b ${bam} \\
         --effectiveGenomeSize ${params.genome_size} \\
-        -g ${params.genome_2bit} \\
+        -g ${genome_2bit} \\
         --GCbiasFrequenciesFile ${freq} \\
         --numberOfProcessors ${task.cpus} \\
         -o ${prefix}.gc_correct.bam \\

@@ -5,7 +5,6 @@ process PLOTCOVERAGE {
         'https://depot.galaxyproject.org/singularity/deeptools:3.5.4--pyhdfd78af_1 ' :
         'biocontainers/deeptools:3.5.4--pyhdfd78af_1' }"
 
-
     publishDir "${params.outdir}/${meta.caseid}/${meta.sampleid}/fragmentomics/reports/", 
         mode:'copy', 
         overwrite:true

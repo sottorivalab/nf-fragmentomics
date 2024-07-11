@@ -2,13 +2,13 @@ process COMPUTEGCBIAS {
 	
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/deeptools:3.5.4--pyhdfd78af_1 ' :
+        'https://depot.galaxyproject.org/singularity/deeptools:3.5.4--pyhdfd78af_1' :
         'biocontainers/deeptools:3.5.4--pyhdfd78af_1' }"
 	
 	label 'heavy_process'
 
 	input:
-	tuple val(meta), path(bam), path(bai), path(seg)
+	tuple val(meta), path(bam), path(bai), path(seg), path(genome_2bit)    
 
 	output:
 	tuple val(meta), path(bam), path(bai), path(seg), path("*.freq.txt"), emit: bam_with_freq
@@ -20,7 +20,7 @@ process COMPUTEGCBIAS {
 	computeGCBias \\
         -b ${bam} \\
         --effectiveGenomeSize ${params.genome_size} \\
-        -g ${params.genome_2bit} \\
+        -g ${genome_2bit} \\
         --GCbiasFrequenciesFile ${prefix}.freq.txt \\
         --numberOfProcessors ${task.cpus} \\
         $args

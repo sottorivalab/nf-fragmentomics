@@ -1,5 +1,10 @@
 process SAMTOOLS_PLOIDY_COUNTREADS {
 
+    conda "${moduleDir}/environment.yml"
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'https://depot.galaxyproject.org/singularity/samtools:1.19.2--h50ea8bc_0' :
+        'biocontainers/samtools:1.19.2--h50ea8bc_0' }"
+        
     publishDir "${params.outdir}/${meta.caseid}/${meta.sampleid}/fragmentomics/processed/bam",
         mode:'copy', 
         pattern: "*.csv",
@@ -17,7 +22,6 @@ process SAMTOOLS_PLOIDY_COUNTREADS {
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.sampleid}"
     """
-    module load samtools
     NEUT=`samtools view -c ${bamneut}`
     GAIN=`samtools view -c ${bamgain}`
     LOSS=`samtools view -c ${bamloss}`
