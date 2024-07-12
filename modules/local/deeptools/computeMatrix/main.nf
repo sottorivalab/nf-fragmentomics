@@ -1,5 +1,9 @@
 process COMPUTEMATRIX {
-	conda '/home/davide.rambaldi/miniconda3/envs/deeptools'
+	
+	conda "${moduleDir}/environment.yml"
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'https://depot.galaxyproject.org/singularity/deeptools:3.5.4--pyhdfd78af_1' :
+        'biocontainers/deeptools:3.5.4--pyhdfd78af_1' }"
 
     publishDir "${params.outdir}/${meta_sample.caseid}/${meta_sample.sampleid}/fragmentomics/processed/matrix/${meta_target.source}/${meta_target.name}/${meta_ploidy.type}", 
 		mode:'copy', 
@@ -8,7 +12,7 @@ process COMPUTEMATRIX {
 	label 'fast_process'
 
 	input:
-	tuple val(meta_sample), val(meta_ploidy), path(bw), val(meta_target), val(meta_ploidy_target), path(bed)
+	tuple val(meta_sample), val(meta_ploidy), path(bw), val(meta_target), val(meta_ploidy_target), path(bed), path(blacklist_bed)
 	
 	output:
 	tuple val(meta_sample), val(meta_ploidy), val(meta_target), val(meta_ploidy_target), path("*_matrix.gz"), emit: matrix
@@ -24,7 +28,7 @@ process COMPUTEMATRIX {
 		-a ${params.target_expand_sx} \\
 		-b ${params.target_expand_dx} \\
 		-o ${prefix}_matrix.gz \\
-		--blackListFileName ${params.blacklist_bed} \\
+		--blackListFileName ${blacklist_bed} \\
 		--numberOfProcessors ${task.cpus} \\
 		$args
 	"""

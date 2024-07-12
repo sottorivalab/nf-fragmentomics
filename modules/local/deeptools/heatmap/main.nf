@@ -1,5 +1,9 @@
 process HEATMAP {
-    conda '/home/davide.rambaldi/miniconda3/envs/deeptools'
+    
+    conda "${moduleDir}/environment.yml"
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'https://depot.galaxyproject.org/singularity/deeptools:3.5.4--pyhdfd78af_1 ' :
+        'biocontainers/deeptools:3.5.4--pyhdfd78af_1' }"
     
     publishDir "${params.outdir}/${meta_sample.caseid}/${meta_sample.sampleid}/fragmentomics/processed/matrix/${meta_target.source}/${meta_target.name}/${meta_ploidy.type}", 
         mode:'copy', 

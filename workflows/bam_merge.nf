@@ -7,6 +7,7 @@ workflow BAM_MERGE {
     gain_bw_ch
     neut_bw_ch
     loss_bw_ch
+    chr_sizes
 
     main:
     if (params.ploidysplit) 
@@ -56,7 +57,7 @@ workflow BAM_MERGE {
             }
 
         BIGWIG_MERGE(timepoints_ch)
-        BEDGRAPHTOBIGWIG(BIGWIG_MERGE.out.bedgraph)
+        BEDGRAPHTOBIGWIG(BIGWIG_MERGE.out.bedgraph.combine(chr_sizes))
     }
     else
     {
@@ -74,7 +75,7 @@ workflow BAM_MERGE {
             }
         
         BIGWIG_MERGE(timepoints_ch)
-        BEDGRAPHTOBIGWIG(BIGWIG_MERGE.out.bedgraph)
+        BEDGRAPHTOBIGWIG(BIGWIG_MERGE.out.bedgraph.combine(chr_sizes))
     }
 
     // emit:

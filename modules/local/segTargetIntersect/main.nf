@@ -1,5 +1,10 @@
 process SEGTARGETINTERSECT {
     
+    conda "${moduleDir}/environment.yml"
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'https://depot.galaxyproject.org/singularity/bedtools:2.31.1--hf5e1c6e_0' :
+        'biocontainers/bedtools:2.31.1--hf5e1c6e_0' }"
+        
     publishDir "${params.outdir}/${meta_sample.caseid}/${meta_sample.sampleid}/fragmentomics/processed/targets/${meta_target.source}/${meta_target.name}",
         mode:'copy', 
         overwrite:true
@@ -19,7 +24,6 @@ process SEGTARGETINTERSECT {
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta_sample.sampleid}_${meta_target.name}_${meta_target.source}"
     """
-    module load bedtools2
     bedtools intersect -a $targets_bed -b ${gainbed} -wa > ${prefix}_GAIN.bed
     bedtools intersect -a $targets_bed -b ${neutbed} -wa > ${prefix}_NEUT.bed
     bedtools intersect -a $targets_bed -b ${lossbed} -wa > ${prefix}_LOSS.bed

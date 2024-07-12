@@ -71,7 +71,8 @@ workflow {
             BAM_PREPROCESS.out.all_bw_ch,
             BAM_PREPROCESS.out.gain_bw_ch,
             BAM_PREPROCESS.out.neut_bw_ch,
-            BAM_PREPROCESS.out.loss_bw_ch
+            BAM_PREPROCESS.out.loss_bw_ch,
+            chr_sizes
         )
     }
 
@@ -107,6 +108,7 @@ workflow {
         BAM_PREPROCESS.out.all_bw_ch,
         BAM_PREPROCESS.out.gain_bw_ch,
         BAM_PREPROCESS.out.neut_bw_ch,
-        BAM_PREPROCESS.out.loss_bw_ch
+        BAM_PREPROCESS.out.loss_bw_ch,
+        blacklist_bed
     )
 }

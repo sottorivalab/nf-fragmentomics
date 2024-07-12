@@ -1,10 +1,11 @@
-include { SEGTARGETINTERSECT     } from '../modules/local/segTargetIntersect.nf'
-include { COMPUTEMATRIX          } from '../modules/local/computeMatrix.nf'
-include { HEATMAP                } from '../modules/local/heatmap.nf'
+include { SEGTARGETINTERSECT     } from '../modules/local/segTargetIntersect/main.nf'
+include { BIGWIG_AVERAGE_OVERBED } from '../modules/local/ucsc/bigWigAverageOverBed/main.nf'
+include { COMPUTEMATRIX          } from '../modules/local/deeptools/computeMatrix/main.nf'
+include { HEATMAP                } from '../modules/local/deeptools/heatmap/main.nf'
+include { PEAK_REPORT            } from '../modules/local/peakReport/main.nf'
+
 include { PEAK_STATS             } from '../modules/local/peakStats.nf'
-include { PEAK_REPORT            } from '../modules/local/peakReport.nf'
 include { TARGETPLOT             } from '../modules/local/targetPlot.nf'
-include { BIGWIG_AVERAGE_OVERBED } from '../modules/local/bigWigAverageOverBed.nf'
 include { HOUSEKEEPING_PLOT      } from '../modules/local/houseKeepingPlot.nf'
 
 workflow TARGET_PROCESS {
@@ -15,6 +16,7 @@ workflow TARGET_PROCESS {
     gain_bw_ch
     neut_bw_ch
     loss_bw_ch
+    blacklist_bed
 
     main:
     /////////////////////////////////////////////////
@@ -111,10 +113,8 @@ workflow TARGET_PROCESS {
         .map {
             [it[0],it[1],it[2],it[3],it[4],it[5]]
         }
-        
-
     
-    COMPUTEMATRIX(signal_target_filtered_ch)
+    COMPUTEMATRIX(signal_target_filtered_ch.combine(blacklist_bed))
     HEATMAP(COMPUTEMATRIX.out.matrix)
     PEAK_STATS(COMPUTEMATRIX.out.matrix)
     

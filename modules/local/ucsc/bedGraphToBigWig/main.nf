@@ -12,7 +12,7 @@ process BEDGRAPHTOBIGWIG {
     label 'heavy_process'
     
     input:
-    tuple val(timepoint), val(ploidy), path(bedgraph)
+    tuple val(timepoint), val(ploidy), path(bedgraph), path(chr_sizes)
 
     output:
     tuple val(timepoint), val(ploidy), path("*.bw"), emit: bw
@@ -21,7 +21,8 @@ process BEDGRAPHTOBIGWIG {
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "COHORT_${timepoint}_${ploidy}"
     """
-    bedGraphToBigWig ${bedgraph} ${params.chr_sizes} ${prefix}.bw 
+    sort -k1,1 -k2,2n ${bedgraph} > sorted.bg
+    bedGraphToBigWig sorted.bg ${chr_sizes} ${prefix}.bw 
     """
 
     stub:
