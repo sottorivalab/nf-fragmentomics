@@ -75,38 +75,38 @@ workflow {
         )
     }
 
-    // /////////////////////////////////////////////////
-    // // TARGETS meta: [ name, source ]
-    // /////////////////////////////////////////////////
+    /////////////////////////////////////////////////
+    // TARGETS meta: [ name, source ]
+    /////////////////////////////////////////////////
 
-    // // HouseKeeping genes
-    // housekeeping_ch = Channel.fromPath(params.housekeeping_bed)
-    //     .map{ it ->
-    //         [ ['name': 'HouseKeeping', 'source': 'GENEHANCER'], it ]
-    //     }
+    // HouseKeeping genes
+    housekeeping_ch = Channel.fromPath(params.housekeeping_bed)
+        .map{ it ->
+            [ ['name': 'HouseKeeping', 'source': 'GENEHANCER'], it ]
+        }
     
-    // // random TSS
-    // random_tss_ch = Channel.fromPath(params.random_tss_bed)
-    //     .map{ it ->            
-    //         [ ['name': it.baseName.replaceFirst(/^.*_/,""), 'source': 'GENEHANCER'], it ]
-    //     }
+    // random TSS
+    random_tss_ch = Channel.fromPath(params.random_tss_bed)
+        .map{ it ->            
+            [ ['name': it.baseName.replaceFirst(/^.*_/,""), 'source': 'GENEHANCER'], it ]
+        }
 
-    // // targets channel and filter by size
-    // target_ch = Channel.fromPath(params.targets)
-    //     .splitCsv(header: true, sep:',')
-    //     .map{ create_target_channel(it) }
-    //     .filter{ it ->
-    //         it[1].size() > 0 
-    //     }
-    //     .concat(housekeeping_ch, random_tss_ch)
-    //     .dump(tag: 'targets')
+    // targets channel and filter by size
+    target_ch = Channel.fromPath(params.targets)
+        .splitCsv(header: true, sep:',')
+        .map{ create_target_channel(it) }
+        .filter{ it ->
+            it[1].size() > 0 
+        }
+        .concat(housekeeping_ch, random_tss_ch)
+        .dump(tag: 'targets')
 
-    // TARGET_PROCESS(
-    //     target_ch, 
-    //     BAM_PREPROCESS.out.ploidy, 
-    //     BAM_PREPROCESS.out.all_bw_ch,
-    //     BAM_PREPROCESS.out.gain_bw_ch,
-    //     BAM_PREPROCESS.out.neut_bw_ch,
-    //     BAM_PREPROCESS.out.loss_bw_ch
-    // )
+    TARGET_PROCESS(
+        target_ch, 
+        BAM_PREPROCESS.out.ploidy, 
+        BAM_PREPROCESS.out.all_bw_ch,
+        BAM_PREPROCESS.out.gain_bw_ch,
+        BAM_PREPROCESS.out.neut_bw_ch,
+        BAM_PREPROCESS.out.loss_bw_ch
+    )
 }

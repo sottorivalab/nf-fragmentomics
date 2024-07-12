@@ -1,5 +1,10 @@
 process BEDGRAPHTOBIGWIG {
 
+    conda "${moduleDir}/environment.yml"
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'https://depot.galaxyproject.org/singularity/ucsc-bedgraphtobigwig:445--h954228d_0' :
+        'biocontainers/ucsc-bedgraphtobigwig:445--h954228d_0' }"
+        
     publishDir "${params.outdir}/TIMEPOINTS/fragmentomics/processed/bw/${ploidy}", 
         mode:'copy', 
         overwrite:true
@@ -16,7 +21,6 @@ process BEDGRAPHTOBIGWIG {
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "COHORT_${timepoint}_${ploidy}"
     """
-    module load ucsc-tools
     bedGraphToBigWig ${bedgraph} ${params.chr_sizes} ${prefix}.bw 
     """
 

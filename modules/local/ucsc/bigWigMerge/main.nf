@@ -1,5 +1,6 @@
 process BIGWIG_MERGE {    
     
+    conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/ucsc-bigwigmerge%3A377--h446ed27_1' :
         'biocontainers/ucsc-bigwigmerge%3A377--h446ed27_1' }"

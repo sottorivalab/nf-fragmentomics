@@ -1,5 +1,5 @@
-include { BIGWIG_MERGE               } from '../modules/local/bigWigMerge.nf'
-include { BEDGRAPHTOBIGWIG           } from '../modules/local/bedGraphToBigWig.nf'
+include { BIGWIG_MERGE               } from '../modules/local/ucsc/bigWigMerge/main.nf'
+include { BEDGRAPHTOBIGWIG           } from '../modules/local/ucsc/bedGraphToBigWig/main.nf'
 
 workflow BAM_MERGE {
     take:
