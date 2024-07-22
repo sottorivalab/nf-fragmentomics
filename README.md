@@ -1,5 +1,10 @@
 # NF-FRAGMENTOMICS
 
+Todo: 
+
+--averageTypeSummaryPlot can be also median
+
+
 ## USAGE
 
 TODO

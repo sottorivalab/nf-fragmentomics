@@ -67,13 +67,13 @@ workflow {
     BAM_PREPROCESS(sample_ch, genome_2bit, blacklist_bed)
 
     if (params.multisamples) {
-        BAM_MERGE(
-            BAM_PREPROCESS.out.all_bw_ch,
-            BAM_PREPROCESS.out.gain_bw_ch,
-            BAM_PREPROCESS.out.neut_bw_ch,
-            BAM_PREPROCESS.out.loss_bw_ch,
-            chr_sizes
-        )
+        //BAM_MERGE(
+        //    BAM_PREPROCESS.out.all_bw_ch,
+        //    BAM_PREPROCESS.out.gain_bw_ch,
+        //    BAM_PREPROCESS.out.neut_bw_ch,
+        //    BAM_PREPROCESS.out.loss_bw_ch,
+        //    chr_sizes
+        //)
     }
 
     /////////////////////////////////////////////////
