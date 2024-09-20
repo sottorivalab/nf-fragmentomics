@@ -1,2 +1,3 @@
 input: "samplesheet.csv"
 targets: "targets.csv"
+outdir: "./results"
