@@ -57,10 +57,14 @@ workflow {
 
     RUNTIME INFO
     -----------------------------------
+    started at           : ${workflow.start}
     projectDir           : ${workflow.projectDir}
-    container engine     : ${workflow.containerEngine}
+    workDir              : ${workflow.workDir}
+    container            : ${workflow.containerEngine}:${workflow.container}
+    config files         : ${workflow.configFiles}
     profile              : ${workflow.profile}
     stubRun              : ${workflow.stubRun}
+    run as               : ${workflow.commandLine}
     -----------------------------------
     """
     .stripIndent()
