@@ -42,7 +42,6 @@ def create_sample_channel(LinkedHashMap row) {
 
 // Init params
 genome_2bit = params.genome_2bit ? Channel.fromPath(params.genome_2bit) : Channel.empty()
-chr_sizes = params.chr_sizes ? Channel.fromPath(params.chr_sizes) : Channel.empty()
 blacklist_bed = params.blacklist_bed ? Channel.fromPath(params.blacklist_bed) : Channel.empty()
 
 sample_ch = Channel.fromPath(params.input)
@@ -79,19 +78,6 @@ workflow {
         chr_sizes,
         blacklist_bed
     )
-    
-    
-    // BAM_PREPROCESS(sample_ch, genome_2bit, blacklist_bed)
-
-    // if (params.multisamples) {
-    //     BAM_MERGE(
-    //        BAM_PREPROCESS.out.all_bw_ch,
-    //        BAM_PREPROCESS.out.gain_bw_ch,
-    //        BAM_PREPROCESS.out.neut_bw_ch,
-    //        BAM_PREPROCESS.out.loss_bw_ch,
-    //        chr_sizes
-    //     )
-    // }
 
     // TARGET_PROCESS(
     //     target_ch, 

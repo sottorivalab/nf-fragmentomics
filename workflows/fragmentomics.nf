@@ -2,23 +2,23 @@
 FRAGMENTOMICS MAIN WORKFLOW
 */
 
-// include { BAM_PREPROCESS     } from './workflows/bam_preprocess.nf'
+include { BAM_PREPROCESS     } from '../subworkflows/bam_preprocess/main.nf'
 // include { TARGET_PROCESS     } from './workflows/target_process.nf'
 // include { BAM_MERGE          } from './workflows/bam_merge.nf'
 
 
 workflow FRAGMENTOMICS {
     take:
-    // sample_ch [[ caseid, sampleid, timepoint ], bam, bai, bw]
-    sample_ch
-    // target_ch [[ name, source ], bed]
-    target_ch
-    // file
-    genome_2bit
-    // file
-    chr_sizes
-    // file
-    blacklist_bed
+        // sample_ch [[ caseid, sampleid, timepoint ], bam, bai, bw]
+        sample_ch
+        // target_ch [[ name, source ], bed]
+        target_ch
+        // file
+        genome_2bit
+        // file
+        chr_sizes
+        // file
+        blacklist_bed
 
     main:
         /////////////////////////////////////////////////
@@ -44,7 +44,6 @@ workflow FRAGMENTOMICS {
         -----------------------------------
         genome size      : ${params.genome_size}
         genome 2bit      : ${params.genome_2bit}
-        chr sizes        : ${params.chr_sizes}
         -----------------------------------
 
         ANNOTATION FILES:
@@ -67,7 +66,20 @@ workflow FRAGMENTOMICS {
         """
         .stripIndent()
 
-        sample_ch.view()
         target_ch.view()
+
+        // BAM PROCESSING
+        if (params.preprocess) {
+            BAM_PREPROCESS(
+                sample_ch,
+                genome_2bit,
+                blacklist_bed
+            )
+        // USE BIG WIGGLES
+        } else {
+            // TODO
+        }
+
+        // TODO TARGET_PROCESS
         
 }
