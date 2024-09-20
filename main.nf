@@ -28,29 +28,57 @@ workflow {
     // PIPELINE INFO
     /////////////////////////////////////////////////
     log.info """\
-        ===================================
-        FRAGMENTOMICS P I P E L I N E    
-        ===================================
-        project       : ${workflow.projectDir}
-        container     : ${workflow.containerEngine}
-        profile       : ${workflow.profile}
+    ===================================
+    ${params.manifest.name} v${params.manifest.version}
+    ===================================
 
-        input         : ${params.input}
-        targets       : ${params.targets}
-        outdir        : ${params.outdir}        
+    PARAMS
+    -----------------------------------
+    input         : ${params.input}
+    targets       : ${params.targets}
+    outdir        : ${params.outdir}        
+    bin size      : ${params.bin_size}
+    target expand : ${params.target_expand_sx} bp - ${params.target_expand_dx} bp
+    bam filter    : ${params.filter_min} bp - ${params.filter_max} bp
+    -----------------------------------
 
-        multi samples : ${params.multisamples}
-        ploidy split  : ${params.ploidysplit}        
-        stubRun       : ${workflow.stubRun}
-        genome size   : ${params.genome_size}
-        target expand : ${params.target_expand_sx} bp - ${params.target_expand_dx} bp
+    REFERENCE GENOME:
+    -----------------------------------
+    genome size      : ${params.genome_size}
+    genome 2bit      : ${params.genome_2bit}
+    chr sizes        : ${params.chr_sizes}
+    -----------------------------------
 
-        genome 2bit   : ${params.genome_2bit} 
-        chr sizes     : ${params.chr_sizes}
-        blacklist     : ${params.blacklist_bed}        
-        ===================================
-        """
-        .stripIndent()
+    ANNOTATION FILES:
+    -----------------------------------
+    housekeeping bed : ${params.housekeeping_bed}
+    blacklist bed    : ${params.blacklist_bed}
+    -----------------------------------
+
+    RUNTIME INFO
+    -----------------------------------
+    projectDir           : ${workflow.projectDir}
+    container engine     : ${workflow.containerEngine}
+    profile              : ${workflow.profile}
+    stubRun              : ${workflow.stubRun}
+    -----------------------------------
+    """
+    .stripIndent()
+
+    // log.info """\
+    //     ===================================
+    //     FRAGMENTOMICS P I P E L I N E    
+    //     ===================================
+    
+    //     genome size   : ${params.genome_size}
+    //     target expand : ${params.target_expand_sx} bp - ${params.target_expand_dx} bp
+
+    //     genome 2bit   : ${params.genome_2bit} 
+    //     chr sizes     : ${params.chr_sizes}
+    //     blacklist     : ${params.blacklist_bed}        
+    //     ===================================
+    //     """
+    //     .stripIndent()
     
     /////////////////////////////////////////////////
     // PARAMS files
