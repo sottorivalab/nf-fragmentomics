@@ -85,8 +85,7 @@ workflow TARGET_PROCESS {
             .combine(target_ch)
             .map{ it ->
                 [ it[0], it[1], it[2], it[3], [type: 'ALL'], it[4]]
-            }
-            .view()
+            }            
 
         if (workflow.stubRun == false) {
             signal_target_ch = signal_target_ch
