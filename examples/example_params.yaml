@@ -1,0 +1,4 @@
+input: "samplesheet.csv"
+targets: "targets.csv"
+housekeeping_bed: "GeneHancer_housekeeping.bed"
+random_tss_bed: "random_sets/*rand*.bed"
