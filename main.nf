@@ -30,6 +30,10 @@ workflow {
         ===================================
         FRAGMENTOMICS P I P E L I N E    
         ===================================
+        project       : ${workflow.projectDir}
+        container     : ${workflow.containerEngine}
+        profile       : ${workflow.profile}
+
         input         : ${params.input}
         targets       : ${params.targets}
         outdir        : ${params.outdir}        
