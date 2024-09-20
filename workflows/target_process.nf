@@ -86,6 +86,7 @@ workflow TARGET_PROCESS {
             .map{ it ->
                 [ it[0], it[1], it[2], it[3], [type: 'ALL'], it[4]]
             }
+            .view()
 
         if (workflow.stubRun == false) {
             signal_target_ch = signal_target_ch
@@ -100,6 +101,7 @@ workflow TARGET_PROCESS {
     // ValueError: need at least one array to concatenate end EXIT STATUS 1
     // because there are no reads on target
 
+
     BIGWIG_AVERAGE_OVERBED(signal_target_ch)
 
     signal_target_filtered_ch = BIGWIG_AVERAGE_OVERBED.out.bwtab
@@ -112,7 +114,7 @@ workflow TARGET_PROCESS {
         }
         .map {
             [it[0],it[1],it[2],it[3],it[4],it[5]]
-        }
+        }        
     
     COMPUTEMATRIX(signal_target_filtered_ch.combine(blacklist_bed))
     HEATMAP(COMPUTEMATRIX.out.matrix)
