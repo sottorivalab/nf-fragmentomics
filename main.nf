@@ -1,7 +1,20 @@
-// FRAGMENTOMICS PIPELINE
+#!/usr/bin/env nextflow
+/*
+========================================================================================
+FRAGMENTOMICS PIPELINE
+========================================================================================
+*/
+
+nextflow.enable.dsl = 2
+
+include { FRAGMENTOMICS } from './workflows/fragmentomics.nf'
+
 // include { BAM_PREPROCESS     } from './workflows/bam_preprocess.nf'
 // include { TARGET_PROCESS     } from './workflows/target_process.nf'
 // include { BAM_MERGE          } from './workflows/bam_merge.nf'
+
+
+
 
 // def create_target_channel(LinkedHashMap row) {
 //     def meta = [
@@ -24,65 +37,9 @@
 // MAIN WORKFLOW
 workflow {
 
-    /////////////////////////////////////////////////
-    // PIPELINE INFO
-    /////////////////////////////////////////////////
-    log.info """\
-    ===================================
-    ${params.manifest.name} v${params.manifest.version}
-    ===================================
+    main:
+    FRAGMENTOMICS()
 
-    PARAMS
-    -----------------------------------
-    input         : ${params.input}
-    targets       : ${params.targets}
-    outdir        : ${params.outdir}        
-    bin size      : ${params.bin_size}
-    target expand : ${params.target_expand_sx} bp - ${params.target_expand_dx} bp
-    bam filter    : ${params.filter_min} bp - ${params.filter_max} bp
-    -----------------------------------
-
-    REFERENCE GENOME:
-    -----------------------------------
-    genome size      : ${params.genome_size}
-    genome 2bit      : ${params.genome_2bit}
-    chr sizes        : ${params.chr_sizes}
-    -----------------------------------
-
-    ANNOTATION FILES:
-    -----------------------------------
-    housekeeping bed : ${params.housekeeping_bed}
-    blacklist bed    : ${params.blacklist_bed}
-    -----------------------------------
-
-    RUNTIME INFO
-    -----------------------------------
-    started at           : ${workflow.start}
-    projectDir           : ${workflow.projectDir}
-    workDir              : ${workflow.workDir}
-    container            : ${workflow.containerEngine}:${workflow.container}
-    config files         : ${workflow.configFiles}
-    profile              : ${workflow.profile}
-    stubRun              : ${workflow.stubRun}
-    run as               : ${workflow.commandLine}
-    -----------------------------------
-    """
-    .stripIndent()
-
-    // log.info """\
-    //     ===================================
-    //     FRAGMENTOMICS P I P E L I N E    
-    //     ===================================
-    
-    //     genome size   : ${params.genome_size}
-    //     target expand : ${params.target_expand_sx} bp - ${params.target_expand_dx} bp
-
-    //     genome 2bit   : ${params.genome_2bit} 
-    //     chr sizes     : ${params.chr_sizes}
-    //     blacklist     : ${params.blacklist_bed}        
-    //     ===================================
-    //     """
-    //     .stripIndent()
     
     /////////////////////////////////////////////////
     // PARAMS files
