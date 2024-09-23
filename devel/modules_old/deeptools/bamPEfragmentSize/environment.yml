@@ -1,7 +1,0 @@
-name: deeptools-bam-PE-fragment-size
-channels:
-  - conda-forge
-  - bioconda
-  - defaults
-dependencies:
-  - bioconda::deeptools=3.5.4

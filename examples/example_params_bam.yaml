@@ -1,0 +1,3 @@
+input: "./examples/example_samplesheet_bam.csv"
+targets: "./examples/example_targets.csv"
+outdir: "./results"

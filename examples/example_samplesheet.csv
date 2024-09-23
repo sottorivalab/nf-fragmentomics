@@ -1,7 +1,7 @@
 caseid,sampleid,timepoint,bam,bai,bw
-MAYA_12,MAYA_12_BL,BL,/path/to/bam.bam,/path/to/bam.bai,/path/to/bw
-MAYA_12,MAYA_12_BR,BR,/path/to/bam.bam,/path/to/bam.bai,/path/to/bw
+MAYA_12,MAYA_12_BL,BL,/path/to/bam.bam,/path/to/bam.bai,
+MAYA_12,MAYA_12_BR,BR,/path/to/bam.bam,/path/to/bam.bai,
 MAYA_102,MAYA_102_BR,BR,/path/to/bam.bam,/path/to/bam.bai,/path/to/bw
 MAYA_102,MAYA_102_BL,BL,/path/to/bam.bam,/path/to/bam.bai,/path/to/bw
 MISSING_1,MISSING_1,BL,,,/path/to/bw
-MISSING_2,MISSING_1,BL,/path/to/bam.bam,/path/to/bam.bai,/path/to/bw,
+MISSING_2,MISSING_1,BL,,,/path/to/bw

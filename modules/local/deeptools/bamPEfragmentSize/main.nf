@@ -1,6 +1,5 @@
 process BAMPEFRAGMENTSIZE {
    
-    conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/deeptools:3.5.4--pyhdfd78af_1' :
         'biocontainers/deeptools:3.5.4--pyhdfd78af_1' }"
@@ -12,7 +11,7 @@ process BAMPEFRAGMENTSIZE {
     label 'fast_process'
 
     input:
-    tuple val(meta), path(bam), path(bai), path(seg)
+    tuple val(meta), path(bam), path(bai)
 
     output:
     tuple val(meta), path("*_fragmentsize.png"), path("*_fragmentsize.txt"), emit: bamqc

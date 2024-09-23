@@ -16,8 +16,6 @@ workflow FRAGMENTOMICS {
         // file
         genome_2bit
         // file
-        chr_sizes
-        // file
         blacklist_bed
 
     main:
@@ -66,20 +64,36 @@ workflow FRAGMENTOMICS {
         """
         .stripIndent()
 
-        target_ch.view()
-
         // BAM PROCESSING
         if (params.preprocess) {
+            // remove wiggle from sample channel
+            // rerun preprocess for all samples            
+            bam_ch = sample_ch
+                .map { it ->
+                    [it[0], it[1], it[2]]
+                }
+            
             BAM_PREPROCESS(
-                sample_ch,
+                bam_ch,
                 genome_2bit,
                 blacklist_bed
             )
+
         // USE BIG WIGGLES
         } else {
             // TODO
         }
 
         // TODO TARGET_PROCESS
-        
+        // target_ch.view()
+
+        // TARGET_PROCESS(
+        //     target_ch, 
+        //     BAM_PREPROCESS.out.ploidy, 
+        //     BAM_PREPROCESS.out.all_bw_ch,
+        //     BAM_PREPROCESS.out.gain_bw_ch,
+        //     BAM_PREPROCESS.out.neut_bw_ch,
+        //     BAM_PREPROCESS.out.loss_bw_ch,
+        //     blacklist_bed
+        // )
 }
