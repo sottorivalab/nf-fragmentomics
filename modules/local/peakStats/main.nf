@@ -22,7 +22,6 @@ process PEAK_STATS {
 	fragmentomics_peakStats.R \\
         -s ${meta_sample.sampleid} \\
         -t ${meta_target.name} \\
-        -p ${meta_ploidy.type} \\
         -S ${meta_target.source} \\
         ${matrix}
 	"""
