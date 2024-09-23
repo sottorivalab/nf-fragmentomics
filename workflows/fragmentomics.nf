@@ -42,11 +42,6 @@ workflow FRAGMENTOMICS {
         -----------------------------------
         genome size      : ${params.genome_size}
         genome 2bit      : ${params.genome_2bit}
-        -----------------------------------
-
-        ANNOTATION FILES:
-        -----------------------------------
-        housekeeping bed : ${params.housekeeping_bed}
         blacklist bed    : ${params.blacklist_bed}
         -----------------------------------
 

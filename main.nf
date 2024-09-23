@@ -49,24 +49,13 @@ sample_ch = Channel.fromPath(params.input)
     .splitCsv(header:true, sep:',')
     .map{ create_sample_channel(it) }
 
-housekeeping_ch = Channel.fromPath(params.housekeeping_bed)
-    .map{ it ->
-        [ ['name': 'HouseKeeping', 'source': 'house_keeping_dataset'], it ]
-    }
-
-random_tss_ch = Channel.fromPath(params.random_tss_bed)
-    .map{ it ->            
-        [ ['name': it.baseName.replaceFirst(/^.*_/,""), 'source': 'house_keeping_dataset'], it ]
-    }
-
 target_ch = Channel.fromPath(params.targets)
     .splitCsv(header: true, sep:',')
     .map{ create_target_channel(it) }
     .filter{ it ->
         it[1].size() > 0 
     }
-    .concat(housekeeping_ch, random_tss_ch)
-
+    .view()
 
 // MAIN WORKFLOW
 workflow {
