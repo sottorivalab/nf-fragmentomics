@@ -3,8 +3,7 @@ FRAGMENTOMICS MAIN WORKFLOW
 */
 
 include { BAM_PREPROCESS     } from '../subworkflows/bam_preprocess/main.nf'
-// include { TARGET_PROCESS     } from './workflows/target_process.nf'
-// include { BAM_MERGE          } from './workflows/bam_merge.nf'
+include { TARGET_PROCESS     } from '../subworkflows/target_process/main.nf'
 
 
 workflow FRAGMENTOMICS {
@@ -75,6 +74,7 @@ workflow FRAGMENTOMICS {
             )
 
             wiggle_ch = BAM_PREPROCESS.out.wiggle_ch
+        
         // USE BIG WIGGLES
         } else {
             log.warn("Skipping preprocessing ...")
@@ -84,16 +84,9 @@ workflow FRAGMENTOMICS {
                 }
         }
 
-        // TODO TARGET_PROCESS
-        // target_ch.view()
-
-        // TARGET_PROCESS(
-        //     target_ch, 
-        //     BAM_PREPROCESS.out.ploidy, 
-        //     BAM_PREPROCESS.out.all_bw_ch,
-        //     BAM_PREPROCESS.out.gain_bw_ch,
-        //     BAM_PREPROCESS.out.neut_bw_ch,
-        //     BAM_PREPROCESS.out.loss_bw_ch,
-        //     blacklist_bed
-        // )
+        TARGET_PROCESS(
+            target_ch,
+            wiggle_ch,
+            blacklist_bed
+        )
 }

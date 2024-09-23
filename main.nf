@@ -20,7 +20,7 @@ def create_target_channel(LinkedHashMap row) {
         name: row.name,
         source: row.source
     ]
-    return [meta, row.bed]
+    return [meta, file(row.bed)]
 }
 
 def create_sample_channel(LinkedHashMap row) {
@@ -52,10 +52,14 @@ sample_ch = Channel.fromPath(params.input)
 target_ch = Channel.fromPath(params.targets)
     .splitCsv(header: true, sep:',')
     .map{ create_target_channel(it) }
-    .filter{ it ->
-        it[1].size() > 0 
-    }
-    .view()
+    
+// filter targets for lines if not stubrun
+if (workflow.stubRun == false) {
+    target_ch = target_ch
+        .filter{ it ->
+            it[1].readLines().size() > 1
+        }
+}
 
 // MAIN WORKFLOW
 workflow {
