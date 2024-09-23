@@ -5,7 +5,6 @@ import csv
 import argparse
 import logging
 from pathlib import Path
-from rich import print
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Generate targets.csv")
@@ -68,7 +67,7 @@ def main():
 
     for idx, x in enumerate(dirs):
         for mfile in x.glob("*.*"):
-            print(f"{mfile.stem.split('.')[0]},{args.sources[idx]},{mfile.absolute()}")
+           print(f"{mfile.stem.split('.')[0]},{args.sources[idx]},{mfile.absolute()}")
             
     
 
