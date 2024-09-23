@@ -1,0 +1,3 @@
+caseid,sampleid,timepoint,bam,bai,bw
+MAYA_12,MAYA_12_BL,BL,,,./tests/input/stub/sample1.bw
+MAYA_12,MAYA_12_BR,BR,,,./tests/input/stub/sample2.bw

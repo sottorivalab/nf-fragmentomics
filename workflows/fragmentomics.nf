@@ -79,9 +79,14 @@ workflow FRAGMENTOMICS {
                 blacklist_bed
             )
 
+            wiggle_ch = BAM_PREPROCESS.out.wiggle_ch
         // USE BIG WIGGLES
         } else {
-            // TODO
+            log.warn("Skipping preprocessing ...")
+            wiggle_ch = sample_ch
+                .map { it ->
+                    [it[0], it[3]]
+                }
         }
 
         // TODO TARGET_PROCESS

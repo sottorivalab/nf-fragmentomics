@@ -1,0 +1,4 @@
+input: "./examples/example_samplesheet_bw.csv"
+targets: "./examples/example_targets.csv"
+outdir: "./results"
+preprocess: false

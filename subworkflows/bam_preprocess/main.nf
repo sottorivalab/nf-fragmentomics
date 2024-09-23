@@ -29,15 +29,15 @@ workflow BAM_PREPROCESS {
         COMPUTEGCBIAS(gc_correct_ch)
         CORRECTGCBIAS(COMPUTEGCBIAS.out.freq)
         
-        coverage_ch = CORRECTGCBIAS.out.gc_correct
+        wiggle_ch = CORRECTGCBIAS.out.gc_correct
             // remove freq file from channel
             .map { it ->
                 [it[0], it[1], it[2]]
             }
             .combine(blacklist_bed)
 
-        COVERAGEBAM(coverage_ch)
+        COVERAGEBAM(wiggle_ch)
     
     emit:
-        coverage_ch
+        wiggle_ch
 }
