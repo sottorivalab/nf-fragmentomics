@@ -29,6 +29,7 @@ process COMPUTEMATRIX {
 		-o ${prefix}_matrix.gz \\
 		--blackListFileName ${blacklist_bed} \\
 		--numberOfProcessors ${task.cpus} \\
+		--sortRegions descend \\
 		$args
 	"""
 
