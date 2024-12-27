@@ -1,0 +1,14 @@
+# TODO
+
+## High Priority
+- [ ] Singularity image for tidyverse e optparse
+- [ ] Write unit tests for core process
+
+## Medium Priority
+- [ ] Optimize performance of matrix processing
+
+## Low Priority
+- [ ] Refactor code for readability
+- [ ] Explore additional features
+- [ ] Conduct code review and cleanup
+
