@@ -23,7 +23,15 @@ A first plot of the composite coverage on the TFBS target set (raw coverage) is 
 
 ![plotHeatmap example](assets/img/plotHeatmap_example.png)
 
+The process `PEAK_STATS` generate 3 output files:
 
+ - `peak_data.tsv` file contains the composite coverage (`raw`) for each bin (`bin`),the coverage relative to the background median (`relative`), the background median (`background_median`) for each bin.
+
+ - `peak_stats.csv` summary statistics for the composite coverage: signal, target, source, integration (Monte Carlo integration), length of the peak (`length`), relative length of the peak (`rlength`), mim and max raw values (`ymin` and `ymax`) and the ratio between length and integration (`ratio`)
+
+ - `PeakIntegration.pdf` pdf plot of the calculated metrics:
+
+![plotStats plot](assets/img/peakStats.png)
 
 ## Quick Start
 
