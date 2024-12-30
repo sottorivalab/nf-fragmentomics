@@ -7,3 +7,4 @@ testing/
 *.pyc
 .nf-test*
 .nf-test/
+*.bkp
