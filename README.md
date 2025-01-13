@@ -35,9 +35,101 @@ The process `PEAK_STATS` generate 3 output files:
 
 ## Quick Start
 
-<!-- TODO -->
+Create a `samplesheet.csv`:
+
+```
+caseid,sampleid,timepoint,bam,bai,bw
+PATIENT_A,PATIENT_A_T1,T1,/path/to/bam.bam,/path/to/bam.bai,
+PATIENT_A,PATIENT_A_T2,T2,/path/to/bam.bam,/path/to/bam.bai,
+```
+
+Where: 
+
+ - `caseid` is the patient
+ - `sampleid` is the sample
+ - `timepoint` is the time group
+ - `bam` is the input bam file
+ - `bai` is the bam index
+ - `bw` is the (optional) big wiggle file (preprocessing will be skipped)
+
+
+Create a target list (`targets.csv`)
+
+```
+name,source,bed
+MYC,GRIFFIN,./tests/input/stub/myc.bed
+ELK4,TIMON,./tests/input/stub/elk4.bed
+rand1,house_keeping_dataset,./tests/input/stub/rand1.bed
+rand2,house_keeping_dataset,./tests/input/stub/rand2.bed
+rand3,house_keeping_dataset,./tests/input/stub/rand3.bed
+HouseKeeping,house_keeping_dataset,./tests/input/stub/GeneHancer_housekeeping.bed
+```
+
+Here we are defining 6 targets: 
+
+ - MYC and ELK4 trascription factor binding sites from GRIFFIN dataset. 
+ - 3 random dataset of random genes for housekeeping plots. 
+ - A set of Housekeeping genes for random comparisons.
+
+Required parameters:
+
+```
+input: "samplesheet.csv"
+targets: "targets.csv"
+outdir: "./results"
+```
+
+Required annotation files and parameters (see `conf/params.config`):
+
+ - `genome_size` : effective genome size used by GC Correction functions (see also: [deeptools effective genome size page](https://deeptools.readthedocs.io/en/latest/content/feature/effectiveGenomeSize.html))
+
+ - `genome_2bit` : Genome in two bit format. Most genomes can be found here: http://hgdownload.cse.ucsc.edu/gbdb/
+
+ - `blacklist_bed`: bed file with blacklisted regions used in COVERAGEBAM (wiggle file generation) and in COMPUTEMATRIX (matrix calculation). I am using the ENCODE blacklist from:
+ 
+        Amemiya, H.M., Kundaje, A. & Boyle, A.P. The ENCODE Blacklist: Identification of Problematic Regions of the Genome. Sci Rep 9, 9354 (2019). https://doi.org/10.1038/s41598-019-45839-z
+
+I typically put parameters in a params.yaml file and I run the pipeline with:
+
+```
+nextflow run ~/nextflow_dev/nf-fragmentomics/main.nf -params-file params.yaml
+```
+
+Available profiles (see also `conf/profiles.config`):
+
+ - stub: run with stub true
+ - debug: run with debug true
+ - devel: run locally
+ - large: for large bam files (Whole Genome Sequencing)
+ - small: for small bam files (Low Pass Whole Genome Sequencing)
+
 
 ## Documentation
+
+### Samplesheet specifications
+
+<!-- TODO -->
+
+### Targets specifications
+
+<!-- TODO -->
+
+### Required Annotation files
+
+ * Use the ENCODED blacklist or other blacklist bed file to remove problematic regions from the analysis.
+
+
+## Analysis example
+
+### Housekeeping plots
+
+<!-- TODO -->
+
+### Target plots
+
+<!-- TODO -->
+
+### Heatmaps with ComplexHeatmap
 
 <!-- TODO -->
 
