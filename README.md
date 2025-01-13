@@ -137,7 +137,50 @@ Input bam file must be sorted and indexed.
 
 ### Housekeeping plots
 
-<!-- TODO -->
+In order to verify if in our dataset it is possible to see a signal from open chromatin regions we can do the following experiment:
+
+1. We take all the TSS from GeneHancer
+2. We calculate the composite coverage (the peak) of all TSS on Housekeeping genes (that should be always active). 
+3. We then calculate the composite coverage for 100 sets of randomly picked genes NOT housekeeping
+
+We first need to load the `peak_data.tsv` files.
+
+Those files contains 4 columns:
+
+ * `raw` is the raw signal
+ * `bin` is the x position
+ * `relative` is the signal relative to the background_median
+ * `background_median` is the median calculated as shown above
+
+In R for example we can do this:
+
+```{r}
+mdata <- read_delim("path/to/peak_data.tsv", show_col_types = FALSE)
+```
+
+We can load the random dataset in an object (random in the next example) and the housekeeping dataset in another object (hk in the next example). 
+
+We can now combine the 2 data in a plot with ggplot
+
+```{r}
+ggplot() +
+    geom_line(data = random, aes(x = bin, y = relative), color="grey", show.legend = FALSE) +
+    geom_line(data = housekeeping, aes(x = bin, y = relative), color="red", show.legend = FALSE) +
+    scale_x_continuous(
+      "Position relative to TSS (bp)", 
+      breaks = c(0,200,400,600,800), 
+      labels = c("-4kb","-2kb","0","2kb","4kb")
+    ) +
+    ylab("Relative coverage") +
+    ggtitle(plot.title) +
+    scale_color_manual(values=c("grey","red")) +
+    theme(legend.position = "bottom")
+```
+
+![HouseKeeping Genes QC Plot](assets/img/housekeeping_plot.png)
+
+The housekeeping signal (red line in the plot) is quite different if compared to random gene sets! Do you agree?
+
 
 ### Target plots
 
