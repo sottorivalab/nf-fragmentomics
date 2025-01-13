@@ -108,7 +108,10 @@ Available profiles (see also `conf/profiles.config`):
 
 ### Samplesheet specifications
 
-<!-- TODO -->
+We tryed the analysis with WGS and lpWGS samples.
+
+Input bam file must be sorted and indexed. 
+
 
 ### Targets specifications
 
@@ -117,6 +120,17 @@ Available profiles (see also `conf/profiles.config`):
 ### Required Annotation files
 
  * Use the ENCODED blacklist or other blacklist bed file to remove problematic regions from the analysis.
+
+### Parameters
+
+ - `preprocess` if true the pipeline filter bam by size, apply GC correction and convert to wiggle file
+
+ - `bin_size` the bin size used to generate the coverage file (big wiggle)
+
+ - `target_expand_sx` and `target_expand_dx` how many bp I must expand the Target region? default is 4000 bp on both sides
+
+ - `filter_min` and `filter_max` limit for reads filtering. By default is 90-150 bp
+
 
 
 ## Analysis example
@@ -132,6 +146,7 @@ Available profiles (see also `conf/profiles.config`):
 ### Heatmaps with ComplexHeatmap
 
 <!-- TODO -->
+
 
 ## Credits
 
