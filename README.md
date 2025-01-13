@@ -135,6 +135,8 @@ Input bam file must be sorted and indexed.
 
 ## Analysis example
 
+Some examples with pseudocode
+
 ### Housekeeping plots
 
 In order to verify if in our dataset it is possible to see a signal from open chromatin regions we can do the following experiment:
@@ -154,7 +156,7 @@ Those files contains 4 columns:
 
 In R for example we can do this:
 
-```{r}
+```r
 mdata <- read_delim("path/to/peak_data.tsv", show_col_types = FALSE)
 ```
 
@@ -162,7 +164,7 @@ We can load the random dataset in an object (random in the next example) and the
 
 We can now combine the 2 data in a plot with ggplot
 
-```{r}
+```r
 ggplot() +
     geom_line(data = random, aes(x = bin, y = relative), color="grey", show.legend = FALSE) +
     geom_line(data = housekeeping, aes(x = bin, y = relative), color="red", show.legend = FALSE) +
@@ -184,7 +186,40 @@ The housekeeping signal (red line in the plot) is quite different if compared to
 
 ### Target plots
 
-<!-- TODO -->
+Here we want to plot the composite coverage for a single Transcription Factor for a cohort across different timepoints.
+
+We start as above from the `peak_data.tsv` files where:
+
+ * `raw` is the raw signal
+ * `bin` is the x position
+ * `relative` is the signal relative to the background_median
+ * `background_median` is the median calculated as shown above
+
+In this case is better to lead the single file and merge the data in a single object:
+
+For each peak_data file:
+
+```r
+mdata <- read_delim("path/to/peak_data.tsv", show_col_types = FALSE)
+```
+
+Mutate rdata to add sample, case and timepoint
+
+```r
+mdata <- mdata |> mutate(
+    sample=sample_name,
+    case=case_name,
+    timepoint=timepoint_name
+)
+```
+
+You can now combine different data objects in a single object using `bind_rows`.
+
+On the final dataset we can use the `bins` on the X axis, the `relative` signal on the Y axis. We group and color observation by timepoint and we split (facet_wrap) plots by patient.
+
+Result:
+
+![CDX2 Cohort Plot](assets/img/target_plots_cdx2.png)
 
 ### Heatmaps with ComplexHeatmap
 
