@@ -9,12 +9,6 @@ nextflow.enable.dsl = 2
 
 include { FRAGMENTOMICS } from './workflows/fragmentomics.nf'
 
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   PARSE INPUT FILE
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
 def create_target_channel(LinkedHashMap row) {
     def meta = [
         name: row.name,

@@ -1,0 +1,68 @@
+{
+    "Should run bamPEFragmentSize with default parameters": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "caseid": "test",
+                            "sampleid": "test",
+                            "timepoint": "T1"
+                        },
+                        "test.paired_end.sorted_fragmentsize.png:md5,1607ab8d1c4aeb0076cb177411826f66",
+                        "test.paired_end.sorted_fragmentsize.txt:md5,aec545fc634ae0d1df19a1c10bcd1571"
+                    ]
+                ],
+                "bamqc": [
+                    [
+                        {
+                            "caseid": "test",
+                            "sampleid": "test",
+                            "timepoint": "T1"
+                        },
+                        "test.paired_end.sorted_fragmentsize.png:md5,1607ab8d1c4aeb0076cb177411826f66",
+                        "test.paired_end.sorted_fragmentsize.txt:md5,aec545fc634ae0d1df19a1c10bcd1571"
+                    ]
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.3"
+        },
+        "timestamp": "2025-01-14T17:13:31.3952"
+    },
+    "Should run bamPEFragmentSize with custom parameters": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "caseid": "test",
+                            "sampleid": "test",
+                            "timepoint": "T1"
+                        },
+                        "test.paired_end.sorted_fragmentsize.png:md5,1607ab8d1c4aeb0076cb177411826f66",
+                        "test.paired_end.sorted_fragmentsize.txt:md5,aec545fc634ae0d1df19a1c10bcd1571"
+                    ]
+                ],
+                "bamqc": [
+                    [
+                        {
+                            "caseid": "test",
+                            "sampleid": "test",
+                            "timepoint": "T1"
+                        },
+                        "test.paired_end.sorted_fragmentsize.png:md5,1607ab8d1c4aeb0076cb177411826f66",
+                        "test.paired_end.sorted_fragmentsize.txt:md5,aec545fc634ae0d1df19a1c10bcd1571"
+                    ]
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.3"
+        },
+        "timestamp": "2025-01-14T17:14:54.754929"
+    }
+}

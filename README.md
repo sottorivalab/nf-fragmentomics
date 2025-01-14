@@ -52,6 +52,8 @@ flowchart TB
     end
 ```
 
+### INPUT
+
 Create a `samplesheet.csv`:
 
 ```
@@ -68,6 +70,8 @@ Where:
  - `bam` is the input BAM file
  - `bai` is the BAM index
  - `bw` is the (optional) big wiggle file (preprocessing will be skipped)
+
+### TARGETS
 
 Create a target list (`targets.csv`):
 
@@ -95,21 +99,21 @@ targets: "targets.csv"
 outdir: "./results"
 ```
 
-Required annotation files and parameters (see `conf/params.config`):
+### GENOME
 
- - `genome_size`: effective genome size used by GC Correction functions (see also: [deeptools effective genome size page](https://deeptools.readthedocs.io/en/latest/content/feature/effectiveGenomeSize.html))
+`genome_2bit`: Genome in two-bit format. Most genomes can be found here: http://hgdownload.cse.ucsc.edu/gbdb/
 
- - `genome_2bit`: Genome in two-bit format. Most genomes can be found here: http://hgdownload.cse.ucsc.edu/gbdb/
+### BLACKLIST BED
 
- - `blacklist_bed`: BED file with blacklisted regions used in COVERAGEBAM (wiggle file generation) and in COMPUTEMATRIX (matrix calculation). We are using the ENCODE blacklist from:
+`blacklist_bed`: BED file with blacklisted regions used in COVERAGEBAM (wiggle file generation) and in COMPUTEMATRIX (matrix calculation). We are using the ENCODE blacklist from:
  
-        Amemiya, H.M., Kundaje, A. & Boyle, A.P. The ENCODE Blacklist: Identification of Problematic Regions of the Genome. Sci Rep 9, 9354 (2019). https://doi.org/10.1038/s41598-019-45839-z
+    Amemiya, H.M., Kundaje, A. & Boyle, A.P. The ENCODE Blacklist: Identification of Problematic Regions of the Genome. Sci Rep 9, 9354 (2019). https://doi.org/10.1038/s41598-019-45839-z
 
-I typically put parameters in a params.yaml file and run the pipeline with:
+### GENOME SIZE
 
-```
-nextflow run ~/nextflow_dev/nf-fragmentomics/main.nf -params-file params.yaml
-```
+`genome_size`: effective genome size used by GC Correction functions (see also: [deeptools effective genome size page](https://deeptools.readthedocs.io/en/latest/content/feature/effectiveGenomeSize.html))
+
+### PROFILES
 
 Available profiles (see also `conf/profiles.config`):
 
@@ -121,7 +125,7 @@ Available profiles (see also `conf/profiles.config`):
 
 Some profile examples:
 
-### Stub
+#### Stub
 
 Stub run with stub annotation files:
 
@@ -129,7 +133,7 @@ Stub run with stub annotation files:
 nextflow run main.nf -profile stub -stub-run -params-file params.yaml
 ```
 
-### Devel with conda
+#### Devel with conda
 
 Run on single machine with conda environment:
 
@@ -137,14 +141,13 @@ Run on single machine with conda environment:
 nextflow run main.nf -profile devel,conda -params-file params.yaml
 ```
 
-### Whole Genome Sequencing with singularity
+#### Whole Genome Sequencing with singularity
 
 Run on slurm cluster with singularity
 
 ```
 nextflow run main.nf -profile large,singularity -params-file params.yaml
 ```
-
 
 ## Documentation
 
