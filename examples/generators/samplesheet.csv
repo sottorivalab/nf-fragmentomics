@@ -1,0 +1,9 @@
+caseid,sampleid,timepoint,bam,bai,bw
+case1,case1_T1,T1,,,/Users/davide.rambaldi/Documents/Projects/nextflow_dev/nf-fragmentomics/examples/generators/case1_T1.bw
+case1,case1_T2,T2,,,/Users/davide.rambaldi/Documents/Projects/nextflow_dev/nf-fragmentomics/examples/generators/case1_T2.bw
+case2,case2_T1,T1,,,/Users/davide.rambaldi/Documents/Projects/nextflow_dev/nf-fragmentomics/examples/generators/case2_T1.bw
+case2,case2_T2,T2,,,/Users/davide.rambaldi/Documents/Projects/nextflow_dev/nf-fragmentomics/examples/generators/case2_T2.bw
+case1,case1_T1,T1,/Users/davide.rambaldi/Documents/Projects/nextflow_dev/nf-fragmentomics/examples/generators/case1_T1.bam,/Users/davide.rambaldi/Documents/Projects/nextflow_dev/nf-fragmentomics/examples/generators/case1_T1.bam.bai,
+case1,case1_T2,T2,/Users/davide.rambaldi/Documents/Projects/nextflow_dev/nf-fragmentomics/examples/generators/case1_T2.bam,/Users/davide.rambaldi/Documents/Projects/nextflow_dev/nf-fragmentomics/examples/generators/case1_T2.bam.bai,
+case2,case2_T1,T1,/Users/davide.rambaldi/Documents/Projects/nextflow_dev/nf-fragmentomics/examples/generators/case2_T1.bam,/Users/davide.rambaldi/Documents/Projects/nextflow_dev/nf-fragmentomics/examples/generators/case2_T1.bam.bai,
+case2,case2_T2,T2,/Users/davide.rambaldi/Documents/Projects/nextflow_dev/nf-fragmentomics/examples/generators/case2_T2.bam,/Users/davide.rambaldi/Documents/Projects/nextflow_dev/nf-fragmentomics/examples/generators/case2_T2.bam.bai,
