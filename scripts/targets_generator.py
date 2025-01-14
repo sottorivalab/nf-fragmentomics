@@ -12,29 +12,28 @@ __license__ = "MIT"
 
 _logger = logging.getLogger(__name__)
 
-regexp = re.compile(r"((.*)_(.*))\..*")
+regexp = re.compile(r"(.*)\..*")
 
 def parse_args():
     """Parse arguments"""
     parser = argparse.ArgumentParser(
-        description="Generate samplesheet.csv for nf-fragmentomics pipeline",
+        description="Generate targets.csv for nf-fragmentomics pipeline",
         epilog="Author: Davide Rambaldi"
     )
-    
+
     parser.add_argument(
         dest="files",
-        help="Bam or wiggle files",
+        help="Input bed files",
         nargs='+',
         metavar="FILE",
     )
 
     parser.add_argument(
-        "-r",
-        "--regexp",
-        dest="regexp",
-        default=regexp,
-        metavar="REGEXP",
-        help=f"Parser regexp - default: {regexp.pattern}"
+        "-s",
+        "--source",
+        dest="source",
+        help="Source of the bed files - by default use the parent directory name",
+        default=None,
     )
 
     parser.add_argument(
@@ -67,69 +66,53 @@ def setup_logging(loglevel):
     logformat = "[%(asctime)s] %(levelname)s:%(name)s:%(message)s"
     logging.basicConfig(
         level=loglevel, 
-        stream=sys.stderr, 
+        stream=sys.stdout, 
         format=logformat, 
         datefmt="%Y-%m-%d %H:%M:%S"
     )
 
 def check_files(files):
-    """Check if files exist"""
+    """Check files"""
     for file in files:
-        _logger.info(f"Checking file: {file}")
+        _logger.info("Checking file: %s", file)
         if not file.is_file():
-            _logger.error(f"File not found: {file}")
-            return False
-
-        if file.suffix not in ['.bam', '.bw']:
-            _logger.error(f"Invalid file extension: {file}")
+            _logger.error("File not found: %s", f)
             return False
         
-        if file.suffix == '.bam':
-            bai_file = Path(f"{str(file)}.bai")
-            if not bai_file.is_file():
-                _logger.error(f"Missing bai file: {bai_file}")
-                return False
-            
-    return True
+        if file.suffix != ".bed":
+            _logger.error("File extension not supported: %s", file)
+            return False
+        
+        return True
 
-def print_samplesheet(files):
-    """Write samplesheet.csv to stdout"""
-    print("caseid,sampleid,timepoint,bam,bai,bw")
+def print_targets(files, source):
+    """Write targets.csv to stdout"""
+    print("name,source,bed")
     for file in files:
         match = regexp.match(file.name)
-        sampleid = match.group(1)
-        caseid = match.group(2)
-        timepoint = match.group(3)
-
-        _logger.info(
-            f"Writing file: {file},\n"
-            f"Suffix: {file.suffix},\n"
-            f"Name: {file.name},\n"
-            f"Match: {match} - sampleid={sampleid} caseid={caseid} timepoint={timepoint}\n"
-        )
-
+        name = match.group(1)
+        if source is None:
+            source = file.parent.name
         file_abs = Path.cwd() / file.name
-        if file.suffix == '.bam':
-            bai_abs = Path.cwd() / f"{file.name}.bai"
-            print(f"{caseid},{sampleid},{timepoint},{file_abs},{bai_abs},")
-        else:
-            print(f"{caseid},{sampleid},{timepoint},,,{file_abs}")
+        print(f"{name},{source},{file_abs}")
+        
 
 def main():
     """Main function"""
     args = parse_args()
     setup_logging(args.loglevel)
-    
-    _logger.info("Generating samplesheet.csv")
+
+    _logger.info("Generating targets.csv")
     _logger.info("Parser regexp: %s", regexp.pattern)
+    
+    if args.source is not None:
+        _logger.info("Source: %s", args.source)
 
     files = [Path(f) for f in args.files]
-    
-    _logger.info("Checking files")
 
     if check_files(files):
         _logger.info("Files are ok")
-        print_samplesheet(files)
+        print_targets(files, args.source)
         _logger.info("Done")
         return 0
     else:
