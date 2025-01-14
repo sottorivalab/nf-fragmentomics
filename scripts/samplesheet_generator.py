@@ -4,7 +4,6 @@ import sys
 import argparse
 import logging
 import re
-
 from pathlib import Path
 
 __author__ = "Davide Rambaldi"
@@ -17,7 +16,6 @@ regexp = re.compile(r"((.*)_(.*))\..*")
 
 def parse_args():
     """Parse arguments"""
-
     parser = argparse.ArgumentParser(
         description="Generate samplesheet.csv for nf-fragmentomics pipeline",
         epilog="Author: Davide Rambaldi"
@@ -82,12 +80,12 @@ def check_files(files):
             _logger.error(f"File not found: {file}")
             return False
 
-        if file.suffix not in ['.bam','.bw']:
+        if file.suffix not in ['.bam', '.bw']:
             _logger.error(f"Invalid file extension: {file}")
             return False
         
-        if file.suffix  == '.bam':
-            bai_file = Path(f"{str(file)}.bai")            
+        if file.suffix == '.bam':
+            bai_file = Path(f"{str(file)}.bai")
             if not bai_file.is_file():
                 _logger.error(f"Missing bai file: {bai_file}")
                 return False
@@ -96,7 +94,7 @@ def check_files(files):
 
 def write_samplesheet(files):
     """Write samplesheet.csv"""
-    with open("samplesheet.csv","w") as f:
+    with open("samplesheet.csv", "w") as f:
         f.write("caseid,sampleid,timepoint,bam,bai,bw\n")
         for file in files:
             match = regexp.match(file.name)
@@ -118,8 +116,6 @@ def write_samplesheet(files):
             else:
                 f.write(f"{caseid},{sampleid},{timepoint},,,{file_abs}\n")
        
-
-
 def main():
     """Main function"""
     args = parse_args()
@@ -139,7 +135,6 @@ def main():
         return 0
     else:
         return 1
-
 
 if __name__ == "__main__":
     sys.exit(main())
