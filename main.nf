@@ -40,31 +40,34 @@ def create_sample_channel(LinkedHashMap row) {
     ]
 }
 
-// Init param files
-genome_2bit = params.genome_2bit ? Channel.fromPath(params.genome_2bit) : Channel.empty()
-blacklist_bed = params.blacklist_bed ? Channel.fromPath(params.blacklist_bed) : Channel.empty()
 
-// samples channel
-sample_ch = Channel.fromPath(params.input)
-    .splitCsv(header:true, sep:',')
-    .map{ create_sample_channel(it) }
-
-target_ch = Channel.fromPath(params.targets)
-    .splitCsv(header: true, sep:',')
-    .map{ create_target_channel(it) }
-    
-// filter targets for lines if not stubrun
-if (workflow.stubRun == false) {
-    target_ch = target_ch
-        .filter{ it ->
-            it[1].readLines().size() > 1
-        }
-}
 
 // MAIN WORKFLOW
 workflow {
     
     main:
+    // Init param files
+    genome_2bit = params.genome_2bit ? Channel.fromPath(params.genome_2bit) : Channel.empty()
+    blacklist_bed = params.blacklist_bed ? Channel.fromPath(params.blacklist_bed) : Channel.empty()
+
+    // samples channel
+    sample_ch = Channel.fromPath(params.input)
+        .splitCsv(header:true, sep:',')
+        .map{ create_sample_channel(it) }
+
+    // targets channel
+    target_ch = Channel.fromPath(params.targets)
+        .splitCsv(header: true, sep:',')
+        .map{ create_target_channel(it) }
+        
+    // filter targets for lines if not stubrun
+    if (workflow.stubRun == false) {
+        target_ch = target_ch
+            .filter{ it ->
+                it[1].readLines().size() > 1
+            }
+    }
+
     FRAGMENTOMICS(
         sample_ch,
         target_ch,

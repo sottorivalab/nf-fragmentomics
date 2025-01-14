@@ -102,6 +102,33 @@ Available profiles (see also `conf/profiles.config`):
  - `large`: for large BAM files (Whole Genome Sequencing)
  - `small`: for small BAM files (Low Pass Whole Genome Sequencing)
 
+Some profile examples:
+
+### Stub
+
+Stub run with stub annotation files:
+
+```
+nextflow run main.nf -profile stub -stub-run -params-file params.yaml
+```
+
+### Devel with conda
+
+Run on single machine with conda environment:
+
+```
+nextflow run main.nf -profile devel,conda -params-file params.yaml
+```
+
+### Whole Genome Sequencing with singularity
+
+Run on slurm cluster with singularity
+
+```
+nextflow run main.nf -profile large,singularity -params-file params.yaml
+```
+
+
 ## Documentation
 
 ### Samplesheet specifications
@@ -125,12 +152,13 @@ Param: `blacklist_bed`
 ### Parameters
 
  - `preprocess`: if true, the pipeline filters BAM by size, applies GC correction, and converts to wiggle file
-
  - `bin_size`: the bin size used to generate the coverage file (big wiggle)
-
  - `target_expand_sx` and `target_expand_dx`: how many bp to expand the Target region? default is 4000 bp on both sides
-
  - `filter_min` and `filter_max`: limit for reads filtering. By default is 90-150 bp
+
+### Labels
+
+<!-- TODO -->
 
 ### Scripts
 

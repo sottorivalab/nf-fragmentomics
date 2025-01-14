@@ -23,7 +23,7 @@ workflow FRAGMENTOMICS {
         /////////////////////////////////////////////////
         log.info """\
         ===================================
-        ${params.manifest.name} v${params.manifest.version}
+        ${workflow.manifest.name} v${workflow.manifest.version}
         ===================================
 
         PARAMS
