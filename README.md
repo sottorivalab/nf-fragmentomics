@@ -112,11 +112,15 @@ Input BAM file must be sorted and indexed.
 
 ### Targets specifications
 
-<!-- TODO -->
+File name or names, in BED or GTF format, containing the regions to compute and plot.
+
+see also [computeMatrix](https://deeptools.readthedocs.io/en/latest/content/tools/computeMatrix.html)
 
 ### Required Annotation files
 
- * Use the ENCODE blacklist or other blacklist BED file to remove problematic regions from the analysis.
+This pipeline use the ENCODE blacklist or other blacklist BED file to remove problematic regions from the analysis.
+
+Param: `blacklist_bed`
 
 ### Parameters
 
