@@ -35,6 +35,23 @@ The process `PEAK_STATS` generates 3 output files:
 
 ## Quick Start
 
+```mermaid
+flowchart TB
+    subgraph " "
+    subgraph params
+    v4["input"]
+    v2["blacklist_bed"]
+    v0["genome_2bit"]
+    v6["targets"]
+    end
+    v9([FRAGMENTOMICS])
+    v0 --> v9
+    v2 --> v9
+    v4 --> v9
+    v6 --> v9
+    end
+```
+
 Create a `samplesheet.csv`:
 
 ```
