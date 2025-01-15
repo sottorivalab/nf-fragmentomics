@@ -21,7 +21,7 @@ process FILTERBAMBYSIZE {
         awk 'function abs(v) { return v < 0 ? -v : v} \\
         { if (\$0 ~ /^@/) {print} \\
         else { if ( abs(\$9) > ${params.filter_min} && abs(\$9) <= ${params.filter_max} ) {print}}}' | \\
-        samtools view -b > ${prefix}.filtered.bam
+        samtools view -b $args > ${prefix}.filtered.bam
         samtools index ${prefix}.filtered.bam
     """
 
