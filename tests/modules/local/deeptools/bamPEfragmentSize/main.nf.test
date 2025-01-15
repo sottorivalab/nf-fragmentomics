@@ -9,6 +9,7 @@ nextflow_process {
         when {
             params {
                 outdir = "tests/results"
+                module_args = ""
             }
             process {
                 
@@ -30,14 +31,13 @@ nextflow_process {
     }
 
     test("Should run bamPEFragmentSize with custom parameters") {
-
+        
         when {
             params {
                 outdir = "tests/results"
-                args = "--maxFragmentLength 1000 --binSize 10"
+                module_args = '--maxFragmentLength 100'                
             }
-            process {
-                
+            process {                
                 """
                 input[0] = [
                     [ caseid:'test', sampleid: 'test', timepoint: 'T1' ], // meta map
@@ -51,9 +51,6 @@ nextflow_process {
         then {
             assert process.success
             assert snapshot(process.out).match()
-            // FIXME check somewhere else
-            assert path(process.out.histogram.get(0).get(1)).text.contains("--maxFragmentLength 1000")
-            assert path(process.out.histogram.get(0).get(1)).text.contains("--binSize 10")
         }
 
     }

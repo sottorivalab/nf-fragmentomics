@@ -42,7 +42,7 @@
                             "sampleid": "test",
                             "timepoint": "T1"
                         },
-                        "test.paired_end.sorted_fragmentsize.png:md5,1607ab8d1c4aeb0076cb177411826f66",
+                        "test.paired_end.sorted_fragmentsize.png:md5,ce25bfc0d444756b949455ab078a99f5",
                         "test.paired_end.sorted_fragmentsize.txt:md5,aec545fc634ae0d1df19a1c10bcd1571"
                     ]
                 ],
@@ -53,7 +53,7 @@
                             "sampleid": "test",
                             "timepoint": "T1"
                         },
-                        "test.paired_end.sorted_fragmentsize.png:md5,1607ab8d1c4aeb0076cb177411826f66",
+                        "test.paired_end.sorted_fragmentsize.png:md5,ce25bfc0d444756b949455ab078a99f5",
                         "test.paired_end.sorted_fragmentsize.txt:md5,aec545fc634ae0d1df19a1c10bcd1571"
                     ]
                 ]
@@ -63,6 +63,6 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-01-14T17:14:54.754929"
+        "timestamp": "2025-01-15T10:07:48.606031"
     }
 }
