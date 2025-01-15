@@ -9,7 +9,6 @@ nextflow_process {
         when {
             params {
                 outdir = "tests/results"
-                module_args = ""
             }
             process {
                 
