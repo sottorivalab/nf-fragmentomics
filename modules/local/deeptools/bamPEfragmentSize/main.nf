@@ -17,7 +17,6 @@ process BAMPEFRAGMENTSIZE {
         mode:'copy', 
         overwrite:true
 
-
     input:
     // meta: [ caseid, sampleid, timepoint ]
     tuple val(meta), path(bam), path(bai)
@@ -25,6 +24,7 @@ process BAMPEFRAGMENTSIZE {
     output:
     // meta: [ caseid, sampleid, timepoint ]
     tuple val(meta), path("*_fragmentsize.png"), path("*_fragmentsize.txt"), emit: bamqc
+    path "versions.yml"                                                    , emit: versions
 
     script:
     def args = task.ext.args ?: ''
@@ -36,6 +36,11 @@ process BAMPEFRAGMENTSIZE {
         -T "Sample: ${meta.sampleid}" \\
         --numberOfProcessors ${task.cpus} \\
         $args 1>${prefix}_fragmentsize.txt
+    
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        deeptools: \$(bamPEFragmentSize --version | sed -e "s/bamPEFragmentSize //g")
+    END_VERSIONS
     """
 
     stub:
@@ -43,5 +48,10 @@ process BAMPEFRAGMENTSIZE {
     """
     touch ${prefix}_fragmentsize.png
     touch ${prefix}_fragmentsize.txt
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        deeptools: \$(bamPEFragmentSize --version | sed -e "s/bamPEFragmentSize //g")
+    END_VERSIONS
     """
 }
