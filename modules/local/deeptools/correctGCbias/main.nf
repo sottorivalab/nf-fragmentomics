@@ -1,3 +1,6 @@
+/*
+ * Correct GC bias in BAM files
+ */ 
 process CORRECTGCBIAS {
     tag "$meta.sampleid"	
 	label 'heavy_process'

@@ -1,0 +1,28 @@
+{
+    "Should run COMPUTEMATRIX without failures": {
+        "content": [
+            [
+                [
+                    {
+                        "caseid": "test",
+                        "sampleid": "test",
+                        "timepoint": "T1"
+                    },
+                    {
+                        "source": "test",
+                        "name": "test"
+                    },
+                    "test_matrix.gz:md5,dcf3ebf50243448dddc584a60057a0c1"
+                ]
+            ],
+            [
+                "versions.yml:md5,defce74e73df4e345c6c325220d4072d"
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.3"
+        },
+        "timestamp": "2025-01-16T14:32:17.347144"
+    }
+}

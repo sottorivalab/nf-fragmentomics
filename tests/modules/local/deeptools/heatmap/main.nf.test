@@ -1,0 +1,33 @@
+nextflow_process {
+
+    name "Test Process HEATMAP"
+    script "modules/local/deeptools/heatmap/main.nf"
+    process "HEATMAP"
+
+    test("Should run HEATMAP without failures") {
+
+        when {
+            params {
+                outdir = "tests/results"
+            }
+            process {
+                // meta_sample [caseid, sampleid, timepoint], meta_target [source, name], matrix
+
+                """
+                input[0] = [
+                    [ caseid:'test', sampleid: 'test', timepoint: 'T1' ],
+                    [ source: 'test', name: 'test' ],
+                    file(params.modules_testdata_base_path + 'genomics/sarscov2/illumina/deeptools/test.computeMatrix.mat.gz', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out.heatmap, process.out.versions).match()
+        }
+
+    }
+
+}

@@ -1,3 +1,6 @@
+/*
+ * COMPUTEGCBIAS in bam files
+ */
 process COMPUTEGCBIAS {
 	tag "$meta.sampleid"	
 	label 'heavy_process'

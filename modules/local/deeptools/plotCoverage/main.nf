@@ -5,7 +5,6 @@
  * It takes as input a BAM file and produces a graphical representation of the coverage across the genome.
  * The output includes a PNG image showing the coverage plot and a tab-delimited text file with the coverage values.
  */
-
 process PLOTCOVERAGE {
     tag "$meta.sampleid"
     label 'fast_process'

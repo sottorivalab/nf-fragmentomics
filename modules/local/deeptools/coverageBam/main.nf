@@ -1,5 +1,8 @@
+/*
+ * This process takes a BAM file as input and calculates the coverage.
+ */
 process COVERAGEBAM {
-	tag "$meta.id"
+	tag "$meta.sampleid"
 	label 'heavy_process'
 
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
