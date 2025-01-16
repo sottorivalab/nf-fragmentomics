@@ -1,68 +1,48 @@
 {
     "Should run bamPEFragmentSize with default parameters": {
         "content": [
-            {
-                "0": [
-                    [
-                        {
-                            "caseid": "test",
-                            "sampleid": "test",
-                            "timepoint": "T1"
-                        },
-                        "test.paired_end.sorted_fragmentsize.png:md5,1607ab8d1c4aeb0076cb177411826f66",
-                        "test.paired_end.sorted_fragmentsize.txt:md5,aec545fc634ae0d1df19a1c10bcd1571"
-                    ]
-                ],
-                "bamqc": [
-                    [
-                        {
-                            "caseid": "test",
-                            "sampleid": "test",
-                            "timepoint": "T1"
-                        },
-                        "test.paired_end.sorted_fragmentsize.png:md5,1607ab8d1c4aeb0076cb177411826f66",
-                        "test.paired_end.sorted_fragmentsize.txt:md5,aec545fc634ae0d1df19a1c10bcd1571"
-                    ]
+            [
+                [
+                    {
+                        "caseid": "test",
+                        "sampleid": "test",
+                        "timepoint": "T1"
+                    },
+                    "test.paired_end.sorted_fragmentsize.png:md5,1607ab8d1c4aeb0076cb177411826f66",
+                    "test.paired_end.sorted_fragmentsize.txt:md5,aec545fc634ae0d1df19a1c10bcd1571"
                 ]
-            }
+            ],
+            [
+                "versions.yml:md5,983e4a3117f03e952d2c03d6ea6cd64e"
+            ]
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-01-14T17:13:31.3952"
+        "timestamp": "2025-01-16T11:32:27.221346"
     },
     "Should run bamPEFragmentSize with custom parameters": {
         "content": [
-            {
-                "0": [
-                    [
-                        {
-                            "caseid": "test",
-                            "sampleid": "test",
-                            "timepoint": "T1"
-                        },
-                        "test.paired_end.sorted_fragmentsize.png:md5,ce25bfc0d444756b949455ab078a99f5",
-                        "test.paired_end.sorted_fragmentsize.txt:md5,aec545fc634ae0d1df19a1c10bcd1571"
-                    ]
-                ],
-                "bamqc": [
-                    [
-                        {
-                            "caseid": "test",
-                            "sampleid": "test",
-                            "timepoint": "T1"
-                        },
-                        "test.paired_end.sorted_fragmentsize.png:md5,ce25bfc0d444756b949455ab078a99f5",
-                        "test.paired_end.sorted_fragmentsize.txt:md5,aec545fc634ae0d1df19a1c10bcd1571"
-                    ]
+            [
+                [
+                    {
+                        "caseid": "test",
+                        "sampleid": "test",
+                        "timepoint": "T1"
+                    },
+                    "test.paired_end.sorted_fragmentsize.png:md5,ce25bfc0d444756b949455ab078a99f5",
+                    "test.paired_end.sorted_fragmentsize.txt:md5,aec545fc634ae0d1df19a1c10bcd1571"
                 ]
-            }
+            ],
+            [
+                "versions.yml:md5,983e4a3117f03e952d2c03d6ea6cd64e"
+            ]
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-01-15T10:07:48.606031"
+        "timestamp": "2025-01-16T11:32:44.627455"
     }
 }
