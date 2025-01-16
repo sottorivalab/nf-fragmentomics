@@ -7,9 +7,11 @@ process COMPUTEGCBIAS {
         'biocontainers/deeptools:3.5.5--pyhdfd78af_0' }"	
 
 	input:
+	// meta [caseid, sampleid, timepoint], bam, bai, genome_2bit
 	tuple val(meta), path(bam), path(bai), path(genome_2bit)    
 
 	output:
+	// meta [caseid, sampleid, timepoint], bam, bai, genome_2bit, freq
 	tuple val(meta), path(bam), path(bai), path(genome_2bit), path("*.freq.txt"), emit: freq
 	path "versions.yml"                                                         , emit: versions
 

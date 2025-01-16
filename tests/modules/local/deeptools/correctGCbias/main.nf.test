@@ -1,0 +1,42 @@
+nextflow_process {
+
+    name "Test Process CORRECTGCBIAS"
+    script "modules/local/deeptools/correctGCbias/main.nf"
+    process "CORRECTGCBIAS"
+
+    test("Should run CORRECTGCBIAS without failures") {
+        setup {
+            run("COMPUTEGCBIAS") {
+                script "modules/local/deeptools/computeGCbias/main.nf"
+                process {
+                    """
+                    input[0] = [
+                        [ caseid:'test', sampleid: 'test', timepoint: 'T1' ], // meta map
+                        file(params.modules_testdata_base_path + 'genomics/homo_sapiens/illumina/bam/test.paired_end.sorted.bam', checkIfExists: true),
+                        file(params.modules_testdata_base_path + 'genomics/homo_sapiens/illumina/bam/test.paired_end.sorted.bam.bai', checkIfExists: true),
+                        file(params.modules_testdata_base_path + 'genomics/homo_sapiens/genome/chr22/sequence/chr22_23800000-23980000.2bit', checkIfExists: true)
+                    ]
+                    """
+                }
+            }
+        }
+
+        when {
+            params {                
+                outdir = "tests/results"
+            }
+            process {
+                """
+                input[0] = COMPUTEGCBIAS.out.freq
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out.gc_correct, process.out.versions).match()
+        }
+
+    }
+
+}
