@@ -1,16 +1,17 @@
 process COMPUTEGCBIAS {
-	
+	tag "$meta.sampleid"	
+	label 'heavy_process'
+
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/deeptools:3.5.5--pyhdfd78af_0' :
-        'biocontainers/deeptools:3.5.5--pyhdfd78af_0' }"
-	
-	label 'heavy_process'
+        'biocontainers/deeptools:3.5.5--pyhdfd78af_0' }"	
 
 	input:
 	tuple val(meta), path(bam), path(bai), path(genome_2bit)    
 
 	output:
 	tuple val(meta), path(bam), path(bai), path(genome_2bit), path("*.freq.txt"), emit: freq
+	path "versions.yml"                                                         , emit: versions
 
 	script:
     def args = task.ext.args ?: ''
@@ -23,11 +24,21 @@ process COMPUTEGCBIAS {
         --GCbiasFrequenciesFile ${prefix}.freq.txt \\
         --numberOfProcessors ${task.cpus} \\
         $args
+	
+	cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        deeptools: \$(computeGCBias --version | sed -e "s/computeGCBias //g")
+    END_VERSIONS
 	"""
 
 	stub:
     def prefix = task.ext.prefix ?: "${meta.sampleid}"
 	"""
 	touch ${prefix}.freq.txt
+
+	cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        deeptools: \$(computeGCBias --version | sed -e "s/computeGCBias //g")
+    END_VERSIONS
 	"""
 }

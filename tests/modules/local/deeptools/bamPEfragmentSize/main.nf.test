@@ -32,10 +32,14 @@ nextflow_process {
     test("Should run bamPEFragmentSize with custom parameters") {
         
         when {
+            
             params {
                 outdir = "tests/results"
                 module_args = '--maxFragmentLength 100'                
             }
+
+            config "./nextflow.config"
+
             process {                
                 """
                 input[0] = [
