@@ -1,5 +1,14 @@
+/*
+ * This Nextflow script is part of the nf-fragmentomics project and is located in the deeptools/bamPEfragmentSize module.
+ * The script is designed to calculate the fragment size distribution of paired-end BAM files using the bamPEFragmentSize tool from deepTools.
+ * It takes paired-end BAM files as input and generates a plot showing the fragment size distribution.
+ * The output can be used to assess the quality of the sequencing library and to identify any potential issues with the fragment size distribution.
+ */
+
 process BAMPEFRAGMENTSIZE {
-   
+    tag "$meta.sampleid"
+    label 'fast_process'
+
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/deeptools:3.5.5--pyhdfd78af_0':
         'biocontainers/deeptools:3.5.5--pyhdfd78af_0' }"
@@ -8,12 +17,13 @@ process BAMPEFRAGMENTSIZE {
         mode:'copy', 
         overwrite:true
 
-    label 'fast_process'
 
     input:
+    // meta: [ caseid, sampleid, timepoint ]
     tuple val(meta), path(bam), path(bai)
 
     output:
+    // meta: [ caseid, sampleid, timepoint ]
     tuple val(meta), path("*_fragmentsize.png"), path("*_fragmentsize.txt"), emit: bamqc
 
     script:
