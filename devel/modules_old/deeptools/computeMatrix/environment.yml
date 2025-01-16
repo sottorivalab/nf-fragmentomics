@@ -1,7 +1,0 @@
-name: deeptools-compute-matrix
-channels:
-  - conda-forge
-  - bioconda
-  - defaults
-dependencies:
-  - bioconda::deeptools=3.5.4

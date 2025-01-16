@@ -1,7 +1,0 @@
-name: ucsc-bigwig-merge
-channels:
-  - conda-forge
-  - bioconda
-  - defaults
-dependencies:
-  - bioconda::ucsc-bigwigmerge=377

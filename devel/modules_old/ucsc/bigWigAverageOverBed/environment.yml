@@ -1,7 +1,0 @@
-name: ucsc-big-wig-average-over-bed
-channels:
-  - conda-forge
-  - bioconda
-  - defaults
-dependencies:
-  - bioconda::ucsc-bigwigaverageoverbed=377
