@@ -1,35 +1,25 @@
 {
     "Should run PLOTCOVERAGE without failures": {
         "content": [
-            {
-                "0": [
-                    [
-                        {
-                            "caseid": "test",
-                            "sampleid": "test",
-                            "timepoint": "T1"
-                        },
-                        "test.paired_end.sorted_coverage.png:md5,675ba6a3a5b0bab697bf11d266f61c06",
-                        "test.paired_end.sorted_coverage.tab:md5,8a910e49beef5599b3cbeee22d06bffd"
-                    ]
-                ],
-                "bamcoverage": [
-                    [
-                        {
-                            "caseid": "test",
-                            "sampleid": "test",
-                            "timepoint": "T1"
-                        },
-                        "test.paired_end.sorted_coverage.png:md5,675ba6a3a5b0bab697bf11d266f61c06",
-                        "test.paired_end.sorted_coverage.tab:md5,8a910e49beef5599b3cbeee22d06bffd"
-                    ]
+            [
+                [
+                    {
+                        "caseid": "test",
+                        "sampleid": "test",
+                        "timepoint": "T1"
+                    },
+                    "test.paired_end.sorted_coverage.png:md5,675ba6a3a5b0bab697bf11d266f61c06",
+                    "test.paired_end.sorted_coverage.tab:md5,8a910e49beef5599b3cbeee22d06bffd"
                 ]
-            }
+            ],
+            [
+                "versions.yml:md5,1e707c3314bf30586bfb444cceafc143"
+            ]
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-01-15T11:08:22.389654"
+        "timestamp": "2025-01-16T11:52:13.030485"
     }
 }
