@@ -27,6 +27,9 @@ process PLOTCOVERAGE {
     tuple val(meta), path("*_coverage.png"), path("*_coverage.tab"), emit: bamcoverage
     path "versions.yml"                                            , emit: versions
 
+    when:
+    task.ext.when == null || task.ext.when
+    
     script:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${bam.baseName}"

@@ -1,0 +1,33 @@
+nextflow_process {
+
+    name "Test Process COVERAGEBAM"
+    script "modules/local/deeptools/coverageBam/main.nf"
+    process "COVERAGEBAM"
+
+    test("Should run COVERAGEBAM without failures") {
+
+        when {
+            params {
+                outdir = "tests/results"
+            }
+
+            process {
+                """
+                input[0] = [
+                    [ caseid:'test', sampleid: 'test', timepoint: 'T1' ], // meta map
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/illumina/bam/test.paired_end.sorted.bam', checkIfExists: true),
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/illumina/bam/test.paired_end.sorted.bam.bai', checkIfExists: true),
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/genome/genome.bed', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out.bw, process.out.versions).match()
+        }
+
+    }
+
+}

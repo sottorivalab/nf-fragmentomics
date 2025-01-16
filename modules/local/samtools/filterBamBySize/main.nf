@@ -15,6 +15,9 @@ process FILTERBAMBYSIZE {
     tuple val(meta), path("*filtered.bam"), path("*filtered.bam.bai"), emit: filtered
     path "versions.yml"                                              , emit: versions
 
+    when:
+    task.ext.when == null || task.ext.when
+    
     script:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${bam.baseName}"

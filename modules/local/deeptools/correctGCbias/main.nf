@@ -17,6 +17,9 @@ process CORRECTGCBIAS {
 	tuple val(meta), path("*.gc_correct.bam"), path("*.gc_correct.bam.bai"), path(freq), emit: gc_correct
 	path "versions.yml"                                                                , emit: versions
 
+	when:
+    task.ext.when == null || task.ext.when
+	
 	script:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.sampleid}"

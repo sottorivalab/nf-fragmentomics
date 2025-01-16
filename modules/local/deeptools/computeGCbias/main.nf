@@ -15,6 +15,9 @@ process COMPUTEGCBIAS {
 	tuple val(meta), path(bam), path(bai), path(genome_2bit), path("*.freq.txt"), emit: freq
 	path "versions.yml"                                                         , emit: versions
 
+	when:
+    task.ext.when == null || task.ext.when
+	
 	script:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.sampleid}"

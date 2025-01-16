@@ -1,0 +1,24 @@
+{
+    "Should run COVERAGEBAM without failures": {
+        "content": [
+            [
+                [
+                    {
+                        "caseid": "test",
+                        "sampleid": "test",
+                        "timepoint": "T1"
+                    },
+                    "test.paired_end.sorted.bw:md5,936b325a0eec195768a575c3f439e4d6"
+                ]
+            ],
+            [
+                "versions.yml:md5,47275d818815391772f1e942b5ec305a"
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.3"
+        },
+        "timestamp": "2025-01-16T14:15:35.9541"
+    }
+}
