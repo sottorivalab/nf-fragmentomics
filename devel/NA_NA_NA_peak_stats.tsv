@@ -1,0 +1,2 @@
+signal	target	source	integration	background.mean	referencePoint.bin	referencePoint.coverage	referencePoint.relative	central.coverage	central.coverage.bin.min	central.coverage.bin.max	background.left.limit	background.right.limit	average.coverage	average.coverage.bin.min	average.coverage.bin.max	peak.length	peak.relative.length
+NA	NA	NA	0.1249	0.8294834803655374	400	0.5719528178243941	0.6895288831699764	0.5748476949001199	397	403	50	750	0.726122969531338	300	500	0.2575306625411433	0.3104711168300236

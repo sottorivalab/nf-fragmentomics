@@ -222,6 +222,9 @@ peak.stats <- tibble(
   peak.relative.length=1-referencePoint$relative
 )
 
+# write peak_stats.tsv
+write_delim(peak.stats, paste(opt$signal, opt$target, opt$source, "peak_stats.tsv", sep="_"), delim="\t")
+
 # labels
 label.pos <- -(max(summary.table$bin) * .1)
 peak.length <- tibble(
@@ -239,7 +242,7 @@ peak.relative.length <- tibble(
   )
 )
 
-
+# plot raw signal
 ggplot() +
   # composite coverage
   geom_line(data=summary.table,aes(y=coverage, x=bin)) +
@@ -327,7 +330,7 @@ ggplot() +
 
 ggsave(paste(opt$signal, opt$target, opt$source, "RawSignal.pdf", sep="_"), width=29.7, height=21, units="cm")
 
-
+# plot relative signal
 ggplot() +
   # composite coverage
   geom_line(data=summary.table,aes(y=relative, x=bin)) +
