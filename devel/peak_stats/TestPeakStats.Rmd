@@ -9,7 +9,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_knit$set(root.dir = '~/Projects/nf-fragmentomics/devel/')
+knitr::opts_knit$set(root.dir = '~/Projects/nf-fragmentomics/devel/peak_stats')
 ```
 
 ```{r}
@@ -19,11 +19,11 @@ library(ggplot2)
 library(readr)
 library(stringr)
 library(jsonlite)
-setwd("~/Projects/nf-fragmentomics/devel/")
+setwd("~/Projects/nf-fragmentomics/devel/peak_stats")
 ```
 
 ```{r}
-source("../bin/fragmentomics_peakStats.R")
+source("../../bin/fragmentomics_peakStats.R")
 ```
 
 ### OPTIONS
@@ -45,7 +45,7 @@ opt <- list(
 Load test matrix:
 
 ```{r}
-mfile <- "../tests/input/matrix/CDX2_regions_matrix.gz"
+mfile <- "../../tests/input/matrix/CDX2_regions_matrix.gz"
 ```
 
 ```{r}

@@ -8,8 +8,8 @@ testing/
 .nf-test*
 .nf-test/
 *.bkp
-devel/*.RDS
-devel/*tsv
-devel/*pdf
+devel/peak_stats/*.RDS
+devel/peak_stats/*tsv
+devel/peak_stats/*pdf
 .RData
 .Rhistory
