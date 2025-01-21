@@ -322,7 +322,7 @@ ggplot() +
     )
   ) +
   scale_x_continuous(
-    "Position relative to TSS (bp)", 
+    "Position relative to referencePoint (bp)", 
     breaks = c(0,100,200,300,400,500,600,700,800), 
     labels = c("-4kb","-3kb","-2kb","-1kb","0","1kb","2kb","3kb","4kb")
   ) +
@@ -352,7 +352,7 @@ ggplot() +
     )
   ) +
   scale_x_continuous(
-    "Position relative to TSS (bp)", 
+    "Position relative to referencePoint (bp)", 
     breaks = c(0,100,200,300,400,500,600,700,800), 
     labels = c("-4kb","-3kb","-2kb","-1kb","0","1kb","2kb","3kb","4kb")
   ) +
