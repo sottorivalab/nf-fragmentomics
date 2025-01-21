@@ -22,6 +22,10 @@ library(jsonlite)
 setwd("~/Projects/nf-fragmentomics/devel/")
 ```
 
+```{r}
+source("../bin/fragmentomics_peakStats.R")
+```
+
 ### OPTIONS
 
 ```{r}
@@ -29,6 +33,7 @@ opt <- list(
   random.points = 10000,
   bg.limit.left = 50,
   bg.limit.right = 50,
+  central.coverage.bp = 30,
   signal = "S1",
   target = "T1",
   source = "griffin"
@@ -41,7 +46,18 @@ Load test matrix:
 
 ```{r}
 mfile <- "../tests/input/matrix/CDX2_regions_matrix.gz"
-all.data <- as_tibble(read.delim(mfile, header=F, skip=1))
-headers <- fromJSON(str_remove(read_lines(mfile, n_max = 1), "@"))
 ```
+
+```{r}
+mdata <- read_matrix(mfile, opt)
+```
+
+```{r}
+write_files(mdata$all, mdata$summary, mdata$stats, opt)
+```
+
+```{r}
+plot_signal(mdata$summary, mdata$integration, mdata$stats, opt)
+```
+
 
