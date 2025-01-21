@@ -8,3 +8,6 @@ testing/
 .nf-test*
 .nf-test/
 *.bkp
+devel/*.RDS
+devel/*tsv
+devel/*pdf
