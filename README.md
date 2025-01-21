@@ -394,7 +394,12 @@ In this example, we use [ComplexHeatmap](https://jokergoo.github.io/ComplexHeatm
 
 ## Contributions and Support
 
-<!-- TODO -->
+To test the R peakStats script:
+
+```
+cd peakStats
+../../bin/fragmentomics_peakStats.R -s "Signal" -t "Target" -S "Source" --background-left-limit 50 --background-right-limit 50 ../input/matrix/FOXA2_regions_matrix.gz
+```
 
 ## Citation
 

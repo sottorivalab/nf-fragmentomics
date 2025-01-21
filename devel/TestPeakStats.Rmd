@@ -1,0 +1,47 @@
+---
+title: "TestPeakStats"
+author: "Davide Rambaldi"
+date: "2025-01-16"
+output: html_document
+---
+
+### SETUP
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = '~/Projects/nf-fragmentomics/devel/')
+```
+
+```{r}
+library(tibble)
+library(dplyr)
+library(ggplot2)
+library(readr)
+library(stringr)
+library(jsonlite)
+setwd("~/Projects/nf-fragmentomics/devel/")
+```
+
+### OPTIONS
+
+```{r}
+opt <- list(
+  random.points = 10000,
+  bg.limit.left = 50,
+  bg.limit.right = 50,
+  signal = "S1",
+  target = "T1",
+  source = "griffin"
+)
+```
+
+### TEST MATRIX
+
+Load test matrix:
+
+```{r}
+mfile <- "../tests/input/matrix/CDX2_regions_matrix.gz"
+all.data <- as_tibble(read.delim(mfile, header=F, skip=1))
+headers <- fromJSON(str_remove(read_lines(mfile, n_max = 1), "@"))
+```
+
