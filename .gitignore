@@ -11,3 +11,5 @@ testing/
 devel/*.RDS
 devel/*tsv
 devel/*pdf
+.RData
+.Rhistory
