@@ -1,0 +1,23 @@
+Bootstrap: docker
+From: ubuntu:latest
+
+%labels
+    Version v0.0.1
+
+%help
+    fragmentomics peak stats R script singularity image
+
+%environment
+    export DEBIAN_FRONTEND=noninteractive
+
+%post
+    apt-get update && apt-get install -y build-essential r-base
+    chmod a+w /usr/local/lib/R/site-library
+    
+    R -e 'install.packages("optparse")'
+    R -e 'install.packages("stringr")'
+    R -e 'install.packages("tibble")'
+    R -e 'install.packages("dplyr")'
+    R -e 'install.packages("ggplot2")'
+    R -e 'install.packages("readr")'
+    R -e 'install.packages("jsonlite")'
