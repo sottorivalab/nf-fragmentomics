@@ -39,6 +39,7 @@ process COMPUTEMATRIX {
 		--blackListFileName ${blacklist_bed} \\
 		--numberOfProcessors ${task.cpus} \\
 		--sortRegions descend \\
+		--binSize ${params.bin_size} \\
 		$args
 
 	cat <<-END_VERSIONS > versions.yml
