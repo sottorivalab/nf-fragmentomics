@@ -1,0 +1,8 @@
+name,source,bed
+ENCODE_Blacklist_V2,stub,/Users/davide.rambaldi/Documents/Projects/nextflow_dev/nf-fragmentomics/ENCODE_Blacklist_V2.bed
+GeneHancer_housekeeping,stub,/Users/davide.rambaldi/Documents/Projects/nextflow_dev/nf-fragmentomics/GeneHancer_housekeeping.bed
+elk4,stub,/Users/davide.rambaldi/Documents/Projects/nextflow_dev/nf-fragmentomics/elk4.bed
+myc,stub,/Users/davide.rambaldi/Documents/Projects/nextflow_dev/nf-fragmentomics/myc.bed
+rand1,stub,/Users/davide.rambaldi/Documents/Projects/nextflow_dev/nf-fragmentomics/rand1.bed
+rand2,stub,/Users/davide.rambaldi/Documents/Projects/nextflow_dev/nf-fragmentomics/rand2.bed
+rand3,stub,/Users/davide.rambaldi/Documents/Projects/nextflow_dev/nf-fragmentomics/rand3.bed

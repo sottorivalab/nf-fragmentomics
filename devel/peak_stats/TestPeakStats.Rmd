@@ -52,6 +52,28 @@ mfile <- "../../tests/input/matrix/CDX2_regions_matrix.gz"
 mdata <- read_matrix(mfile, opt)
 ```
 
+FFT experiments
+
+```{r}
+ggplot() +
+  geom_line(data=mdata$summary, aes(x = bin, y = coverage)) +
+  ggtitle("Composite coverage")
+```
+
+```{r}
+fk <- fft(mdata$summary$coverage)
+amp <- Mod(fk)
+magnitudes <- tibble(magnitudes=amp, bin=mdata$summary$bin)
+```
+
+```{r}
+ggplot() +
+  geom_line(data=magnitudes, aes(x = bin, y = magnitudes))
+```
+
+
+
+
 ```{r}
 write_files(mdata$all, mdata$summary, mdata$stats, opt)
 ```

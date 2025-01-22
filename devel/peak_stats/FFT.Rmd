@@ -1,0 +1,48 @@
+---
+title: "FFT"
+author: "Davide Rambaldi"
+date: "2025-01-22"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+xs <- seq(-2*pi,2*pi,pi/100)
+wave.1 <- sin(3*xs)
+wave.2 <- sin(10*xs)
+par(mfrow = c(1, 2))
+plot(xs,wave.1,type="l",ylim=c(-1,1)); abline(h=0,lty=3)
+plot(xs,wave.2,type="l",ylim=c(-1,1)); abline(h=0,lty=3)
+```
+which can be linearly combined into a complex wave:
+
+```{r}
+wave.3 <- 0.5 * wave.1 + 0.25 * wave.2
+plot(xs,wave.3,type="l"); title("Eg complex wave"); abline(h=0,lty=3)
+```
+```{r}
+wave.4 <- wave.3
+wave.4[wave.3>0.5] <- 0.5
+plot(xs,wave.4,type="l",ylim=c(-1.25,1.25)); title("overflowed, non-linear complex wave"); abline(h=0,lty=3)
+```
+
+```{r}
+repeat.xs     <- seq(-2*pi,0,pi/100)
+wave.3.repeat <- 0.5*sin(3*repeat.xs) + 0.25*sin(10*repeat.xs)
+plot(xs,wave.3,type="l"); title("Repeating pattern")
+points(repeat.xs,wave.3.repeat,type="l",col="red"); abline(h=0,v=c(-2*pi,0),lty=3)
+```
+```{r}
+plot.fourier <- function(fourier.series, f.0, ts) {
+  w <- 2*pi*f.0
+  trajectory <- sapply(ts, function(t) fourier.series(t,w))
+  plot(ts, trajectory, type="l", xlab="time", ylab="f(t)"); abline(h=0,lty=3)
+}
+
+# An eg
+plot.fourier(function(t,w) {sin(w*t)}, 1, ts=seq(0,1,1/100)) 
+```
+

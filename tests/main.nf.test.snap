@@ -1,0 +1,37 @@
+{
+    "Test Function create_target_channel": {
+        "content": [
+            [
+                {
+                    "name": "elk4vc",
+                    "source": "test"
+                },
+                "elk4.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.3"
+        },
+        "timestamp": "2025-01-22T14:40:18.574983"
+    },
+    "Test Function create_sample_channel": {
+        "content": [
+            [
+                {
+                    "caseid": "case1",
+                    "sampleid": "case1_T1",
+                    "timepoint": "T1"
+                },
+                null,
+                null,
+                "case1_T1.bw:md5,d41d8cd98f00b204e9800998ecf8427e"
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.3"
+        },
+        "timestamp": "2025-01-22T14:40:20.880655"
+    }
+}

@@ -27,7 +27,7 @@ The process `PEAK_STATS` generates 3 output files:
 
  - `peak_data.tsv` file contains the composite coverage (`raw`) for each bin (`bin`), the coverage relative to the background median (`relative`), and the background median (`background_median`) for each bin.
 
- - `peak_stats.csv` summary statistics for the composite coverage: signal, target, source, integration (Monte Carlo integration), length of the peak (`length`), relative length of the peak (`rlength`), min and max raw values (`ymin` and `ymax`), and the ratio between length and integration (`ratio`).
+ - `peak_stats.tsv` summary statistics for the composite coverage: signal, target, source, integration (Monte Carlo integration), length of the peak (`length`), relative length of the peak (`rlength`), min and max raw values (`ymin` and `ymax`), and the ratio between length and integration (`ratio`).
 
  - `PeakIntegration.pdf` pdf plot of the calculated metrics:
 

@@ -1,0 +1,51 @@
+
+nextflow_function {
+
+    name "Test Functions"
+    script "main.nf"
+
+	
+
+    test("Test Function create_target_channel") {
+
+        function "create_target_channel"
+
+        when {
+            function {
+                """
+                input[0] = ["name":"elk4vc", "source":"test", "bed":"$baseDir/tests/input/stub/elk4.bed"]
+                """
+            }
+        }
+
+        then {
+            assert function.success
+            assert snapshot(function.result).match()
+        }
+
+    }
+
+	
+
+    test("Test Function create_sample_channel") {
+
+        function "create_sample_channel"
+
+        when {
+            function {
+                """
+                input[0] = ["caseid":"case1", "sampleid":"case1_T1", "timepoint":"T1", "bw":"$baseDir/tests/input/samplesheet_generator/bw/case1_T1.bw"]
+                """
+            }
+        }
+
+        then {
+            assert function.success
+            assert snapshot(function.result).match()
+        }
+
+    }
+
+	
+
+}
