@@ -1,0 +1,30 @@
+{
+    "Should run PEAK_STATS with default parameters": {
+        "content": [
+            [
+                [
+                    {
+                        "caseid": "case1",
+                        "sampleid": "sample1"
+                    },
+                    {
+                        "source": "source1",
+                        "name": "target1"
+                    },
+                    "sample1_target1_source1_peak_data.tsv:md5,4c13b93af07d3792cf771ae64c152d8a",
+                    "sample1_target1_source1_peak_stats.tsv:md5,a740a4d7e9734ee2e537797a4276a4ce",
+                    "sample1_target1_source1_RawSignal.pdf:md5,049b388c71948329db3aa5dfe84059fb",
+                    "sample1_target1_source1_RelativeSignal.pdf:md5,606dc66620cb3e5cf06784225a3f5d8a"
+                ]
+            ],
+            [
+                "versions.yml:md5,220b21b3bc18960f5fcc575bfbaa8789"
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.3"
+        },
+        "timestamp": "2025-01-21T12:13:09.512044"
+    }
+}
