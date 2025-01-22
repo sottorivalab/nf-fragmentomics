@@ -8,8 +8,7 @@ nextflow_workflow {
 
         when {
             params {
-                // define parameters here. Example:
-                // outdir = "tests/results"
+                outdir = "tests/results"
             }
             workflow {
                 """

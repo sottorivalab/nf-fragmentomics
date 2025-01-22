@@ -4,7 +4,7 @@ process PEAK_STATS {
 
 	container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'library://tucano/fragmentomics/fragmentomics_peak_stats:latest' :
-        'docker://docker.io/tucano/fragmentomics_peak_stats:latest' }"
+        'docker.io/tucano/fragmentomics_peak_stats:latest' }"
 
 	publishDir "${params.outdir}/${meta_sample.caseid}/${meta_sample.sampleid}/fragmentomics/processed/matrix/${meta_target.source}/${meta_target.name}", 
 		mode:'copy', 

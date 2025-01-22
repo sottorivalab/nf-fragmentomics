@@ -8,8 +8,8 @@
                         "sampleid": "test",
                         "timepoint": "T1"
                     },
-                    "test.gc_correct.bam:md5,c13957bfb89e9beeafbb83eafa9f7ffb",
-                    "test.gc_correct.bam.bai:md5,b12ff23c58ec9457ea0eaa5d5484d14b",
+                    "test.gc_correct.bam:md5,0d7537ab9988ee91ec451cf525246958",
+                    "test.gc_correct.bam.bai:md5,5273cc612c92af0954129874f97022c3",
                     "test.freq.txt:md5,4a7eb3e068f25d4f021ca3740f30fe36"
                 ]
             ],
@@ -21,6 +21,6 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-01-16T14:02:21.963576"
+        "timestamp": "2025-01-22T10:59:09.024654"
     }
 }
