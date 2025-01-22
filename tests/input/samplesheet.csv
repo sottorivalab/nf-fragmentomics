@@ -1,0 +1,2 @@
+caseid,sampleid,timepoint,bam,bai,bw
+case1,case1_T1,T1,"${params.modules_testdata_base_path}/genomics/homo_sapiens/illumina/bam/test.paired_end.sorted.bam","${params.modules_testdata_base_path}/genomics/homo_sapiens/illumina/bam/test.paired_end.sorted.bam.bai"

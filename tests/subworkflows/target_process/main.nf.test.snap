@@ -1,0 +1,30 @@
+{
+    "Should run without failures": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "caseid": "test",
+                            "sampleid": "test",
+                            "timepoint": "T1"
+                        },
+                        {
+                            "source": "test",
+                            "name": "test"
+                        },
+                        "test_test_test_peak_data.tsv:md5,7582b17bccfd8dd5e51b5a7910a08a38",
+                        "test_test_test_peak_stats.tsv:md5,405d1d60d8b80c4c55eaef09793977f2",
+                        "test_test_test_RawSignal.pdf:md5,bf446def35fab2b1eab3d21da31de741",
+                        "test_test_test_RelativeSignal.pdf:md5,c952403cdfece89cfddee791885a454c"
+                    ]
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.3"
+        },
+        "timestamp": "2025-01-22T15:35:08.067795"
+    }
+}

@@ -1,0 +1,2 @@
+name,source,bed
+MYC,GRIFFIN,"${params.modules_testdata_base_path}/genomics/sarscov2/genome/bed/test.bed"

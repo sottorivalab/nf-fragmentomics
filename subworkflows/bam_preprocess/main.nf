@@ -7,7 +7,7 @@ include { COVERAGEBAM       } from '../../modules/local/deeptools/coverageBam/ma
 
 workflow BAM_PREPROCESS {
 
-    take:
+    take:        
         bam_ch
         genome_2bit
         blacklist_bed

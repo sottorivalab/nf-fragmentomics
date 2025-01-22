@@ -15,11 +15,11 @@ nextflow_process {
                 """
                 input[0] = [
                     [ caseid:'test', sampleid: 'test', timepoint: 'T1' ],
-                    file(params.modules_testdata_base_path + 'genomics/sarscov2/illumina//bigwig/test.bigwig', checkIfExists: true),
+                    file(params.modules_testdata_base_path + 'genomics/sarscov2/illumina/bigwig/test.bigwig', checkIfExists: true),
                     [ source: 'test', name: 'test' ],
                     file(params.modules_testdata_base_path + 'genomics/sarscov2/genome/bed/test.bed', checkIfExists: true),
-                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/genome/genome.bed', checkIfExists: true)
-                ]               
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/genome/genome.blacklist_intervals.bed', checkIfExists: true)
+                ]
                 """
             }
         }

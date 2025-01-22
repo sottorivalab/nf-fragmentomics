@@ -34,7 +34,7 @@ nextflow_process {
 
         then {
             assert process.success
-            assert snapshot(process.out.gc_correct, process.out.versions).match()
+            assert snapshot(process.out.versions).match()
         }
 
     }

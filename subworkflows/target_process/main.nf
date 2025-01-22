@@ -16,4 +16,7 @@ workflow TARGET_PROCESS {
         COMPUTEMATRIX(signal_target_ch)
         HEATMAP(COMPUTEMATRIX.out.matrix)
         PEAK_STATS(COMPUTEMATRIX.out.matrix)
+    
+    emit:
+        PEAK_STATS.out.peaks
 }

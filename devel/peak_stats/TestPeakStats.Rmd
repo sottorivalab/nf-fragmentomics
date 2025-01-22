@@ -72,6 +72,18 @@ ggplot() +
 ```
 
 
+```{r}
+reconstructed_signal <- fk
+reconstructed_signal[3:length(fk)] <- 0  # Set all components except the first to 0
+
+# Step 3: Inverse FFT to get the time-domain signal
+reconstructed_time_signal <- Re(ifft(reconstructed_signal) )
+
+# Step 4: Plot the original and reconstructed signals
+plot(1:800, mdata$summary$coverage, type = "l", col = "blue", lwd = 2, ylab = "Amplitude", xlab = "Time", main = "Original vs Reconstructed Signal")
+lines(1:800, reconstructed_time_signal, col = "red", lwd = 2)
+legend("topright", legend = c("Original Signal", "Reconstructed Signal"), col = c("blue", "red"), lwd = 2)
+```
 
 
 ```{r}
