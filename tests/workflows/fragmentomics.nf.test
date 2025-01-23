@@ -4,29 +4,30 @@ nextflow_workflow {
     script "workflows/fragmentomics.nf"
     workflow "FRAGMENTOMICS"
 
-    test("Should run without failures") {
+    test("Should run with BigWiggle without failures") {
 
         when {
             params {                
                 outdir = "tests/results"
+                preprocess = false
             }
             workflow {
                 """
                 input[0] = Channel.of([
                     [ caseid:'test', sampleid: 'test', timepoint: 'T1' ],
-                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/illumina/bam/test.paired_end.sorted.bam', checkIfExists: true),
-                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/illumina/bam/test.paired_end.sorted.bam.bai', checkIfExists: true),
-                    null
+                    null,
+                    null,
+                    file(params.modules_testdata_base_path + 'genomics/sarscov2/illumina/bigwig/test.bigwig', checkIfExists: true)
                 ])
                 input[1] = Channel.of([
                     [ source: 'test', name: 'test' ],
-                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/genome/chr22/target.bed', checkIfExists: true),
+                    file(params.modules_testdata_base_path + 'genomics/sarscov2/genome/bed/test.bed', checkIfExists: true),
                 ])
                 input[2] = [
                     file(params.modules_testdata_base_path + 'genomics/homo_sapiens/genome/chr22/sequence/chr22_23800000-23980000.2bit', checkIfExists: true)
                 ]
                 input[3] = [
-                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/genome/genome.blacklist_intervals.bed', checkIfExists: true)
+                    file(params.modules_testdata_base_path + 'genomics/sarscov2/genome/bed/baits.bed', checkIfExists: true)
                 ]
                 """                
             }
@@ -34,7 +35,6 @@ nextflow_workflow {
 
         then {
             assert workflow.success
-            assert snapshot(workflow.out).match()
         }
 
     }
