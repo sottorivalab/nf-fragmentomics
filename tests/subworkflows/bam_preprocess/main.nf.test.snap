@@ -9,7 +9,7 @@
                             "sampleid": "test",
                             "timepoint": "T1"
                         },
-                        "test.gc_correct.bw:md5,936b325a0eec195768a575c3f439e4d6"
+                        "test.gc_correct.bw:md5,783baa2ba72fc4ec18e007dd83edd8ce"
                     ]
                 ],
                 "wiggle_ch": [
@@ -19,7 +19,7 @@
                             "sampleid": "test",
                             "timepoint": "T1"
                         },
-                        "test.gc_correct.bw:md5,936b325a0eec195768a575c3f439e4d6"
+                        "test.gc_correct.bw:md5,783baa2ba72fc4ec18e007dd83edd8ce"
                     ]
                 ]
             }
@@ -28,6 +28,6 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-01-22T14:47:43.663956"
+        "timestamp": "2025-01-23T10:41:27.090852"
     }
 }

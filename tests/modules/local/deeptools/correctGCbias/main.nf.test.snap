@@ -2,18 +2,6 @@
     "Should run CORRECTGCBIAS without failures": {
         "content": [
             [
-                [
-                    {
-                        "caseid": "test",
-                        "sampleid": "test",
-                        "timepoint": "T1"
-                    },
-                    "test.gc_correct.bam:md5,0d7537ab9988ee91ec451cf525246958",
-                    "test.gc_correct.bam.bai:md5,5273cc612c92af0954129874f97022c3",
-                    "test.freq.txt:md5,4a7eb3e068f25d4f021ca3740f30fe36"
-                ]
-            ],
-            [
                 "versions.yml:md5,954f95dfad3c0c454617079d7532ba7e"
             ]
         ],
@@ -21,6 +9,6 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.3"
         },
-        "timestamp": "2025-01-22T10:59:09.024654"
+        "timestamp": "2025-01-23T10:33:10.093521"
     }
 }

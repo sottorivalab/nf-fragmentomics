@@ -13,9 +13,9 @@ process BAMPEFRAGMENTSIZE {
         'https://depot.galaxyproject.org/singularity/deeptools:3.5.5--pyhdfd78af_0':
         'biocontainers/deeptools:3.5.5--pyhdfd78af_0' }"
 
-    publishDir "${params.outdir}/${meta.caseid}/${meta.sampleid}/fragmentomics/reports/", 
-        mode:'copy', 
-        overwrite:true
+    // publishDir "${params.outdir}/${meta.caseid}/${meta.sampleid}/fragmentomics/reports/", 
+    //     mode:'copy', 
+    //     overwrite:true
 
     input:
     // meta: [ caseid, sampleid, timepoint ]
