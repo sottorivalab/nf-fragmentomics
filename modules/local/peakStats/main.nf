@@ -6,10 +6,6 @@ process PEAK_STATS {
         'library://tucano/fragmentomics/fragmentomics_peak_stats:latest' :
         'docker.io/tucano/fragmentomics_peak_stats:latest' }"
 
-	publishDir "${params.outdir}/${meta_sample.caseid}/${meta_sample.sampleid}/fragmentomics/processed/matrix/${meta_target.source}/${meta_target.name}", 
-		mode:'copy', 
-		overwrite:true
-
     input:
     tuple val(meta_sample), val(meta_target), path(matrix)
 

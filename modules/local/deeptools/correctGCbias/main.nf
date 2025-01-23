@@ -9,10 +9,6 @@ process CORRECTGCBIAS {
         'https://depot.galaxyproject.org/singularity/deeptools:3.5.5--pyhdfd78af_0' :
         'biocontainers/deeptools:3.5.5--pyhdfd78af_0' }"
 
-	// publishDir "${params.outdir}/${meta.caseid}/${meta.sampleid}/fragmentomics/processed/bam", 
-	// 	mode:'copy', 
-	// 	overwrite:true
-	
     input:
 	tuple val(meta), path(bam), path(bai), path(genome_2bit), path(freq)
 

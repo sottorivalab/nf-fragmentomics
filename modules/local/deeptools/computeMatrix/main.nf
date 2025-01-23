@@ -8,10 +8,6 @@ process COMPUTEMATRIX {
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/deeptools:3.5.5--pyhdfd78af_0' :
         'biocontainers/deeptools:3.5.5--pyhdfd78af_0' }"
-
-    publishDir "${params.outdir}/${meta_sample.caseid}/${meta_sample.sampleid}/fragmentomics/processed/matrix/${meta_target.source}/${meta_target.name}", 
-		mode:'copy', 
-		overwrite:true
 	
 	input:
 	// meta_sample [caseid, sampleid, timepoint], bw, meta_target [source, name], bed, blacklist_bed
