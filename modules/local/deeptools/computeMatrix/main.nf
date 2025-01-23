@@ -39,9 +39,9 @@ process COMPUTEMATRIX {
 		$args
 
 	cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        deeptools: \$(computeMatrix --version | sed -e "s/computeMatrix //g")
-    END_VERSIONS
+	"${task.process}":
+		deeptools: \$(computeMatrix --version | sed -e "s/computeMatrix //g")
+	END_VERSIONS
 	"""
 
 	stub:
@@ -50,8 +50,8 @@ process COMPUTEMATRIX {
 	touch ${prefix}_matrix.gz
 
 	cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        deeptools: \$(computeMatrix --version | sed -e "s/computeMatrix //g")
-    END_VERSIONS
+	"${task.process}":
+		deeptools: \$(computeMatrix --version | sed -e "s/computeMatrix //g")
+	END_VERSIONS
 	"""
 }

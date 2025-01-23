@@ -48,7 +48,7 @@ process PLOTCOVERAGE {
     """
     touch ${prefix}_coverage.png
     touch ${prefix}_coverage.tab
-
+    
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         deeptools: \$(plotCoverage --version | sed -e "s/plotCoverage //g")

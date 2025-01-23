@@ -36,7 +36,7 @@ process COMPUTEGCBIAS {
 	cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         deeptools: \$(computeGCBias --version | sed -e "s/computeGCBias //g")
-    END_VERSIONS
+	END_VERSIONS
 	"""
 
 	stub:
@@ -47,6 +47,6 @@ process COMPUTEGCBIAS {
 	cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         deeptools: \$(computeGCBias --version | sed -e "s/computeGCBias //g")
-    END_VERSIONS
+	END_VERSIONS
 	"""
 }

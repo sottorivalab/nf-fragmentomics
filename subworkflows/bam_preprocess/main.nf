@@ -13,10 +13,11 @@ workflow BAM_PREPROCESS {
         blacklist_bed
 
     main:
+        ch_versions = Channel.empty()
         /////////////////////////////////////////////////
         // BAMQC AND FILTER READS BY SIZE 
         /////////////////////////////////////////////////
-        BAMPEFRAGMENTSIZE(bam_ch)
+        BAMPEFRAGMENTSIZE(bam_ch)        
         PLOTCOVERAGE(bam_ch)
         FILTERBAMBYSIZE(bam_ch)
 
@@ -38,7 +39,17 @@ workflow BAM_PREPROCESS {
 
         COVERAGEBAM(gc_correct_ch)
         wiggle_ch = COVERAGEBAM.out.bw
-    
+        ch_versions = ch_versions.mix(
+            BAMPEFRAGMENTSIZE.out.versions, 
+            PLOTCOVERAGE.out.versions, 
+            FILTERBAMBYSIZE.out.versions, 
+            COMPUTEGCBIAS.out.versions,
+            CORRECTGCBIAS.out.versions, 
+            COVERAGEBAM.out.versions
+        )
+
     emit:
-        wiggle_ch    
+        bw = wiggle_ch
+        versions = ch_versions
+    
 }

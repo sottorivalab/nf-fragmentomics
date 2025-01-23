@@ -7,6 +7,8 @@ FRAGMENTOMICS PIPELINE
 
 nextflow.enable.dsl = 2
 
+import org.yaml.snakeyaml.Yaml
+
 include { FRAGMENTOMICS } from './workflows/fragmentomics.nf'
 
 def create_target_channel(LinkedHashMap row) {
@@ -65,6 +67,8 @@ workflow {
         target_ch,
         genome_2bit,
         blacklist_bed
-    )
+    )    
 
+    // collect versions in a single file
+    FRAGMENTOMICS.out.versions.view()
 }

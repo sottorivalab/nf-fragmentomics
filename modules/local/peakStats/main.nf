@@ -20,10 +20,11 @@ process PEAK_STATS {
         -t ${meta_target.name} \\
         -S ${meta_target.source} \\
         ${matrix}
+	
 	cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        Rscript: \$(Rscript --version | sed -e "s/Rscript (R) //g")
-    END_VERSIONS
+	"${task.process}":
+		Rscript: \$(Rscript --version | sed -e "s/Rscript (R) //g")
+	END_VERSIONS
 	"""
 
 	stub:
@@ -35,8 +36,8 @@ process PEAK_STATS {
 	touch ${meta_sample.sampleid}_${meta_target.name}_${meta_target.source}_matrix.RDS
 	
 	cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        Rscript: \$(Rscript --version | sed -e "s/Rscript (R) //g")
-    END_VERSIONS
+	"${task.process}":
+		Rscript: \$(Rscript --version | sed -e "s/Rscript (R) //g")
+	END_VERSIONS
 	"""
 }

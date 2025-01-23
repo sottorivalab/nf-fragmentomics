@@ -18,6 +18,12 @@ workflow FRAGMENTOMICS {
         blacklist_bed
 
     main:
+
+        ///////////////////////////////////////////////////
+        // VERSION CHANNEL
+        ///////////////////////////////////////////////////
+        ch_versions = Channel.empty()
+
         /////////////////////////////////////////////////
         // PIPELINE INFO
         /////////////////////////////////////////////////
@@ -73,8 +79,12 @@ workflow FRAGMENTOMICS {
                 blacklist_bed
             )
 
-            wiggle_ch = BAM_PREPROCESS.out.wiggle_ch
-        
+            wiggle_ch = BAM_PREPROCESS.out.bw
+
+            ch_versions = ch_versions.mix(
+                BAM_PREPROCESS.out.versions
+            )
+
         // USE BIG WIGGLES
         } else {
             log.warn("Skipping preprocessing ...")
@@ -89,4 +99,11 @@ workflow FRAGMENTOMICS {
             wiggle_ch,
             blacklist_bed
         )
+
+        ch_versions = ch_versions.mix(
+            TARGET_PROCESS.out.versions
+        )                
+            
+    emit:
+        versions = ch_versions  // channel: [ path(versions.yml) ]
 }
