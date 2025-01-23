@@ -130,7 +130,8 @@ Some profile examples:
 Stub run with stub annotation files:
 
 ```
-nextflow run main.nf -profile stub -stub-run -params-file params.yaml
+conda activate nf-fragmentomics-env
+nextflow run main.nf -params-file examples/input/example_params.yaml -profile stub -stub-run
 ```
 
 #### Devel with conda
