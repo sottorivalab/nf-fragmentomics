@@ -120,8 +120,7 @@ Available profiles (see also `conf/profiles.config`):
  - `stub`: run with stub true
  - `debug`: run with debug true
  - `devel`: run locally
- - `large`: for large BAM files (Whole Genome Sequencing)
- - `small`: for small BAM files (Low Pass Whole Genome Sequencing)
+ - `slurm`: for our HPC
 
 Some profile examples:
 
@@ -147,7 +146,7 @@ nextflow run main.nf -profile devel,conda -params-file params.yaml
 Run on slurm cluster with singularity
 
 ```
-nextflow run main.nf -profile large,singularity -params-file params.yaml
+nextflow run main.nf -profile slurm,singularity -params-file params.yaml
 ```
 
 ### BAM PREPROCESSING

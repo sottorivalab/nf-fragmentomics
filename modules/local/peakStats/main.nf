@@ -1,6 +1,6 @@
 process PEAK_STATS {
 	tag "$meta_sample.sampleid"
-	label 'fast_process'
+	label 'process_medium'
 
 	container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'library://tucano/fragmentomics/fragmentomics_peak_stats:latest' :
