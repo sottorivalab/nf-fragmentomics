@@ -35,8 +35,6 @@ def create_sample_channel(LinkedHashMap row) {
 }
 
 process VERSIONS {
-    debug true
-
     publishDir "${params.outdir}", mode: 'copy'
     
     input:
