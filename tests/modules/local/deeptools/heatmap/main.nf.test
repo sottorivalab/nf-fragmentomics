@@ -27,7 +27,5 @@ nextflow_process {
             assert process.success
             assert snapshot(process.out.heatmap, process.out.versions).match()
         }
-
     }
-
 }
