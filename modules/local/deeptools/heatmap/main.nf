@@ -32,10 +32,10 @@ process HEATMAP {
         --plotTitle "Sample: ${meta_sample.sampleid} - Target: ${meta_target.name}" \\
         $args
     
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-    deeptools: \$(plotHeatmap --version | sed -e "s/plotHeatmap //g")
-    END_VERSIONS
+cat <<-END_VERSIONS > versions.yml
+"${task.process}":
+deeptools: \$(plotHeatmap --version | sed -e "s/plotHeatmap //g")
+END_VERSIONS
     """
 
     stub:
@@ -43,9 +43,9 @@ process HEATMAP {
     """
     touch ${prefix}_heatmap.png
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-    deeptools: \$(plotHeatmap --version | sed -e "s/plotHeatmap //g")
-    END_VERSIONS
+cat <<-END_VERSIONS > versions.yml
+"${task.process}":
+deeptools: \$(plotHeatmap --version | sed -e "s/plotHeatmap //g")
+END_VERSIONS
     """
 }

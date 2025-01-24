@@ -34,6 +34,32 @@ def create_sample_channel(LinkedHashMap row) {
     ]
 }
 
+process VERSIONS {
+    debug true
+
+    publishDir "${params.outdir}", mode: 'copy'
+    
+    input:
+    val versions
+
+    output:
+    path("versions.yml")
+
+    script:
+    """
+    cat <<-END_VERSIONS > versions.yml
+    ${versions.join("\n")}
+    END_VERSIONS
+    """
+
+    stub:
+    """
+    cat <<-END_VERSIONS > versions.yml
+    ${versions.join("\n")}
+    END_VERSIONS
+    """
+}
+
 // MAIN WORKFLOW
 workflow {
     
@@ -68,11 +94,13 @@ workflow {
     )    
 
     // collect versions in a single file simple mode
-    FRAGMENTOMICS.out.versions
-        .unique()
-        .map { version_file ->
-            version_file.text
-        }
-        .unique()
-        .view()
+    VERSIONS(
+        FRAGMENTOMICS.out.versions
+            .unique()
+            .map { version_file ->
+                version_file.text
+            }
+            .unique()
+            .collect()
+    )
 }
