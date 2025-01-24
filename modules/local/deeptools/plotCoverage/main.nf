@@ -39,7 +39,7 @@ process PLOTCOVERAGE {
     
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        deeptools: \$(plotCoverage --version | sed -e "s/plotCoverage //g")
+    deeptools: \$(plotCoverage --version | sed -e "s/plotCoverage //g")
     END_VERSIONS
     """
 
@@ -51,7 +51,7 @@ process PLOTCOVERAGE {
     
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        deeptools: \$(plotCoverage --version | sed -e "s/plotCoverage //g")
+    deeptools: \$(plotCoverage --version | sed -e "s/plotCoverage //g")
     END_VERSIONS
     """
 }

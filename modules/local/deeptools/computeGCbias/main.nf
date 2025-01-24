@@ -34,19 +34,19 @@ process COMPUTEGCBIAS {
         $args
 	
 	cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        deeptools: \$(computeGCBias --version | sed -e "s/computeGCBias //g")
-	END_VERSIONS
+"${task.process}":
+deeptools: \$(computeGCBias --version | sed -e "s/computeGCBias //g")
+END_VERSIONS
 	"""
 
 	stub:
     def prefix = task.ext.prefix ?: "${meta.sampleid}"
 	"""
 	touch ${prefix}.freq.txt
-
+	
 	cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        deeptools: \$(computeGCBias --version | sed -e "s/computeGCBias //g")
-	END_VERSIONS
+"${task.process}":
+deeptools: \$(computeGCBias --version | sed -e "s/computeGCBias //g")
+END_VERSIONS
 	"""
 }

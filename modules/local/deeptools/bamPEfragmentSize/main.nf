@@ -38,7 +38,7 @@ process BAMPEFRAGMENTSIZE {
     
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        deeptools: \$(bamPEFragmentSize --version | sed -e "s/bamPEFragmentSize //g")
+    deeptools: \$(bamPEFragmentSize --version | sed -e "s/bamPEFragmentSize //g")
     END_VERSIONS
     """
 
@@ -50,7 +50,7 @@ process BAMPEFRAGMENTSIZE {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        deeptools: \$(bamPEFragmentSize --version | sed -e "s/bamPEFragmentSize //g")
+    deeptools: \$(bamPEFragmentSize --version | sed -e "s/bamPEFragmentSize //g")
     END_VERSIONS
     """
 }

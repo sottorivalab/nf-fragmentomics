@@ -31,11 +31,12 @@ process CORRECTGCBIAS {
         --numberOfProcessors ${task.cpus} \\
         -o ${prefix}.gc_correct.bam \\
         $args
+    
 	
     cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        deeptools: \$(correctGCBias --version | sed -e "s/correctGCBias //g")
-    END_VERSIONS
+"${task.process}":
+deeptools: \$(correctGCBias --version | sed -e "s/correctGCBias //g")
+END_VERSIONS
 	"""
 
 	stub:
@@ -43,10 +44,10 @@ process CORRECTGCBIAS {
 	"""
 	touch ${prefix}.gc_correct.bam
 	touch ${prefix}.gc_correct.bam.bai
-    
+
     cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        deeptools: \$(correctGCBias --version | sed -e "s/correctGCBias //g")
-    END_VERSIONS
+"${task.process}":
+deeptools: \$(correctGCBias --version | sed -e "s/correctGCBias //g")
+END_VERSIONS
 	"""
 }

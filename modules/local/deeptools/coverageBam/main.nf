@@ -36,7 +36,7 @@ process COVERAGEBAM {
 	
 	cat <<-END_VERSIONS > versions.yml
 	"${task.process}":
-		deeptools: \$(bamCoverage --version | sed -e "s/bamCoverage //g")
+	deeptools: \$(bamCoverage --version | sed -e "s/bamCoverage //g")
 	END_VERSIONS
 	"""
 
@@ -47,7 +47,7 @@ process COVERAGEBAM {
 
 	cat <<-END_VERSIONS > versions.yml
 	"${task.process}":
-		deeptools: \$(bamCoverage --version | sed -e "s/bamCoverage //g")
+	deeptools: \$(bamCoverage --version | sed -e "s/bamCoverage //g")
 	END_VERSIONS
 	"""
 }

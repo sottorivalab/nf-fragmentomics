@@ -34,7 +34,7 @@ process HEATMAP {
     
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        deeptools: \$(plotHeatmap --version | sed -e "s/plotHeatmap //g")
+    deeptools: \$(plotHeatmap --version | sed -e "s/plotHeatmap //g")
     END_VERSIONS
     """
 
@@ -45,7 +45,7 @@ process HEATMAP {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        deeptools: \$(plotHeatmap --version | sed -e "s/plotHeatmap //g")
+    deeptools: \$(plotHeatmap --version | sed -e "s/plotHeatmap //g")
     END_VERSIONS
     """
 }
