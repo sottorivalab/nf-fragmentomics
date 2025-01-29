@@ -2,3 +2,5 @@ input: "./examples/example_samplesheet_bw.csv"
 targets: "./examples/example_targets.csv"
 outdir: "./results"
 preprocess: false
+genome_2bit: "/group/sottoriva/davide.rambaldi/fragmentomics/reference/GRCh38.2bit"
+blacklist_bed: '/group/sottoriva/davide.rambaldi/fragmentomics/datasets/encode_mappability/ENCODE_Blacklist_V2.bed'

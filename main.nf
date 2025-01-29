@@ -31,7 +31,7 @@ def create_sample_channel(LinkedHashMap row) {
 }
 
 process VERSIONS {
-    publishDir "${params.outdir}", mode: 'copy'
+    publishDir "${params.outdir}/pipeline_info", mode: 'copy'
     
     input:
     val versions
