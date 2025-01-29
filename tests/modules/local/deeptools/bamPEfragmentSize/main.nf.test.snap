@@ -13,14 +13,14 @@
                 ]
             ],
             [
-                "versions.yml:md5,983e4a3117f03e952d2c03d6ea6cd64e"
+                "versions.yml:md5,256d00d90ec76a2556827a8e69e5addf"
             ]
         ],
         "meta": {
             "nf-test": "0.9.2",
-            "nextflow": "24.10.3"
+            "nextflow": "24.10.4"
         },
-        "timestamp": "2025-01-16T11:32:27.221346"
+        "timestamp": "2025-01-29T15:05:10.337311"
     },
     "Should run bamPEFragmentSize with custom parameters": {
         "content": [
@@ -36,13 +36,13 @@
                 ]
             ],
             [
-                "versions.yml:md5,983e4a3117f03e952d2c03d6ea6cd64e"
+                "versions.yml:md5,256d00d90ec76a2556827a8e69e5addf"
             ]
         ],
         "meta": {
             "nf-test": "0.9.2",
-            "nextflow": "24.10.3"
+            "nextflow": "24.10.4"
         },
-        "timestamp": "2025-01-16T11:32:44.627455"
+        "timestamp": "2025-01-29T15:05:28.106826"
     }
 }

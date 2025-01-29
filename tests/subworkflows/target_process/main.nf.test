@@ -13,8 +13,7 @@ nextflow_workflow {
             workflow {
                 """
                 input[0] = Channel.of([
-                    [ source: 'test', name: 'test' ],
-                    file(params.modules_testdata_base_path + 'genomics/sarscov2/genome/bed/test.bed', checkIfExists: true),
+                    'test_source', ['test'], [file(params.modules_testdata_base_path + 'genomics/sarscov2/genome/bed/test.bed', checkIfExists: true)]
                 ])
                 input[1] = Channel.of([
                     [ caseid:'test', sampleid: 'test', timepoint: 'T1' ],

@@ -1,42 +1,45 @@
 /*
- * This process computes a matrix from the given input data.
+ * This process computes a list of matrixes from the given input data.
  */
 process COMPUTEMATRIX {
 	tag "$meta_sample.sampleid"
-	label 'process_medium'
+	label 'process_high'
 
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/deeptools:3.5.5--pyhdfd78af_0' :
         'biocontainers/deeptools:3.5.5--pyhdfd78af_0' }"
 	
 	input:
-	// meta_sample [caseid, sampleid, timepoint], bw, meta_target [source, name], bed, blacklist_bed
-	tuple val(meta_sample), path(bw), val(meta_target), path(bed), path(blacklist_bed)
+	tuple val(meta_sample), path(bw), path(blacklist_bed), val(source), val(names), path(beds)
 	
 	output:
-	// meta_sample [caseid, sampleid, timepoint], meta_target [source, name], matrix
-	tuple val(meta_sample), val(meta_target), path("*_matrix.gz"), emit: matrix
-	path "versions.yml"                                          , emit: versions
+	tuple val(meta_sample), val(source), path("*_matrix.gz"), emit: matrix
+	path "versions.yml"                                     , emit: versions
 
 	when:
 	task.ext.when == null || task.ext.when
 
 	script:
-    def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: bed.baseName
+    def args = task.ext.args ?: ''    
 	"""
-	computeMatrix reference-point \\
-		--referencePoint center \\
-		-S ${bw} \\
-		-R ${bed} \\
-		-a ${params.target_expand_sx} \\
-		-b ${params.target_expand_dx} \\
-		-o ${prefix}_matrix.gz \\
-		--blackListFileName ${blacklist_bed} \\
-		--numberOfProcessors ${task.cpus} \\
-		--sortRegions descend \\
-		--binSize ${params.bin_size} \\
-		$args
+	for BED in ${beds.join(' ')} ; do
+		BASENAME=\$(basename \${BED} .bed)
+        OUTPUT_FILE=\${BASENAME}_matrix.gz
+		
+		computeMatrix reference-point \\
+			--referencePoint center \\
+			-S ${bw} \\
+			-R \${BED} \\
+			-a ${params.target_expand_sx} \\
+			-b ${params.target_expand_dx} \\
+			-o \${OUTPUT_FILE} \\
+			--blackListFileName ${blacklist_bed} \\
+			--numberOfProcessors ${task.cpus} \\
+			--sortRegions descend \\
+			--binSize ${params.bin_size} \\
+			$args
+			
+	done
 
 	cat <<-END_VERSIONS > versions.yml
 	"${task.process}":
@@ -45,9 +48,12 @@ process COMPUTEMATRIX {
 	"""
 
 	stub:
-	def prefix = task.ext.prefix ?: bed.baseName
 	"""
-	touch ${prefix}_matrix.gz
+	for BED in ${beds.join(' ')} ; do
+		BASENAME=\$(basename \${BED} .bed)
+		OUTPUT_FILE=\${BASENAME}_matrix.gz
+		touch \${OUTPUT_FILE}
+	done
 
 	cat <<-END_VERSIONS > versions.yml
 	"${task.process}":

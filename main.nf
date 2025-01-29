@@ -9,12 +9,8 @@ nextflow.enable.dsl = 2
 
 include { FRAGMENTOMICS } from './workflows/fragmentomics.nf'
 
-def create_target_channel(LinkedHashMap row) {
-    def meta = [
-        name: row.name,
-        source: row.source
-    ]
-    return [meta, file(row.bed)]
+def create_target_channel(LinkedHashMap row) {    
+    return [row.source, row.name, file(row.bed)]
 }
 
 def create_sample_channel(LinkedHashMap row) {
@@ -76,13 +72,16 @@ workflow {
         .splitCsv(header: true, sep:',')
         .map{ create_target_channel(it) }
         
+
     // filter targets for lines if not stubrun
     if (workflow.stubRun == false) {
         target_ch = target_ch
             .filter{ it ->
-                it[1].readLines().size() > 1
+                it[1]['path'].readLines().size() > 1
             }
     }
+
+    target_ch = target_ch.groupTuple(by: 0)
 
     FRAGMENTOMICS(
         sample_ch,

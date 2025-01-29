@@ -11,14 +11,14 @@ nextflow_process {
                 outdir = "tests/results"
             }
             process {
-                // meta_sample [caseid, sampleid, timepoint], bw, meta_target [source, name], bed, blacklist_bed
                 """
                 input[0] = [
                     [ caseid:'test', sampleid: 'test', timepoint: 'T1' ],
                     file(params.modules_testdata_base_path + 'genomics/sarscov2/illumina/bigwig/test.bigwig', checkIfExists: true),
-                    [ source: 'test', name: 'test' ],
-                    file(params.modules_testdata_base_path + 'genomics/sarscov2/genome/bed/test.bed', checkIfExists: true),
-                    file(params.modules_testdata_base_path + 'genomics/sarscov2/genome/bed/baits.bed', checkIfExists: true)
+                    file(params.modules_testdata_base_path + 'genomics/sarscov2/genome/bed/baits.bed', checkIfExists: true),
+                    'test_source',
+                    ['test_target'],
+                    [file(params.modules_testdata_base_path + 'genomics/sarscov2/genome/bed/test.bed', checkIfExists: true)]
                 ]
                 """
             }

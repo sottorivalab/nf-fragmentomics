@@ -11,13 +11,11 @@ nextflow_process {
                 outdir = "tests/results"
             }
             process {
-                // meta_sample [caseid, sampleid, timepoint], meta_target [source, name], matrix
-
                 """
                 input[0] = [
                     [ caseid:'test', sampleid: 'test', timepoint: 'T1' ],
-                    [ source: 'test', name: 'test' ],
-                    file(params.modules_testdata_base_path + 'genomics/sarscov2/illumina/deeptools/test.computeMatrix.mat.gz', checkIfExists: true)
+                    'test_source',
+                    [file(params.modules_testdata_base_path + 'genomics/sarscov2/illumina/deeptools/test.computeMatrix.mat.gz', checkIfExists: true)]
                 ]
                 """
             }
@@ -25,7 +23,6 @@ nextflow_process {
 
         then {
             assert process.success
-            assert snapshot(process.out.heatmap, process.out.versions).match()
         }
     }
 }

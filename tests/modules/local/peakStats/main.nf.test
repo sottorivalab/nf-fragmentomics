@@ -4,7 +4,6 @@ nextflow_process {
     script "modules/local/peakStats/main.nf"
     process "PEAK_STATS"
 
-    // TODO move test file in test_data
     test("Should run PEAK_STATS with default parameters") {
 
         when {
@@ -14,9 +13,9 @@ nextflow_process {
             process {
                 """
                 input[0] = [
-                    [caseid: 'case1', sampleid: 'sample1'],
-                    [source: 'source1', name: 'target1'],
-                    file("$baseDir/tests/input/matrix/CDX2_regions_matrix.gz")
+                    [ caseid:'test', sampleid: 'test', timepoint: 'T1' ],
+                    'test_source',
+                    [file(params.modules_testdata_base_path + 'genomics/sarscov2/illumina/deeptools/test.computeMatrix.mat.gz', checkIfExists: true)]
                 ]
                 """
             }

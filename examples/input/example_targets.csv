@@ -1,7 +1,7 @@
 name,source,bed
 MYC,GRIFFIN,./tests/input/stub/myc.bed
 ELK4,TIMON,./tests/input/stub/elk4.bed
-rand1,house_keeping_dataset,./tests/input/stub/rand1.bed
-rand2,house_keeping_dataset,./tests/input/stub/rand2.bed
-rand3,house_keeping_dataset,./tests/input/stub/rand3.bed
+rand1,random_dataset,./tests/input/stub/rand1.bed
+rand2,random_dataset,./tests/input/stub/rand2.bed
+rand3,random_dataset,./tests/input/stub/rand3.bed
 HouseKeeping,house_keeping_dataset,./tests/input/stub/GeneHancer_housekeeping.bed

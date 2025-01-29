@@ -10,42 +10,46 @@ process HEATMAP {
         'biocontainers/deeptools:3.5.5--pyhdfd78af_0' }"
     
     input:
-    // meta_sample [caseid, sampleid, timepoint], meta_target [source, name], matrix
-    tuple val(meta_sample), val(meta_target), path(matrix)
+    tuple val(meta_sample), val(source), path(matrix)
 
     output:
-    // meta_sample [caseid, sampleid, timepoint], meta_target [source, name], png
-	tuple val(meta_sample), val(meta_target), path("*_heatmap.png"), emit: heatmap
-    path "versions.yml"                                            , emit: versions
+	tuple val(meta_sample), val(source), path("*_heatmap.png"), emit: heatmap
+    path "versions.yml"                                       , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
     def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: matrix.baseName
     """
-    plotHeatmap \\
-        -m ${matrix} \\
-        -o ${prefix}_heatmap.png \\
-        --dpi 200 \\
-        --plotTitle "Sample: ${meta_sample.sampleid} - Target: ${meta_target.name}" \\
-        $args
-    
-cat <<-END_VERSIONS > versions.yml
-"${task.process}":
-deeptools: \$(plotHeatmap --version | sed -e "s/plotHeatmap //g")
-END_VERSIONS
+    for MAT in ${matrix.join(' ')}; do
+        BASENAME=\$(basename \${MAT} _matrix.gz)
+        OUTPUT_FILE=\${BASENAME}_heatmap.png
+        plotHeatmap \\
+            -m \${MAT} \\
+            -o \${OUTPUT_FILE} \\
+            --dpi 200 \\
+            $args \\
+            --plotTitle "${meta_sample.sampleid} over \${BASENAME}"
+    done
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+    deeptools: \$(plotHeatmap --version | sed -e "s/plotHeatmap //g")
+    END_VERSIONS
     """
 
     stub:
-    def prefix = task.ext.prefix ?: matrix.baseName
     """
-    touch ${prefix}_heatmap.png
+    for MAT in ${matrix.join(' ')}; do
+        BASENAME=\$(basename \${MAT} _matrix.gz)
+        OUTPUT_FILE=\${BASENAME}_heatmap.png
+        touch \${OUTPUT_FILE}
+    done
 
-cat <<-END_VERSIONS > versions.yml
-"${task.process}":
-deeptools: \$(plotHeatmap --version | sed -e "s/plotHeatmap //g")
-END_VERSIONS
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+    deeptools: \$(plotHeatmap --version | sed -e "s/plotHeatmap //g")
+    END_VERSIONS
     """
 }
