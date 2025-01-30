@@ -211,7 +211,14 @@ Param: `blacklist_bed`
 
 ### Labels
 
-<!-- TODO -->
+ - process_single
+ - process_low
+ - process_medium
+ - process_high
+ - process_long
+ - process_high_memory
+ - error_ignore
+ - error_retry
 
 ### Scripts
 
