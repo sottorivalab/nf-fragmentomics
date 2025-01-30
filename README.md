@@ -179,8 +179,6 @@ Run on a cluster with singularity
 nextflow run main.nf -profile hpc,singularity -params-file params.yaml
 ```
 
-<!-- TODO end of last revision, review the rest -->
-
 ## Documentation
 
 ### Samplesheet specifications
@@ -207,6 +205,9 @@ Param: `blacklist_bed`
  - `bin_size`: the bin size used to generate the coverage file (big wiggle)
  - `target_expand_sx` and `target_expand_dx`: how many bp to expand the Target region? default is 4000 bp on both sides
  - `filter_min` and `filter_max`: limit for reads filtering. By default is 90-150 bp
+
+<!-- TODO end of last revision, review the rest -->
+
 
 ### Labels
 
