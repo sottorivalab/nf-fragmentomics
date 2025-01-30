@@ -77,7 +77,7 @@ workflow {
     if (workflow.stubRun == false) {
         target_ch = target_ch
             .filter{ it ->
-                it[1]['path'].readLines().size() > 1
+                it[2].readLines().size() > 1
             }
     }
 
