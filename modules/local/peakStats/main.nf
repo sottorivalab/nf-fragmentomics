@@ -10,7 +10,7 @@ process PEAK_STATS {
     tuple val(meta_sample), val(source), path(matrix)
 
     output:
-    tuple val(meta_sample), val(source), path("*_peak_data.tsv"), path("*_peak_stats.tsv"), path("*_RawSignal.pdf"), path("*_RelativeSignal.pdf"), path("*_matrix.RDS"), emit: peaks
+    tuple val(meta_sample), val(source), path("*_peak_data.tsv"), path("*_peak_stats.tsv"), path("*_RawSignal.pdf"), path("*_RelativeSignal.pdf"), emit: peaks
 	path "versions.yml", emit: versions
 
     script:
@@ -21,7 +21,6 @@ process PEAK_STATS {
 		OUTPUT_FILE2=\${BASENAME}_peak_stats.tsv
 		OUTPUT_FILE3=\${BASENAME}_RawSignal.pdf
 		OUTPUT_FILE4=\${BASENAME}_RelativeSignal.pdf
-		OUTPUT_FILE5=\${BASENAME}_matrix.RDS
 		
 		fragmentomics_peakStats.R \\
 			-s ${meta_sample.sampleid} \\
@@ -44,12 +43,10 @@ process PEAK_STATS {
 		OUTPUT_FILE2=\${BASENAME}_peak_stats.tsv
 		OUTPUT_FILE3=\${BASENAME}_RawSignal.pdf
 		OUTPUT_FILE4=\${BASENAME}_RelativeSignal.pdf
-		OUTPUT_FILE5=\${BASENAME}_matrix.RDS
 		touch \${OUTPUT_FILE}
 		touch \${OUTPUT_FILE2}
 		touch \${OUTPUT_FILE3}
 		touch \${OUTPUT_FILE4}
-		touch \${OUTPUT_FILE5}
 	done
 
 	cat <<-END_VERSIONS > versions.yml

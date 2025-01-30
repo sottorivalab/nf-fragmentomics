@@ -187,7 +187,6 @@ read_matrix <- function(mfile, opt) {
 
 # WRITE FILES
 write_files <- function(all.data, summary.table, peak.stats, opt) {
-  write_rds(all.data, paste(opt$signal, opt$target, opt$source, "matrix.RDS", sep="_"))
   write_delim(summary.table, paste(opt$signal, opt$target, opt$source, "peak_data.tsv", sep="_"), delim="\t")
   write_delim(peak.stats, paste(opt$signal, opt$target, opt$source, "peak_stats.tsv", sep="_"), delim="\t")
 }
