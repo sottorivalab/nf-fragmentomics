@@ -33,7 +33,7 @@ The process `PEAK_STATS` generates 4 output files:
 
 ### Peak metrics
 
-<img src="assets/img/peakStats.png" alt="plotStats plot" width="480">
+<img src="assets/img/peakStats.png" alt="plotStats plot" width="1024">
 
 1. `signal`: name of input sample
 2. `target`: name of input target set
@@ -143,27 +143,29 @@ We are using the ENCODE blacklist from:
 
 `genome_size`: effective genome size used by GC Correction functions (see also: [deeptools effective genome size page](https://deeptools.readthedocs.io/en/latest/content/feature/effectiveGenomeSize.html))
 
+
 ### PROFILES
 
-Available profiles (see also `conf/profiles.config`):
-
- - `stub`: run with stub true
- - `debug`: run with debug true
+ - `stub`: stub run files
+ - `debug`: run in debug mode
  - `devel`: run locally
- - `slurm`: for our HPC
+ - `test`: test input files
+ - `test_full`: full test input files
+ - `conda`: conda container mode
+ - `docker`: docker container mode
+ - `singularity`: singularity container mode
+ - `hpc`: for our HPC
+ - `arm`: for docker on osx
 
-Some profile examples:
 
-#### Stub
+Some examples:
 
-Stub run with stub annotation files:
+Local stub run with stub annotation files:
 
 ```
 conda activate nf-fragmentomics-env
 nextflow run main.nf -params-file examples/input/example_params.yaml -profile stub -stub-run
 ```
-
-#### Devel with conda
 
 Run on single machine with conda environment:
 
@@ -171,66 +173,13 @@ Run on single machine with conda environment:
 nextflow run main.nf -profile devel,conda -params-file params.yaml
 ```
 
-#### Whole Genome Sequencing with singularity
-
-Run on slurm cluster with singularity
+Run on a cluster with singularity
 
 ```
-nextflow run main.nf -profile slurm,singularity -params-file params.yaml
+nextflow run main.nf -profile hpc,singularity -params-file params.yaml
 ```
 
-### BAM PREPROCESSING
-
-```mermaid
-flowchart TB
-    subgraph BAM_PREPROCESS
-    subgraph take
-    v0["bam_ch"]
-    v2["blacklist_bed"]
-    v1["genome_2bit"]
-    end
-    v3([BAMPEFRAGMENTSIZE])
-    v4([PLOTCOVERAGE])
-    v5([FILTERBAMBYSIZE])
-    v7([COMPUTEGCBIAS])
-    v8([CORRECTGCBIAS])
-    v10([COVERAGEBAM])
-    subgraph emit
-    v11["wiggle_ch"]
-    end
-    v0 --> v3
-    v0 --> v4
-    v0 --> v5
-    v1 --> v7
-    v5 --> v7
-    v7 --> v8
-    v2 --> v10
-    v8 --> v10
-    v10 --> v11
-    end
-```
-
-### TARGET PROCESSING
-
-```mermaid
-flowchart TB
-    subgraph TARGET_PROCESS
-    subgraph take
-    v0["target_ch"]
-    v2["blacklist_bed"]
-    v1["wiggle_ch"]
-    end
-    v4([COMPUTEMATRIX])
-    v5([HEATMAP])
-    v6([PEAK_STATS])
-    v0 --> v4
-    v1 --> v4
-    v2 --> v4
-    v4 --> v5
-    v4 --> v6
-    end
-```
-
+<!-- TODO end of last revision, review the rest -->
 
 ## Documentation
 
