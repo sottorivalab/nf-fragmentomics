@@ -6,7 +6,6 @@ Recent research indicates that analyzing the fragmentation patterns of circulati
 
 <img src="assets/img/cfDNA_degradation.png" alt="cfDNA degradation" width="480">
 
-
 ## Pipeline Summary
 
 This pipeline calculates the composite coverage over specific genome regions.
@@ -23,15 +22,38 @@ A first plot of the composite coverage on the TFBS target set (raw coverage) is 
 
 <img src="assets/img/plotHeatmap_example.png" alt="plotHeatmap example" width="80">
 
-The process `PEAK_STATS` generates 3 output files:
+The process `PEAK_STATS` generates 4 output files:
 
- - `peak_data.tsv` file contains the composite coverage (`raw`) for each bin (`bin`), the coverage relative to the background median (`relative`), and the background median (`background_median`) for each bin.
+ - `matrix.RDS` matrix in RDS format
+ - `peak_data.tsv` file contains the composite coverage (`coverage`) for each bin (`bin`), the coverage relative to the background median (`relative`), and the background mean (`background_mean`).
+ - `peak_stats.tsv` summary statistics (see below)
+ - `RawSignal.pdf` pdf plot of the calculated metrics
+ - `RelativeSignal.pdf` pdf plot for the relative signal metrics
 
- - `peak_stats.tsv` summary statistics for the composite coverage: signal, target, source, integration (Monte Carlo integration), length of the peak (`length`), relative length of the peak (`rlength`), min and max raw values (`ymin` and `ymax`), and the ratio between length and integration (`ratio`).
 
- - `PeakIntegration.pdf` pdf plot of the calculated metrics:
+### Peak metrics
 
 <img src="assets/img/peakStats.png" alt="plotStats plot" width="480">
+
+1. `signal`: name of input sample
+2. `target`: name of input target set
+3. `source`: source of target 
+4. `integration`: montecarlo integration of peak using `background.mean`
+5. `background.mean`: mean calculated of extreme of distribution.
+6. `referencePoint.bin`: bin location of referencePoint.
+7. `referencePoint.coverage`: composite coverage at reference point.
+8. `referencePoint.relative`: composite relative coverage at reference point.
+9. `central.coverage`: composite central coverage as defined in [Griffin](https://www.nature.com/articles/s41467-022-35076-w).
+10. `central.coverage.bin.min`: bin left limit of composite central coverage.
+11. `central.coverage.bin.max`: bin right limit of composite central coverage.
+12. `background.left.limit`: bin left limit for `background.mean`.
+13. `background.right.limit`: bin right limit for `background.mean`.
+14. `average.coverage`: average coverage as defined in [Griffin](https://www.nature.com/articles/s41467-022-35076-w).
+15. `average.coverage.bin.min`: bin left limit of composite average coverage.
+16. `average.coverage.bin.max`: bin right limit of composite average coverage.
+17. `peak.length`: length of peak (green dotted line in the example)
+18. `peak.relative.length`: length of peak (green dotted line in the example)
+
 
 ## Quick Start
 
@@ -44,17 +66,30 @@ flowchart TB
     v0["genome_2bit"]
     v6["targets"]
     end
-    v9([FRAGMENTOMICS])
-    v0 --> v9
-    v2 --> v9
-    v4 --> v9
-    v6 --> v9
+    v10([FRAGMENTOMICS])
+    v11([VERSIONS])
+    v0 --> v10
+    v2 --> v10
+    v4 --> v10
+    v6 --> v10
+    v10 --> v11
     end
+```
+Required input params:
+
+```
+input: "./examples/input/example_samplesheet_bam.csv"
+targets: "./examples/input/example_targets.csv"
+outdir: "./results"
+genome_2bit: "./tests/input/stub/GRCh38.2bit"
+blacklist_bed: "./tests/input/stub/ENCODE_Blacklist_V2.bed"
 ```
 
 ### INPUT
 
-Create a `samplesheet.csv`:
+Input is a samplesheet with bam or bw (bigWiggle) samples.
+
+Example of `samplesheet.csv`:
 
 ```
 caseid,sampleid,timepoint,bam,bai,bw
@@ -73,7 +108,7 @@ Where:
 
 ### TARGETS
 
-Create a target list (`targets.csv`):
+Example of target list (`targets.csv`):
 
 ```
 name,source,bed
@@ -85,19 +120,12 @@ rand3,house_keeping_dataset,./tests/input/stub/rand3.bed
 HouseKeeping,house_keeping_dataset,./tests/input/stub/GeneHancer_housekeeping.bed
 ```
 
-Here we are defining 6 targets: 
+Where:
 
- - MYC and ELK4 transcription factor binding sites from the GRIFFIN dataset. 
- - 3 random datasets of random genes for housekeeping plots. 
- - A set of housekeeping genes for random comparisons.
+ - `name`: name of the target 
+ - `source`: source of the target is, in many cases, the enclosing folder of the bed file. Different sources will be separated in publish dir.
+ - `bed`: bed file with targets
 
-Required parameters:
-
-```
-input: "samplesheet.csv"
-targets: "targets.csv"
-outdir: "./results"
-```
 
 ### GENOME
 
@@ -105,7 +133,9 @@ outdir: "./results"
 
 ### BLACKLIST BED
 
-`blacklist_bed`: BED file with blacklisted regions used in COVERAGEBAM (wiggle file generation) and in COMPUTEMATRIX (matrix calculation). We are using the ENCODE blacklist from:
+`blacklist_bed`: BED file with blacklisted regions used in COVERAGEBAM (wiggle file generation) and in COMPUTEMATRIX (matrix calculation). 
+
+We are using the ENCODE blacklist from:
  
     Amemiya, H.M., Kundaje, A. & Boyle, A.P. The ENCODE Blacklist: Identification of Problematic Regions of the Genome. Sci Rep 9, 9354 (2019). https://doi.org/10.1038/s41598-019-45839-z
 

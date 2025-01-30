@@ -3,3 +3,4 @@ targets: "./examples/input/example_targets.csv"
 outdir: "./results"
 genome_2bit: "./tests/input/stub/GRCh38.2bit"
 blacklist_bed: "./tests/input/stub/ENCODE_Blacklist_V2.bed"
+genome_size: 2913022398
