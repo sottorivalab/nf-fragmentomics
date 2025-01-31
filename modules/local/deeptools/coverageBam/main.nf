@@ -32,7 +32,7 @@ process COVERAGEBAM {
 		--blackListFileName ${blacklist_bed} \\
 		--centerReads \\
 		--binSize ${params.bin_size} \\
-		$args
+		$args > ${prefix}.bamCoverage.log 2>&1
 	
 	cat <<-END_VERSIONS > versions.yml
 	"${task.process}":

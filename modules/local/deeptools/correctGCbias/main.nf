@@ -30,7 +30,7 @@ process CORRECTGCBIAS {
         --GCbiasFrequenciesFile ${freq} \\
         --numberOfProcessors ${task.cpus} \\
         -o ${prefix}.gc_correct.bam \\
-        $args
+        $args 1> ${prefix}.gc_correct.log 2>&1
     
 	
     cat <<-END_VERSIONS > versions.yml

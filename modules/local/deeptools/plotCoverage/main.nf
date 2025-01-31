@@ -35,7 +35,7 @@ process PLOTCOVERAGE {
         --outRawCounts ${prefix}_coverage.tab \\
         --plotTitle "Sample: ${meta.sampleid}" \\
         --numberOfProcessors ${task.cpus} \\
-        $args
+        $args > ${prefix}_plotCoverage.log 2>&1
     
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

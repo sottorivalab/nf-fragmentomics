@@ -37,7 +37,7 @@ process COMPUTEMATRIX {
 			--numberOfProcessors ${task.cpus} \\
 			--sortRegions descend \\
 			--binSize ${params.bin_size} \\
-			$args
+			$args > \${BASENAME}.computeMatrix.log 2>&1			
 			
 	done
 

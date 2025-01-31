@@ -31,7 +31,7 @@ process COMPUTEGCBIAS {
         -g ${genome_2bit} \\
         --GCbiasFrequenciesFile ${prefix}.freq.txt \\
         --numberOfProcessors ${task.cpus} \\
-        $args
+        $args > ${prefix}.gc_bias.log 2>&1
 	
 	cat <<-END_VERSIONS > versions.yml
     "${task.process}":
