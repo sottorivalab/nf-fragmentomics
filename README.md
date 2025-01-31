@@ -206,9 +206,6 @@ Param: `blacklist_bed`
  - `target_expand_sx` and `target_expand_dx`: how many bp to expand the Target region? default is 4000 bp on both sides
  - `filter_min` and `filter_max`: limit for reads filtering. By default is 90-150 bp
 
-<!-- TODO end of last revision, review the rest -->
-
-
 ### Labels
 
  - process_single
@@ -280,99 +277,6 @@ Usage example with test files:
 
 ## Analysis example
 
-Some analysis examples with pseudocode
-
-### Housekeeping plots
-
-To verify if in our dataset it is possible to see a signal from open chromatin regions, we can do the following experiment:
-
-1. We take all the TSS from GeneHancer.
-2. We calculate the composite coverage (the peak) of all TSS on housekeeping genes (that should always be active). 
-3. We then calculate the composite coverage for 100 sets of randomly picked genes NOT housekeeping.
-
-We first need to load the `peak_data.tsv` files.
-
-These files contain 4 columns:
-
- * `raw` is the raw signal
- * `bin` is the x position
- * `relative` is the signal relative to the background_median
- * `background_median` is the median calculated as shown above
-
-In R, for example, we can do this:
-
-```r
-mdata <- read_delim("path/to/peak_data.tsv", show_col_types = FALSE)
-```
-
-We can load the random dataset in an object (random in the next example) and the housekeeping dataset in another object (hk in the next example). 
-
-We can now combine the 2 data in a plot with ggplot:
-
-```r
-ggplot() +
-    geom_line(data = random, aes(x = bin, y = relative), color="grey", show.legend = FALSE) +
-    geom_line(data = housekeeping, aes(x = bin, y = relative), color="red", show.legend = FALSE) +
-    scale_x_continuous(
-      "Position relative to TSS (bp)", 
-      breaks = c(0,200,400,600,800), 
-      labels = c("-4kb","-2kb","0","2kb","4kb")
-    ) +
-    ylab("Relative coverage") +
-    ggtitle(plot.title) +
-    scale_color_manual(values=c("grey","red")) +
-    theme(legend.position = "bottom")
-```
-
-<img src="assets/img/housekeeping_plot.png" alt="HouseKeeping Genes QC Plot" width="480">
-
-The housekeeping signal (red line in the plot) is quite different compared to random gene sets! Do you agree?
-
-### Target plots
-
-Here we want to plot the composite coverage for a single Transcription Factor for a cohort across different timepoints.
-
-We start as above from the `peak_data.tsv` files where:
-
- * `raw` is the raw signal
- * `bin` is the x position
- * `relative` is the signal relative to the background_median
- * `background_median` is the median calculated as shown above
-
-In this case, it is better to load the single file and merge the data into a single object:
-
-For each peak_data file:
-
-```r
-mdata <- read_delim("path/to/peak_data.tsv", show_col_types = FALSE)
-```
-
-Mutate rdata to add sample, case, and timepoint:
-
-```r
-mdata <- mdata |> mutate(
-    sample=sample_name,
-    case=case_name,
-    timepoint=timepoint_name
-)
-```
-
-You can now combine different data objects into a single object using `bind_rows`.
-
-On the final dataset, we can use the `bins` on the X axis, the `relative` signal on the Y axis. We group and color observations by timepoint and we split (facet_wrap) plots by patient.
-
-Result:
-
-<img src="assets/img/target_plots_cdx2.png" alt="CDX2 Cohort Plot" width="480">
-
-### Heatmaps with ComplexHeatmap
-
-Given a set of samples and a list of targets, we can build a heatmap of peak lengths or other peak statistics.
-
-In this example, we use [ComplexHeatmap](https://jokergoo.github.io/ComplexHeatmap-reference/book/index.html) and the R package to draw and arrange multiple heatmaps.
-
-<img src="assets/img/complexHeatmap_example.png" alt="ComplexHeatmap example" width="800">
-
 <!-- TODO -->
 
 ## Credits
@@ -381,12 +285,7 @@ In this example, we use [ComplexHeatmap](https://jokergoo.github.io/ComplexHeatm
 
 ## Contributions and Support
 
-To test the R peakStats script:
-
-```
-cd peakStats
-../../bin/fragmentomics_peakStats.R -s "Signal" -t "Target" -S "Source" --background-left-limit 50 --background-right-limit 50 ../input/matrix/FOXA2_regions_matrix.gz
-```
+<!-- TODO -->
 
 ## Citation
 
