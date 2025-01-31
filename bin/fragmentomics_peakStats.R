@@ -187,8 +187,8 @@ read_matrix <- function(mfile, opt) {
 
 # WRITE FILES
 write_files <- function(all.data, summary.table, peak.stats, opt) {
-  write_delim(summary.table, paste(opt$signal, opt$target, opt$source, "peak_data.tsv", sep="_"), delim="\t")
-  write_delim(peak.stats, paste(opt$signal, opt$target, opt$source, "peak_stats.tsv", sep="_"), delim="\t")
+  write_delim(summary.table, paste(opt$target, "peak_data.tsv", sep="_"), delim="\t")
+  write_delim(peak.stats, paste(opt$target, "peak_stats.tsv", sep="_"), delim="\t")
 }
 
 # PLOT SIGNAL
@@ -296,7 +296,7 @@ plot_signal <- function(summary.table, integration.data, peak.stats, opt) {
     ) +
     theme(legend.position = "none")
 
-  ggsave(paste(opt$signal, opt$target, opt$source, "RawSignal.pdf", sep="_"), width=29.7, height=21, units="cm")
+  ggsave(paste(opt$target, "RawSignal.pdf", sep="_"), width=29.7, height=21, units="cm")
 
   # plot relative signal
   ggplot() +
@@ -326,7 +326,7 @@ plot_signal <- function(summary.table, integration.data, peak.stats, opt) {
     ) +
     theme(legend.position = "none")
 
-  ggsave(paste(opt$signal, opt$target, opt$source, "RelativeSignal.pdf", sep="_"), width=29.7, height=21, units="cm")
+  ggsave(paste(opt$target,"RelativeSignal.pdf", sep="_"), width=29.7, height=21, units="cm")
 }
 
 # MAIN
