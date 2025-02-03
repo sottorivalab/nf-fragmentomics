@@ -208,6 +208,8 @@ Param: `blacklist_bed`
 
 ### Labels
 
+Configured labels:
+
  - process_single
  - process_low
  - process_medium
@@ -216,6 +218,12 @@ Param: `blacklist_bed`
  - process_high_memory
  - error_ignore
  - error_retry
+
+
+`process_low`: BAMPEFRAGMENTSIZE, PLOTCOVERAGE
+`process_medium`: HEATMAP, PEAK_STATS
+`process_high`: COMPUTEGCBIAS, CORRECTGCBIAS, COMPUTEMATRIX, COVERAGEBAM, FILTERBAMBYSIZE
+
 
 ### Scripts
 

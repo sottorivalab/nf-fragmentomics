@@ -7,7 +7,7 @@
 
 process BAMPEFRAGMENTSIZE {
     tag "$meta.sampleid"
-    label 'process_medium'
+    label 'process_low'
 
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/deeptools:3.5.5--pyhdfd78af_0':
