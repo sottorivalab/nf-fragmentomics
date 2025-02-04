@@ -8,6 +8,7 @@ FRAGMENTOMICS PIPELINE
 nextflow.enable.dsl = 2
 
 include { FRAGMENTOMICS } from './workflows/fragmentomics.nf'
+include { VERSIONS } from './modules/local/utils/versions.nf'
 
 def create_target_channel(LinkedHashMap row) {    
     return [row.source, row.name, file(row.bed)]
@@ -30,30 +31,7 @@ def create_sample_channel(LinkedHashMap row) {
     ]
 }
 
-process VERSIONS {
-    debug true
-    publishDir "${params.outdir}/pipeline_info", mode: 'copy'
-    
-    input:
-    val versions
 
-    output:
-    path("versions.yml")
-
-    script:
-    """
-    cat <<-END_VERSIONS > versions.yml
-    ${versions.join("\n")}
-    END_VERSIONS
-    """
-
-    stub:
-    """
-    cat <<-END_VERSIONS > versions.yml
-    ${versions.join("\n")}
-    END_VERSIONS
-    """
-}
 
 // MAIN WORKFLOW
 workflow {
