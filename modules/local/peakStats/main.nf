@@ -31,7 +31,7 @@ process PEAK_STATS {
 	
 	cat <<-END_VERSIONS > versions.yml
 	"${task.process}":
-	Rscript: \$(Rscript --version | sed -e "s/Rscript (R) //g")
+		Rscript: \$(Rscript --version | sed -e "s/Rscript (R) //g")
 	END_VERSIONS
 	"""
 
@@ -51,7 +51,7 @@ process PEAK_STATS {
 
 	cat <<-END_VERSIONS > versions.yml
 	"${task.process}":
-	Rscript: \$(Rscript --version | sed -e "s/Rscript (R) //g")
+	    Rscript: \$(Rscript --version | sed -e "s/Rscript (R) //g")
 	END_VERSIONS
 	"""
 }

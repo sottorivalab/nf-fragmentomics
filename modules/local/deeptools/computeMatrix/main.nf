@@ -37,13 +37,13 @@ process COMPUTEMATRIX {
 			--numberOfProcessors ${task.cpus} \\
 			--sortRegions descend \\
 			--binSize ${params.bin_size} \\
-			$args > \${BASENAME}.computeMatrix.log 2>&1			
-			
+			$args
+
 	done
 
 	cat <<-END_VERSIONS > versions.yml
 	"${task.process}":
-	deeptools: \$(computeMatrix --version | sed -e "s/computeMatrix //g")
+	    deeptools: \$(computeMatrix --version | sed -e "s/computeMatrix //g")
 	END_VERSIONS
 	"""
 
@@ -57,7 +57,7 @@ process COMPUTEMATRIX {
 
 	cat <<-END_VERSIONS > versions.yml
 	"${task.process}":
-	deeptools: \$(computeMatrix --version | sed -e "s/computeMatrix //g")
+	    deeptools: \$(computeMatrix --version | sed -e "s/computeMatrix //g")
 	END_VERSIONS
 	"""
 }

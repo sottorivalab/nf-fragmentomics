@@ -35,11 +35,11 @@ process PLOTCOVERAGE {
         --outRawCounts ${prefix}_coverage.tab \\
         --plotTitle "Sample: ${meta.sampleid}" \\
         --numberOfProcessors ${task.cpus} \\
-        $args > ${prefix}_plotCoverage.log 2>&1
+        $args
     
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-    deeptools: \$(plotCoverage --version | sed -e "s/plotCoverage //g")
+        deeptools: \$( plotCoverage --version | sed -e 's/plotCoverage //g' )
     END_VERSIONS
     """
 
@@ -51,7 +51,7 @@ process PLOTCOVERAGE {
     
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-    deeptools: \$(plotCoverage --version | sed -e "s/plotCoverage //g")
+        deeptools: \$( plotCoverage --version | sed -e 's/plotCoverage //g' )
     END_VERSIONS
     """
 }

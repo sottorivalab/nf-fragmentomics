@@ -31,22 +31,22 @@ process COMPUTEGCBIAS {
         -g ${genome_2bit} \\
         --GCbiasFrequenciesFile ${prefix}.freq.txt \\
         --numberOfProcessors ${task.cpus} \\
-        $args > ${prefix}.gc_bias.log 2>&1
-	
-	cat <<-END_VERSIONS > versions.yml
+        $args		
+
+    cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-    deeptools: \$(computeGCBias --version | sed -e "s/computeGCBias //g")
+        deeptools: \$( computeGCBias --version | sed -e 's/computeGCBias //g' )
     END_VERSIONS
-	"""
+    """
 
 	stub:
     def prefix = task.ext.prefix ?: "${meta.sampleid}"
 	"""
-	touch ${prefix}.freq.txt
-	
-	cat <<-END_VERSIONS > versions.yml
+    touch ${prefix}.freq.txt
+
+    cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-    deeptools: \$(computeGCBias --version | sed -e "s/computeGCBias //g")
+        deeptools: \$( computeGCBias --version | sed -e 's/computeGCBias //g' )
     END_VERSIONS
 	"""
 }

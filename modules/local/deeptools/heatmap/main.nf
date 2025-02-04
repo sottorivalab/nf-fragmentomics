@@ -13,7 +13,7 @@ process HEATMAP {
     tuple val(meta_sample), val(source), path(matrix)
 
     output:
-	tuple val(meta_sample), val(source), path("*_heatmap.png"), emit: heatmap
+    tuple val(meta_sample), val(source), path("*_heatmap.png"), emit: heatmap
     path "versions.yml"                                       , emit: versions
 
     when:
@@ -35,7 +35,7 @@ process HEATMAP {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-    deeptools: \$(plotHeatmap --version | sed -e "s/plotHeatmap //g")
+        deeptools: \$( plotHeatmap --version | sed -e 's/plotHeatmap //g' )
     END_VERSIONS
     """
 
@@ -49,7 +49,7 @@ process HEATMAP {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-    deeptools: \$(plotHeatmap --version | sed -e "s/plotHeatmap //g")
+        deeptools: \$( plotHeatmap --version | sed -e 's/plotHeatmap //g' )
     END_VERSIONS
     """
 }
