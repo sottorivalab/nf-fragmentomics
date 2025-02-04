@@ -31,8 +31,6 @@ def create_sample_channel(LinkedHashMap row) {
     ]
 }
 
-
-
 // MAIN WORKFLOW
 workflow {
     

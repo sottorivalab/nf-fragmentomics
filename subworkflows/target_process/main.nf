@@ -1,6 +1,7 @@
 include { COMPUTEMATRIX } from '../../modules/local/deeptools/computeMatrix/main.nf'
 include { HEATMAP       } from '../../modules/local/deeptools/heatmap/main.nf'
 include { PEAK_STATS    } from '../../modules/local/peakStats/main.nf'
+include { PEAK_COLLECT } from '../../modules/local/peakCollect/main.nf'
 
 workflow TARGET_PROCESS {
     take:
@@ -23,7 +24,14 @@ workflow TARGET_PROCESS {
             HEATMAP.out.versions,
             PEAK_STATS.out.versions
         )
-        
+
+        peak_stats = PEAK_STATS.out.peaks
+            .map { it ->
+                it[3]
+            }
+            .collect()
+            
+        PEAK_COLLECT(peak_stats)
     emit:
         peaks = PEAK_STATS.out.peaks
         versions = ch_versions
