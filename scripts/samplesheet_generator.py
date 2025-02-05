@@ -12,7 +12,8 @@ __license__ = "MIT"
 
 _logger = logging.getLogger(__name__)
 
-regexp = re.compile(r"((.*)_(.*))\..*")
+#regexp = re.compile(r"((.*)_(.*))\..*")
+regexp = re.compile(r"((.*)_(POST_TMZ_INDUCTION|BL|ON_ICI|PD))_filter_90_150_processed\..*")
 
 def parse_args():
     """Parse arguments"""
@@ -26,15 +27,6 @@ def parse_args():
         help="Bam or wiggle files",
         nargs='+',
         metavar="FILE",
-    )
-
-    parser.add_argument(
-        "-r",
-        "--regexp",
-        dest="regexp",
-        default=regexp,
-        metavar="REGEXP",
-        help=f"Parser regexp - default: {regexp.pattern}"
     )
 
     parser.add_argument(
@@ -87,8 +79,12 @@ def check_files(files):
         if file.suffix == '.bam':
             bai_file = Path(f"{str(file)}.bai")
             if not bai_file.is_file():
-                _logger.error(f"Missing bai file: {bai_file}")
-                return False
+                bai_filename = file.stem + '.bai'
+                bai_dir = file.parent
+                bai_file = bai_dir / bai_filename
+                if not bai_file.is_file():
+                    _logger.error(f"Missing bai file: {bai_file}")
+                    return False
             
     return True
 
