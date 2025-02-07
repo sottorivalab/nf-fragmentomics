@@ -12,8 +12,7 @@ __license__ = "MIT"
 
 _logger = logging.getLogger(__name__)
 
-#regexp = re.compile(r"((.*)_(.*))\..*")
-regexp = re.compile(r"((.*)_(POST_TMZ_INDUCTION|BL|ON_ICI|PD))_filter_90_150_processed\..*")
+regexp = re.compile(r"((.*)_(.*))\..*")
 
 def parse_args():
     """Parse arguments"""
@@ -27,6 +26,15 @@ def parse_args():
         help="Bam or wiggle files",
         nargs='+',
         metavar="FILE",
+    )
+    
+    parser.add_argument(
+        "-r",
+        "--regexp",
+        dest="regexp",
+        default=regexp,
+        metavar="REGEXP",
+        help=f"Parser regexp - default: {regexp.pattern}"
     )
 
     parser.add_argument(
@@ -88,12 +96,12 @@ def check_files(files):
             
     return True
 
-def print_samplesheet(files):
+def print_samplesheet(files, regexp):
     """Write samplesheet.csv to stdout"""
     print("caseid,sampleid,timepoint,bam,bai,bw")
     for file in files:
         match = regexp.match(file.name)
-        sampleid = match.group(1)
+        sampleid = match.group(1)   
         caseid = match.group(2)
         timepoint = match.group(3)
 
@@ -115,6 +123,7 @@ def main():
     """Main function"""
     args = parse_args()
     setup_logging(args.loglevel)
+    regexp = re.compile(args.regexp)
     
     _logger.info("Generating samplesheet.csv")
     _logger.info("Parser regexp: %s", regexp.pattern)
@@ -125,7 +134,7 @@ def main():
 
     if check_files(files):
         _logger.info("Files are ok")
-        print_samplesheet(files)
+        print_samplesheet(files, regexp)
         _logger.info("Done")
         return 0
     else:

@@ -257,6 +257,12 @@ Usage example with test files:
 ./scripts/samplesheet_generator.py tests/input/samplesheet_generator/*/*.{bw,bam}
 ```
 
+Example with custom regexp
+
+```
+./scripts/samplesheet_generator.py /Volumes/sottoriva/00-PROCESSED_DATA/2022-MAYA_MISSONI_VALENTINO/CASES/MAYA_*/MAYA_*/low_pass_wgs/bwa/MAYA_*_filter_90_150_processed.bam -r "((.*)_(POST_TMZ_INDUCTION|BL|ON_ICI|PD))_filter_90_150_processed\..*"
+```
+
 #### Targets Generator
 
 location: `scripts/targets_generator.py`
