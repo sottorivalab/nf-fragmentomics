@@ -93,7 +93,7 @@ def print_targets(files, source):
         name = match.group(1)
         if source is None:
             source = file.parent.name
-        file_abs = Path.cwd() / file.name
+        file_abs = file.absolute()
         print(f"{name},{source},{file_abs}")
         
 
