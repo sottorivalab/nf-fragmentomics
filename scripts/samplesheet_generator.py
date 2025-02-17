@@ -112,7 +112,8 @@ def print_samplesheet(files, regexp):
             f"Match: {match} - sampleid={sampleid} caseid={caseid} timepoint={timepoint}\n"
         )
 
-        file_abs = Path.cwd() / file.name
+        file_abs = file.absolute()
+        
         if file.suffix == '.bam':
             bai_abs = Path.cwd() / f"{file.name}.bai"
             print(f"{caseid},{sampleid},{timepoint},{file_abs},{bai_abs},")
