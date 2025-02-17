@@ -115,7 +115,16 @@ def print_samplesheet(files, regexp):
         file_abs = file.absolute()
         
         if file.suffix == '.bam':
-            bai_abs = Path.cwd() / f"{file.name}.bai"
+            bai_file = Path(f"{str(file)}.bai")
+            if not bai_file.is_file():
+                bai_filename = file.stem + '.bai'
+                bai_dir = file.parent
+                bai_file = bai_dir / bai_filename
+                if not bai_file.is_file():
+                    _logger.error(f"Missing bai file: {bai_file}")
+                    return False
+                
+            bai_abs = bai_file.absolute()
             print(f"{caseid},{sampleid},{timepoint},{file_abs},{bai_abs},")
         else:
             print(f"{caseid},{sampleid},{timepoint},,,{file_abs}")
