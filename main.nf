@@ -11,7 +11,7 @@ include { FRAGMENTOMICS } from './workflows/fragmentomics.nf'
 include { VERSIONS } from './modules/local/utils/versions.nf'
 
 def create_target_channel(LinkedHashMap row) {    
-    return [row.source, row.name, file(row.bed)]
+    return [row.source, file(row.bed)]
 }
 
 def create_sample_channel(LinkedHashMap row) {
@@ -48,19 +48,17 @@ workflow {
     target_ch = Channel.fromPath(params.targets)
         .splitCsv(header: true, sep:',')
         .map{ create_target_channel(it) }
-        .collate(params.collate_size)
-        .view()
-    
 
-    // // filter targets for lines if not stubrun
-    // if (workflow.stubRun == false) {
-    //     target_ch = target_ch
-    //         .filter{ it ->
-    //             it[2].readLines().size() > 1
-    //         }
-    // }
+    // filter targets for lines if not stubrun
+    if (workflow.stubRun == false) {
+        target_ch = target_ch
+            .filter{ it ->
+                it[2].readLines().size() > 1
+            }
+    }
 
-    // target_ch = target_ch.groupTuple(by: 0)
+    // target_ch = target_ch.map{it[1]}.collate(params.collate_size).view()
+    source_ch = target_ch.map{it[0]}.collate(params.collate_size).view()
 
     // FRAGMENTOMICS(
     //     sample_ch,
