@@ -48,33 +48,35 @@ workflow {
     target_ch = Channel.fromPath(params.targets)
         .splitCsv(header: true, sep:',')
         .map{ create_target_channel(it) }
-        
+        .collate(params.collate_size)
+        .view()
+    
 
-    // filter targets for lines if not stubrun
-    if (workflow.stubRun == false) {
-        target_ch = target_ch
-            .filter{ it ->
-                it[2].readLines().size() > 1
-            }
-    }
+    // // filter targets for lines if not stubrun
+    // if (workflow.stubRun == false) {
+    //     target_ch = target_ch
+    //         .filter{ it ->
+    //             it[2].readLines().size() > 1
+    //         }
+    // }
 
-    target_ch = target_ch.groupTuple(by: 0)
+    // target_ch = target_ch.groupTuple(by: 0)
 
-    FRAGMENTOMICS(
-        sample_ch,
-        target_ch,
-        genome_2bit,
-        blacklist_bed
-    )    
+    // FRAGMENTOMICS(
+    //     sample_ch,
+    //     target_ch,
+    //     genome_2bit,
+    //     blacklist_bed
+    // )
 
-    // collect versions in a single file simple mode
-    VERSIONS(
-        FRAGMENTOMICS.out.versions
-            .unique()
-            .map { version_file ->
-                version_file.text
-            }
-            .unique()
-            .collect()
-    )
+    // // collect versions in a single file simple mode
+    // VERSIONS(
+    //     FRAGMENTOMICS.out.versions
+    //         .unique()
+    //         .map { version_file ->
+    //             version_file.text
+    //         }
+    //         .unique()
+    //         .collect()
+    // )
 }

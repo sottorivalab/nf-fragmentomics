@@ -1,6 +1,9 @@
 name,source,bed
 MYC,GRIFFIN,./tests/input/stub/myc.bed
 ELK4,TIMON,./tests/input/stub/elk4.bed
+ELK1,TIMON,./tests/input/stub/elk1.bed
+ELK2,TIMON,./tests/input/stub/elk2.bed
+ELK3,TIMON,./tests/input/stub/elk3.bed
 rand1,random_dataset,./tests/input/stub/rand1.bed
 rand2,random_dataset,./tests/input/stub/rand2.bed
 rand3,random_dataset,./tests/input/stub/rand3.bed
