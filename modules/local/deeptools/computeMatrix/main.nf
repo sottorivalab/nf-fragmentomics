@@ -10,7 +10,7 @@ process COMPUTEMATRIX {
         'biocontainers/deeptools:3.5.5--pyhdfd78af_0' }"
 	
 	input:
-	tuple val(meta_sample), path(bw), path(blacklist_bed), val(source), val(names), path(beds)
+	tuple val(meta_sample), path(bw), path(blacklist_bed), val(source), path(beds)
 	
 	output:
 	tuple val(meta_sample), val(source), path("*_matrix.gz"), emit: matrix

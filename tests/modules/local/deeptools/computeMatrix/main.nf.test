@@ -17,7 +17,6 @@ nextflow_process {
                     file(params.modules_testdata_base_path + 'genomics/sarscov2/illumina/bigwig/test.bigwig', checkIfExists: true),
                     file(params.modules_testdata_base_path + 'genomics/sarscov2/genome/bed/baits.bed', checkIfExists: true),
                     'test_source',
-                    ['test_target'],
                     [file(params.modules_testdata_base_path + 'genomics/sarscov2/genome/bed/test.bed', checkIfExists: true)]
                 ]
                 """

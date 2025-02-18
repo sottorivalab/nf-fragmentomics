@@ -21,7 +21,6 @@ nextflow_workflow {
                 ])
                 input[1] = Channel.of([
                     'test_source', 
-                    'test',
                     file(params.modules_testdata_base_path + 'genomics/sarscov2/genome/bed/test.bed', checkIfExists: true),
                 ])
                 input[2] = [

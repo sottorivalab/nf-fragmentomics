@@ -3,7 +3,6 @@
         "content": [
             [
                 "test",
-                "elk4vc",
                 "elk4.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
             ]
         ],
@@ -11,7 +10,7 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.4"
         },
-        "timestamp": "2025-01-29T14:31:36.452137"
+        "timestamp": "2025-02-18T12:24:27.612498"
     },
     "Test Function create_sample_channel": {
         "content": [

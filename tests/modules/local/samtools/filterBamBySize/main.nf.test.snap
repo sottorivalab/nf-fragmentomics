@@ -13,13 +13,13 @@
                 ]
             ],
             [
-                "versions.yml:md5,c22b1dc502eb918c56ff1505430d25f2"
+                "versions.yml:md5,8e1da23404c22cba5eb736cc23529841"
             ]
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "24.10.4"
         },
-        "timestamp": "2025-01-29T15:07:30.037059"
+        "timestamp": "2025-02-18T12:34:16.028664"
     }
 }
