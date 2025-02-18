@@ -57,24 +57,29 @@ workflow {
             }
     }
 
-    // target_ch = target_ch.map{it[1]}.collate(params.collate_size).view()
-    source_ch = target_ch.map{it[0]}.collate(params.collate_size).view()
 
-    // FRAGMENTOMICS(
-    //     sample_ch,
-    //     target_ch,
-    //     genome_2bit,
-    //     blacklist_bed
-    // )
+    target_ch = target_ch
+        .groupTuple(
+            by: 0, 
+            size: params.collate_size, 
+            remainder: true)
 
-    // // collect versions in a single file simple mode
-    // VERSIONS(
-    //     FRAGMENTOMICS.out.versions
-    //         .unique()
-    //         .map { version_file ->
-    //             version_file.text
-    //         }
-    //         .unique()
-    //         .collect()
-    // )
+
+    FRAGMENTOMICS(
+        sample_ch,
+        target_ch,
+        genome_2bit,
+        blacklist_bed
+    )
+
+    // collect versions in a single file simple mode
+    VERSIONS(
+        FRAGMENTOMICS.out.versions
+            .unique()
+            .map { version_file ->
+                version_file.text
+            }
+            .unique()
+            .collect()
+    )
 }

@@ -7,29 +7,26 @@ process  DEBUG {
     debug true
     
     input:
-    tuple val(meta_sample), path(bw), path(blacklist_bed)
-    each targets_batch
+    tuple val(meta_sample), path(bw), path(blacklist_bed), val(source), path(beds)
 
     output:
-    tuple val(meta_sample), val(sources), path("*_matrix.gz"), emit: matrix
+    tuple val(meta_sample), val(source), path("*_matrix.gz"), emit: matrix
 
     script:
     """
-    echo ${targets_batch}
     """
 
     stub:
-    def beds = targets_batch.collect { it[1] }
-    def sources = targets_batch.collect { it[0] }
     """
+    echo BEDS ${beds}
+    echo SOURCE ${source}
     echo SAMPLE ${meta_sample.sampleid}
     for BED in ${beds.join(' ')} ; do
         BASENAME=\$(basename \${BED} .bed)
-        echo BED \${BED}
-        echo BASENAME \${BASENAME}
+        echo "BED \${BED} BASENAME \${BASENAME} SOURCE ${source}"
         OUTPUT_FILE=\${BASENAME}_matrix.gz
         touch \${OUTPUT_FILE}
-    done    
+    done
     """
 }
 
@@ -43,8 +40,10 @@ workflow TARGET_PROCESS {
         ch_versions = Channel.empty()
         signal_target_ch = wiggle_ch
             .combine(blacklist_bed)
+            .combine(target_ch)
+            .view()
         
-        DEBUG(signal_target_ch, target_ch)
+        DEBUG(signal_target_ch)
 
         // COMPUTEMATRIX(signal_target_ch)
         // HEATMAP(COMPUTEMATRIX.out.matrix)

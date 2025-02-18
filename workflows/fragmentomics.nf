@@ -10,7 +10,7 @@ workflow FRAGMENTOMICS {
     take:
         // sample_ch [[ caseid, sampleid, timepoint ], bam, bai, bw]
         sample_ch
-        // target_ch [[ name, source ], bed]
+        // target_ch [bed]
         target_ch
         // file
         genome_2bit

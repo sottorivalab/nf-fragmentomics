@@ -1,5 +1,9 @@
 name,source,bed
 MYC,GRIFFIN,./tests/input/stub/myc.bed
+ELK4,GRIFFIN,./tests/input/stub/elk4.bed
+ELK1,GRIFFIN,./tests/input/stub/elk1.bed
+ELK2,GRIFFIN,./tests/input/stub/elk2.bed
+ELK3,GRIFFIN,./tests/input/stub/elk3.bed
 ELK4,TIMON,./tests/input/stub/elk4.bed
 ELK1,TIMON,./tests/input/stub/elk1.bed
 ELK2,TIMON,./tests/input/stub/elk2.bed
