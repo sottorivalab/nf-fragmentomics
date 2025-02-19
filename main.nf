@@ -53,7 +53,7 @@ workflow {
     if (workflow.stubRun == false) {
         target_ch = target_ch
             .filter{ it ->
-                it[2].readLines().size() > 1
+                it[1].readLines().size() > 1
             }
     }
 
