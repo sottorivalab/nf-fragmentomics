@@ -64,7 +64,6 @@ workflow {
             size: params.collate_size, 
             remainder: true)
 
-
     FRAGMENTOMICS(
         sample_ch,
         target_ch,

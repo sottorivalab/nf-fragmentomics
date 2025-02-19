@@ -232,15 +232,9 @@ Param: `blacklist_bed`
 
 Configured labels:
 
- - process_single
  - process_low
  - process_medium
  - process_high
- - process_long
- - process_high_memory
- - error_ignore
- - error_retry
-
 
 `process_low`: BAMPEFRAGMENTSIZE, PLOTCOVERAGE
 `process_medium`: HEATMAP, PEAK_STATS
