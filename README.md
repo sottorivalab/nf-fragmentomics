@@ -85,6 +85,28 @@ genome_2bit: "./tests/input/stub/GRCh38.2bit"
 blacklist_bed: "./tests/input/stub/ENCODE_Blacklist_V2.bed"
 ```
 
+Other parameters
+
+```
+// preprocess: if true, preprocess the input data to bw
+preprocess = true 
+// bin_size: bin size for the bw files
+bin_size = 10
+// target_expand_sx: bp to expand on the left of the target
+target_expand_sx = 4000
+// target_expand_dx: bp to expand on the right of the target
+target_expand_dx = 4000	
+// filter_min: minimum fragment length
+filter_min = 90
+// filter_max: maximum fragment length
+filter_max = 150
+// collate size for the target channel
+collate_size = 25
+```
+
+With `collate_size` you can control the granularity of target processing (the number of targets for process), default is 15.
+
+
 ### INPUT
 
 Input is a samplesheet with bam or bw (bigWiggle) samples.
@@ -123,7 +145,7 @@ HouseKeeping,house_keeping_dataset,./tests/input/stub/GeneHancer_housekeeping.be
 Where:
 
  - `name`: name of the target 
- - `source`: source of the target is, in many cases, the enclosing folder of the bed file. Different sources will be separated in publish dir.
+ - `source`: source of the target is, in many cases, the enclosing folder of the bed file. Different sources will be separated in publish dir. This allows the presence of files with the same name but ib different folders (griffin/MYC.bed and jasper/MYC.bed)
  - `bed`: bed file with targets
 
 
