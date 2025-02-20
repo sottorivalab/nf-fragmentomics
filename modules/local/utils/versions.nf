@@ -9,15 +9,15 @@ process VERSIONS {
 
     script:
     """
-    cat <<-END_VERSIONS > versions.yml
-    ${versions.join("\n")}
-    END_VERSIONS
+cat <<-END_VERSIONS > versions.yml
+${versions.join("\n")}
+END_VERSIONS
     """
 
     stub:
     """
-    cat <<-END_VERSIONS > versions.yml
-    ${versions.join("\n")}
-    END_VERSIONS
+cat <<-END_VERSIONS > versions.yml
+${versions.join("\n")}
+END_VERSIONS
     """
 }

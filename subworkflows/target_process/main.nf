@@ -20,9 +20,9 @@ workflow TARGET_PROCESS {
         PEAK_STATS(COMPUTEMATRIX.out.matrix)
 
         ch_versions = ch_versions.mix(
-            COMPUTEMATRIX.out.versions,
-            HEATMAP.out.versions,
-            PEAK_STATS.out.versions
+            COMPUTEMATRIX.out.versions.first(),
+            HEATMAP.out.versions.first(),
+            PEAK_STATS.out.versions.first()
         )
 
         peak_stats = PEAK_STATS.out.peaks

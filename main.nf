@@ -74,11 +74,9 @@ workflow {
     // collect versions in a single file simple mode
     VERSIONS(
         FRAGMENTOMICS.out.versions
-            .unique()
             .map { version_file ->
                 version_file.text
             }
-            .unique()
             .collect()
     )
 }

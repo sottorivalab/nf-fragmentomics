@@ -40,12 +40,12 @@ workflow BAM_PREPROCESS {
         COVERAGEBAM(gc_correct_ch)
         wiggle_ch = COVERAGEBAM.out.bw
         ch_versions = ch_versions.mix(
-            BAMPEFRAGMENTSIZE.out.versions,
-            PLOTCOVERAGE.out.versions,
-            FILTERBAMBYSIZE.out.versions,
-            COMPUTEGCBIAS.out.versions,
-            CORRECTGCBIAS.out.versions,
-            COVERAGEBAM.out.versions
+            BAMPEFRAGMENTSIZE.out.versions.first(),
+            PLOTCOVERAGE.out.versions.first(),
+            FILTERBAMBYSIZE.out.versions.first(),
+            COMPUTEGCBIAS.out.versions.first(),
+            CORRECTGCBIAS.out.versions.first(),
+            COVERAGEBAM.out.versions.first()
         )
 
     emit:
