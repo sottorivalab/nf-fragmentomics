@@ -36,7 +36,7 @@ workflow FRAGMENTOMICS {
         -----------------------------------
         input         : ${params.input}
         targets       : ${params.targets}
-        outdir        : ${params.outdir}   
+        outdir        : ${params.outdir}
         preprocess    : ${params.preprocess}
         bin size      : ${params.bin_size}
         target expand : ${params.target_expand_sx} bp - ${params.target_expand_dx} bp
@@ -67,12 +67,12 @@ workflow FRAGMENTOMICS {
         // BAM PROCESSING
         if (params.preprocess) {
             // remove wiggle from sample channel
-            // rerun preprocess for all samples            
+            // rerun preprocess for all samples
             bam_ch = sample_ch
                 .map { it ->
                     [it[0], it[1], it[2]]
                 }
-            
+
             BAM_PREPROCESS(
                 bam_ch,
                 genome_2bit,
@@ -102,8 +102,8 @@ workflow FRAGMENTOMICS {
 
         ch_versions = ch_versions.mix(
             TARGET_PROCESS.out.versions
-        )                
-            
+        )
+
     emit:
         versions = ch_versions  // channel: [ path(versions.yml) ]
 }

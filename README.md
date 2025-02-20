@@ -37,7 +37,7 @@ The process `PEAK_STATS` generates 4 output files:
 
 1. `signal`: name of input sample
 2. `target`: name of input target set
-3. `source`: source of target 
+3. `source`: source of target
 4. `integration`: montecarlo integration of peak using `background.mean`
 5. `background.mean`: mean calculated of extreme of distribution.
 6. `referencePoint.bin`: bin location of referencePoint.
@@ -89,13 +89,13 @@ Other parameters
 
 ```
 // preprocess: if true, preprocess the input data to bw
-preprocess = true 
+preprocess = true
 // bin_size: bin size for the bw files
 bin_size = 10
 // target_expand_sx: bp to expand on the left of the target
 target_expand_sx = 4000
 // target_expand_dx: bp to expand on the right of the target
-target_expand_dx = 4000	
+target_expand_dx = 4000
 // filter_min: minimum fragment length
 filter_min = 90
 // filter_max: maximum fragment length
@@ -119,7 +119,7 @@ PATIENT_A,PATIENT_A_T1,T1,/path/to/bam.bam,/path/to/bam.bai,
 PATIENT_A,PATIENT_A_T2,T2,/path/to/bam.bam,/path/to/bam.bai,
 ```
 
-Where: 
+Where:
 
  - `caseid` is the patient
  - `sampleid` is the sample
@@ -144,7 +144,7 @@ HouseKeeping,house_keeping_dataset,./tests/input/stub/GeneHancer_housekeeping.be
 
 Where:
 
- - `name`: name of the target 
+ - `name`: name of the target
  - `source`: source of the target is, in many cases, the enclosing folder of the bed file. Different sources will be separated in publish dir. This allows the presence of files with the same name but ib different folders (griffin/MYC.bed and jasper/MYC.bed)
  - `bed`: bed file with targets
 
@@ -155,10 +155,10 @@ Where:
 
 ### BLACKLIST BED
 
-`blacklist_bed`: BED file with blacklisted regions used in COVERAGEBAM (wiggle file generation) and in COMPUTEMATRIX (matrix calculation). 
+`blacklist_bed`: BED file with blacklisted regions used in COVERAGEBAM (wiggle file generation) and in COMPUTEMATRIX (matrix calculation).
 
 We are using the ENCODE blacklist from:
- 
+
     Amemiya, H.M., Kundaje, A. & Boyle, A.P. The ENCODE Blacklist: Identification of Problematic Regions of the Genome. Sci Rep 9, 9354 (2019). https://doi.org/10.1038/s41598-019-45839-z
 
 ### GENOME SIZE
@@ -207,7 +207,7 @@ nextflow run main.nf -profile hpc,singularity -params-file params.yaml
 
 We tried the analysis with WGS and lpWGS samples.
 
-Input BAM file must be sorted and indexed. 
+Input BAM file must be sorted and indexed.
 
 ### Targets specifications
 

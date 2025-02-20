@@ -33,14 +33,14 @@ process COVERAGEBAM {
         --centerReads \\
         --binSize ${params.bin_size} \\
         $args
-    
+
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         deeptools: \$( bamCoverage --version | sed -e 's/bamCoverage //g' )
     END_VERSIONS
     """
 
-    stub:    
+    stub:
     def prefix = task.ext.prefix ?: "${bam.baseName}"
     """
     touch ${prefix}.bw

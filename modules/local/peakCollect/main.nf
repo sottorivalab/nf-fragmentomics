@@ -14,7 +14,7 @@ process PEAK_COLLECT {
     head -n 1 peaks1.tsv > peaks.tsv
     for i in *.tsv; do
         tail -n 1 \$i >> peaks.tsv
-    done    
+    done
     """
 
     stub:

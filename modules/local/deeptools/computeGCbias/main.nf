@@ -2,16 +2,16 @@
  * COMPUTEGCBIAS in bam files
  */
 process COMPUTEGCBIAS {
-	tag "$meta.sampleid"	
+	tag "$meta.sampleid"
 	label 'process_high'
 
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/deeptools:3.5.5--pyhdfd78af_0' :
-        'biocontainers/deeptools:3.5.5--pyhdfd78af_0' }"	
+        'biocontainers/deeptools:3.5.5--pyhdfd78af_0' }"
 
 	input:
 	// meta [caseid, sampleid, timepoint], bam, bai, genome_2bit
-	tuple val(meta), path(bam), path(bai), path(genome_2bit)    
+	tuple val(meta), path(bam), path(bai), path(genome_2bit)
 
 	output:
 	// meta [caseid, sampleid, timepoint], bam, bai, genome_2bit, freq
@@ -20,7 +20,7 @@ process COMPUTEGCBIAS {
 
 	when:
     task.ext.when == null || task.ext.when
-	
+
 	script:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.sampleid}"
@@ -31,7 +31,7 @@ process COMPUTEGCBIAS {
         -g ${genome_2bit} \\
         --GCbiasFrequenciesFile ${prefix}.freq.txt \\
         --numberOfProcessors ${task.cpus} \\
-        $args		
+        $args
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

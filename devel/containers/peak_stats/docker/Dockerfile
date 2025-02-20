@@ -3,7 +3,7 @@ FROM ubuntu:latest
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get -y update
-RUN apt-get update && apt-get install -y build-essential r-base 
+RUN apt-get update && apt-get install -y build-essential r-base
 ## enable R package install
 RUN chmod a+w /usr/local/lib/R/site-library
 

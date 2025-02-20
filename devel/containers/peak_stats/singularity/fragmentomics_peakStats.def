@@ -13,7 +13,7 @@ From: ubuntu:latest
 %post
     apt-get update && apt-get install -y build-essential r-base
     chmod a+w /usr/local/lib/R/site-library
-    
+
     R -e 'install.packages("optparse")'
     R -e 'install.packages("stringr")'
     R -e 'install.packages("tibble")'

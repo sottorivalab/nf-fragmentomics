@@ -1,6 +1,6 @@
 process VERSIONS {
     publishDir "${params.outdir}/pipeline_info", mode: 'copy'
-    
+
     input:
     val versions
 

@@ -44,7 +44,7 @@ process CORRECTGCBIAS {
     """
     touch ${prefix}.gc_correct.bam
     touch ${prefix}.gc_correct.bam.bai
-    
+
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         deeptools: \$( correctGCBias --version | sed -e 's/correctGCBias //g' )

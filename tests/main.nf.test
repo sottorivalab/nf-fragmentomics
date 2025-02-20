@@ -4,7 +4,7 @@ nextflow_function {
     name "Test Functions"
     script "main.nf"
 
-	
+
 
     test("Test Function create_target_channel") {
 
@@ -25,7 +25,7 @@ nextflow_function {
 
     }
 
-	
+
 
     test("Test Function create_sample_channel") {
 
@@ -46,6 +46,6 @@ nextflow_function {
 
     }
 
-	
+
 
 }

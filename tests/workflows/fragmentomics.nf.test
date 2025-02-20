@@ -7,7 +7,7 @@ nextflow_workflow {
     test("Should run with BigWiggle without failures") {
 
         when {
-            params {                
+            params {
                 outdir = "tests/results"
                 preprocess = false
             }
@@ -20,7 +20,7 @@ nextflow_workflow {
                     file(params.modules_testdata_base_path + 'genomics/sarscov2/illumina/bigwig/test.bigwig', checkIfExists: true)
                 ])
                 input[1] = Channel.of([
-                    'test_source', 
+                    'test_source',
                     file(params.modules_testdata_base_path + 'genomics/sarscov2/genome/bed/test.bed', checkIfExists: true),
                 ])
                 input[2] = [
@@ -29,7 +29,7 @@ nextflow_workflow {
                 input[3] = [
                     file(params.modules_testdata_base_path + 'genomics/sarscov2/genome/bed/baits.bed', checkIfExists: true)
                 ]
-                """                
+                """
             }
         }
 

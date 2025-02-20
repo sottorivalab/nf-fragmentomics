@@ -44,7 +44,7 @@ def parse_args():
         action="store_const",
         const=logging.INFO,
     )
-    
+
     parser.add_argument(
         "-vv",
         "--very-verbose",
@@ -65,9 +65,9 @@ def setup_logging(loglevel):
     """
     logformat = "[%(asctime)s] %(levelname)s:%(name)s:%(message)s"
     logging.basicConfig(
-        level=loglevel, 
-        stream=sys.stdout, 
-        format=logformat, 
+        level=loglevel,
+        stream=sys.stdout,
+        format=logformat,
         datefmt="%Y-%m-%d %H:%M:%S"
     )
 
@@ -78,11 +78,11 @@ def check_files(files):
         if not file.is_file():
             _logger.error("File not found: %s", f)
             return False
-        
+
         if file.suffix != ".bed":
             _logger.error("File extension not supported: %s", file)
             return False
-        
+
         return True
 
 def print_targets(files, source):
@@ -95,7 +95,7 @@ def print_targets(files, source):
             source = file.parent.name
         file_abs = file.absolute()
         print(f"{name},{source},{file_abs}")
-        
+
 
 def main():
     """Main function"""
@@ -104,7 +104,7 @@ def main():
 
     _logger.info("Generating targets.csv")
     _logger.info("Parser regexp: %s", regexp.pattern)
-    
+
     if args.source is not None:
         _logger.info("Source: %s", args.source)
 

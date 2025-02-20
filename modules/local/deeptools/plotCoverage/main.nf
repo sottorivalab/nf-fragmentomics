@@ -1,7 +1,7 @@
 /*
  * PLOTCOVERAGE
- * 
- * This process generates coverage plots for sequencing data. 
+ *
+ * This process generates coverage plots for sequencing data.
  * It takes as input a BAM file and produces a graphical representation of the coverage across the genome.
  * The output includes a PNG image showing the coverage plot and a tab-delimited text file with the coverage values.
  */
@@ -24,7 +24,7 @@ process PLOTCOVERAGE {
 
     when:
     task.ext.when == null || task.ext.when
-    
+
     script:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${bam.baseName}"
@@ -36,7 +36,7 @@ process PLOTCOVERAGE {
         --plotTitle "Sample: ${meta.sampleid}" \\
         --numberOfProcessors ${task.cpus} \\
         $args
-    
+
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         deeptools: \$( plotCoverage --version | sed -e 's/plotCoverage //g' )
@@ -48,7 +48,7 @@ process PLOTCOVERAGE {
     """
     touch ${prefix}_coverage.png
     touch ${prefix}_coverage.tab
-    
+
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         deeptools: \$( plotCoverage --version | sed -e 's/plotCoverage //g' )

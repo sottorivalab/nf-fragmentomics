@@ -43,6 +43,6 @@ plot.fourier <- function(fourier.series, f.0, ts) {
 }
 
 # An eg
-plot.fourier(function(t,w) {sin(w*t)}, 1, ts=seq(0,1,1/100)) 
+plot.fourier(function(t,w) {sin(w*t)}, 1, ts=seq(0,1,1/100))
 ```
 

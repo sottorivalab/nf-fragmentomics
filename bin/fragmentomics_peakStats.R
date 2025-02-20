@@ -10,14 +10,14 @@ suppressPackageStartupMessages(library(jsonlite))
 #
 # Usage: fragmentomics_peakStats.R [options] matrix
 #
-# Example: 
+# Example:
 #    fragmentomics_peakStats.R -s "Signal" -t "Target" -S "Source" matrix
 #    fragmentomics_peakStats.R -s "Signal" -t "Target" -S "Source" --background-left-limit 50 --background-right-limit 50 matrix
 
-option_list <- list(  
+option_list <- list(
   make_option(
-    c("-r", "--random-points"), 
-    type="integer", 
+    c("-r", "--random-points"),
+    type="integer",
     default=10000,
     help="Number of random points to generate in Monte Carlo integration [default %default]",
     metavar="number",
@@ -25,15 +25,15 @@ option_list <- list(
   ),
 
   make_option(
-    "--background-left-limit", 
-    default=50, 
+    "--background-left-limit",
+    default=50,
     help="Background left limit [default %default]",
     dest="bg.limit.left"
   ),
 
   make_option(
-    "--background-right-limit", 
-    default=50, 
+    "--background-right-limit",
+    default=50,
     help="Background right limit [default %default]",
     dest="bg.limit.right"
   ),
@@ -112,7 +112,7 @@ read_matrix <- function(mfile, opt) {
   # calculate background median
   limits <- list(min = opt$bg.limit.left, max = nrow(summary.table) - opt$bg.limit.right)
   background.data <- summary.table |>
-    filter(bin <= limits$min | bin >= limits$max)  
+    filter(bin <= limits$min | bin >= limits$max)
   background.mean <- mean(background.data$coverage)
 
   # create random points. 1<x<800 (number of bins of matrix)
@@ -121,7 +121,7 @@ read_matrix <- function(mfile, opt) {
   random.points <- tibble(x=x1,y=y1) |> arrange(x)
 
   # left join, this expand the data to N=random.points, annotate the points above and below
-  integration.data <- random.points |> 
+  integration.data <- random.points |>
     left_join(summary.table, join_by(closest(x >= bin))) |>
     mutate(
       above=(y >= coverage & y <= background.mean),
@@ -132,12 +132,12 @@ read_matrix <- function(mfile, opt) {
   montecarlo.integration <- length(which(integration.data$above)) / nrow(integration.data)
 
   # relative signal
-  summary.table <- summary.table |> 
+  summary.table <- summary.table |>
     mutate(
-      relative=coverage/background.mean, 
+      relative=coverage/background.mean,
       background.mean=background.mean
     )
-  
+
   # peak stats
   central.bin <- round(max(summary.table$bin)/2, digits=0)
   referencePoint <- summary.table |> filter(bin == central.bin)
@@ -146,8 +146,8 @@ read_matrix <- function(mfile, opt) {
   # central coverage
   central.coverage.bin.min <- central.bin - (opt$central.coverage.bp / bin.size)
   central.coverage.bin.max <- central.bin + (opt$central.coverage.bp / bin.size)
-  central.coverage.data <- summary.table |> 
-    filter(bin >= central.coverage.bin.min, bin <= central.coverage.bin.max) |> 
+  central.coverage.data <- summary.table |>
+    filter(bin >= central.coverage.bin.min, bin <= central.coverage.bin.max) |>
     select(coverage)
   central.coverage <- mean(central.coverage.data$coverage)
 
@@ -155,8 +155,8 @@ read_matrix <- function(mfile, opt) {
   average.coverage.bp <- 1000
   average.coverage.bin.min <- central.bin - (average.coverage.bp / bin.size)
   average.coverage.bin.max <- central.bin + (average.coverage.bp / bin.size)
-  average.coverage.data <- summary.table |> 
-    filter(bin >= average.coverage.bin.min, bin <= average.coverage.bin.max) |> 
+  average.coverage.data <- summary.table |>
+    filter(bin >= average.coverage.bin.min, bin <= average.coverage.bin.max) |>
     select(coverage)
   average.coverage <- mean(average.coverage.data$coverage)
 
@@ -187,8 +187,8 @@ read_matrix <- function(mfile, opt) {
 
 # WRITE FILES
 write_files <- function(all.data, summary.table, peak.stats, opt) {
-  write_delim(summary.table, paste(opt$target, "peak_data.tsv", sep="_"), delim="\t")
-  write_delim(peak.stats, paste(opt$target, "peak_stats.tsv", sep="_"), delim="\t")
+  write_delim(summary.table, paste(opt$target, "peak_data.tsv", sep="_"), delim="    ")
+  write_delim(peak.stats, paste(opt$target, "peak_stats.tsv", sep="_"), delim="    ")
 }
 
 # PLOT SIGNAL
@@ -226,8 +226,8 @@ plot_signal <- function(summary.table, integration.data, peak.stats, opt) {
     ) +
     geom_rect(
       aes(
-        xmin = peak.stats$background.right.limit, 
-        xmax = max(summary.table$bin), 
+        xmin = peak.stats$background.right.limit,
+        xmax = max(summary.table$bin),
         ymin=min(summary.table$coverage),
         ymax=max(summary.table$coverage)
       ),
@@ -243,8 +243,8 @@ plot_signal <- function(summary.table, integration.data, peak.stats, opt) {
     # central coverage limits
     geom_rect(
       aes(
-        xmin = peak.stats$central.coverage.bin.min, 
-        xmax = peak.stats$central.coverage.bin.max, 
+        xmin = peak.stats$central.coverage.bin.min,
+        xmax = peak.stats$central.coverage.bin.max,
         ymin=min(summary.table$coverage),
         ymax=max(summary.table$coverage)
       ),
@@ -258,8 +258,8 @@ plot_signal <- function(summary.table, integration.data, peak.stats, opt) {
     # average coverage limits
     geom_rect(
       aes(
-        xmin = peak.stats$average.coverage.bin.min, 
-        xmax = peak.stats$average.coverage.bin.max, 
+        xmin = peak.stats$average.coverage.bin.min,
+        xmax = peak.stats$average.coverage.bin.max,
         ymin=min(summary.table$coverage),
         ymax=max(summary.table$coverage)
       ),
@@ -290,8 +290,8 @@ plot_signal <- function(summary.table, integration.data, peak.stats, opt) {
       )
     ) +
     scale_x_continuous(
-      "Position relative to referencePoint (bp)", 
-      breaks = c(0,100,200,300,400,500,600,700,800), 
+      "Position relative to referencePoint (bp)",
+      breaks = c(0,100,200,300,400,500,600,700,800),
       labels = c("-4kb","-3kb","-2kb","-1kb","0","1kb","2kb","3kb","4kb")
     ) +
     theme(legend.position = "none")
@@ -320,8 +320,8 @@ plot_signal <- function(summary.table, integration.data, peak.stats, opt) {
       )
     ) +
     scale_x_continuous(
-      "Position relative to referencePoint (bp)", 
-      breaks = c(0,100,200,300,400,500,600,700,800), 
+      "Position relative to referencePoint (bp)",
+      breaks = c(0,100,200,300,400,500,600,700,800),
       labels = c("-4kb","-3kb","-2kb","-1kb","0","1kb","2kb","3kb","4kb")
     ) +
     theme(legend.position = "none")

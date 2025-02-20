@@ -7,7 +7,7 @@ nextflow_process {
     test("Should run COMPUTEGCBIAS without failures") {
 
         when {
-            params {                
+            params {
                 outdir = "tests/results"
             }
             process {

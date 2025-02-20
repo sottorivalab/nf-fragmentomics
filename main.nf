@@ -10,7 +10,7 @@ nextflow.enable.dsl = 2
 include { FRAGMENTOMICS } from './workflows/fragmentomics.nf'
 include { VERSIONS } from './modules/local/utils/versions.nf'
 
-def create_target_channel(LinkedHashMap row) {    
+def create_target_channel(LinkedHashMap row) {
     return [row.source, file(row.bed)]
 }
 
@@ -24,16 +24,16 @@ def create_sample_channel(LinkedHashMap row) {
 
     // bam, bai and bw can be null
     return [
-        meta, 
-        row.bam ? file(row.bam) : null, 
-        row.bai ? file(row.bai) : null, 
+        meta,
+        row.bam ? file(row.bam) : null,
+        row.bai ? file(row.bai) : null,
         row.bw  ? file(row.bw) : null
     ]
 }
 
 // MAIN WORKFLOW
 workflow {
-    
+
     main:
     // Init param files
     genome_2bit = params.genome_2bit ? Channel.fromPath(params.genome_2bit) : Channel.empty()
@@ -60,8 +60,8 @@ workflow {
 
     target_ch = target_ch
         .groupTuple(
-            by: 0, 
-            size: params.collate_size, 
+            by: 0,
+            size: params.collate_size,
             remainder: true)
 
     FRAGMENTOMICS(

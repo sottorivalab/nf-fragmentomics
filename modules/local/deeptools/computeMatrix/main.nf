@@ -8,10 +8,10 @@ process COMPUTEMATRIX {
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/deeptools:3.5.5--pyhdfd78af_0' :
         'biocontainers/deeptools:3.5.5--pyhdfd78af_0' }"
-	
+
 	input:
 	tuple val(meta_sample), path(bw), path(blacklist_bed), val(source), path(beds)
-	
+
 	output:
 	tuple val(meta_sample), val(source), path("*_matrix.gz"), emit: matrix
 	path "versions.yml"                                     , emit: versions
@@ -20,12 +20,12 @@ process COMPUTEMATRIX {
 	task.ext.when == null || task.ext.when
 
 	script:
-    def args = task.ext.args ?: ''    
+    def args = task.ext.args ?: ''
 	"""
 	for BED in ${beds.join(' ')} ; do
 		BASENAME=\$(basename \${BED} .bed)
         OUTPUT_FILE=\${BASENAME}_matrix.gz
-		
+
 		computeMatrix reference-point \\
 			--referencePoint center \\
 			-S ${bw} \\

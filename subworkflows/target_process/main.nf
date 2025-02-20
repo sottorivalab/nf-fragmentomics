@@ -8,13 +8,13 @@ workflow TARGET_PROCESS {
         target_ch
         wiggle_ch
         blacklist_bed
-    
+
     main:
         ch_versions = Channel.empty()
         signal_target_ch = wiggle_ch
             .combine(blacklist_bed)
             .combine(target_ch)
-        
+
         COMPUTEMATRIX(signal_target_ch)
         HEATMAP(COMPUTEMATRIX.out.matrix)
         PEAK_STATS(COMPUTEMATRIX.out.matrix)
@@ -30,7 +30,7 @@ workflow TARGET_PROCESS {
                 it[3]
             }
             .collect()
-            
+
         PEAK_COLLECT(peak_stats)
 
     emit:

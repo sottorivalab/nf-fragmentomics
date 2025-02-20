@@ -24,7 +24,7 @@ process BAMPEFRAGMENTSIZE {
 
     when:
     task.ext.when == null || task.ext.when
-    
+
     script:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${bam.baseName}"
@@ -35,7 +35,7 @@ process BAMPEFRAGMENTSIZE {
         -T "Sample: ${meta.sampleid}" \\
         --numberOfProcessors ${task.cpus} \\
         $args 1>${prefix}_fragmentsize.txt
-    
+
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         deeptools: \$( bamPEFragmentSize --version | sed -e 's/bamPEFragmentSize //g' )

@@ -20,14 +20,14 @@ def parse_args():
         description="Generate samplesheet.csv for nf-fragmentomics pipeline",
         epilog="Author: Davide Rambaldi"
     )
-    
+
     parser.add_argument(
         dest="files",
         help="Bam or wiggle files",
         nargs='+',
         metavar="FILE",
     )
-    
+
     parser.add_argument(
         "-r",
         "--regexp",
@@ -45,7 +45,7 @@ def parse_args():
         action="store_const",
         const=logging.INFO,
     )
-    
+
     parser.add_argument(
         "-vv",
         "--very-verbose",
@@ -66,9 +66,9 @@ def setup_logging(loglevel):
     """
     logformat = "[%(asctime)s] %(levelname)s:%(name)s:%(message)s"
     logging.basicConfig(
-        level=loglevel, 
-        stream=sys.stderr, 
-        format=logformat, 
+        level=loglevel,
+        stream=sys.stderr,
+        format=logformat,
         datefmt="%Y-%m-%d %H:%M:%S"
     )
 
@@ -83,7 +83,7 @@ def check_files(files):
         if file.suffix not in ['.bam', '.bw']:
             _logger.error(f"Invalid file extension: {file}")
             return False
-        
+
         if file.suffix == '.bam':
             bai_file = Path(f"{str(file)}.bai")
             if not bai_file.is_file():
@@ -93,7 +93,7 @@ def check_files(files):
                 if not bai_file.is_file():
                     _logger.error(f"Missing bai file: {bai_file}")
                     return False
-            
+
     return True
 
 def print_samplesheet(files, regexp):
@@ -101,7 +101,7 @@ def print_samplesheet(files, regexp):
     print("caseid,sampleid,timepoint,bam,bai,bw")
     for file in files:
         match = regexp.match(file.name)
-        sampleid = match.group(1)   
+        sampleid = match.group(1)
         caseid = match.group(2)
         timepoint = match.group(3)
 
@@ -113,7 +113,7 @@ def print_samplesheet(files, regexp):
         )
 
         file_abs = file.absolute()
-        
+
         if file.suffix == '.bam':
             bai_file = Path(f"{str(file)}.bai")
             if not bai_file.is_file():
@@ -123,7 +123,7 @@ def print_samplesheet(files, regexp):
                 if not bai_file.is_file():
                     _logger.error(f"Missing bai file: {bai_file}")
                     return False
-                
+
             bai_abs = bai_file.absolute()
             print(f"{caseid},{sampleid},{timepoint},{file_abs},{bai_abs},")
         else:
@@ -134,12 +134,12 @@ def main():
     args = parse_args()
     setup_logging(args.loglevel)
     regexp = re.compile(args.regexp)
-    
+
     _logger.info("Generating samplesheet.csv")
     _logger.info("Parser regexp: %s", regexp.pattern)
 
     files = [Path(f) for f in args.files]
-    
+
     _logger.info("Checking files")
 
     if check_files(files):
