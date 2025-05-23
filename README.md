@@ -1,5 +1,8 @@
 # NF-FRAGMENTOMICS PIPELINE
 
+<img src="assets/img/logo.png" alt="logo" width="200">
+
+
 ## Introduction
 
 Recent research indicates that analyzing the fragmentation patterns of circulating free DNA (cfDNA) from genome sequencing data can provide insights into nucleosome occupancy in the original cells. In accessible genomic regions, nucleosomes are arranged systematically to facilitate access for DNA-binding proteins.
