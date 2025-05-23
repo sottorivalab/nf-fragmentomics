@@ -7,6 +7,8 @@
 
 Recent research indicates that analyzing the fragmentation patterns of circulating free DNA (cfDNA) from genome sequencing data can provide insights into nucleosome occupancy in the original cells. In accessible genomic regions, nucleosomes are arranged systematically to facilitate access for DNA-binding proteins.
 
+Here we present **nf-fragmentomics**, a bioinformatics pipeline designed to automate and standardize the analysis of cfDNA fragmentation patterns. The pipeline takes as input BAM files (aligned sequencing reads), applies fragment size selection, corrects for GC bias, and generates normalized coverage profiles over user-defined genomic regions (such as transcription factor binding sites). It leverages established tools like deepTools for matrix computation and visualization, and supports the use of blacklists to exclude problematic genomic regions. The modular design allows for flexible configuration and integration into various analysis workflows, making it suitable for both exploratory and large-scale studies of cfDNA fragmentation.
+
 <img src="assets/img/cfDNA_degradation.png" alt="cfDNA degradation" width="480">
 
 ## Pipeline Summary
