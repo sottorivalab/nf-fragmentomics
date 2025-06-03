@@ -1,0 +1,2 @@
+signal_label	target_label	source_label	integration	background_mean	background_left_limit	background_right_limit	central_bin	bin_size	reference_point_coverage	reference_point_relative	central_coverage	central_coverage_bin_min	central_coverage_bin_max	average_coverage	average_coverage_bin_min	average_coverage_bin_max	peak_length	peak_relative
+TEST	TEST	test_source	0.0389	44.982125742574254	50	750	400	10	25.875600000000002	0.579799401845191	26.343257142857144	397	403	43.22312885572139	300	500	19.106525742574252	0.42020059815480904
