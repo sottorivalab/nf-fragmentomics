@@ -130,7 +130,7 @@ if (sys.nframe() == 0L) {
 
   pplot <- fragmentomics::peak_plot(peak_data, normalized = FALSE)
   ggsave(
-    paste(opt$target, "RawSignal.pdf", sep="_"),
+    paste(opt$target, "RawSignal.pdf", sep = "_"),
     width = 29.7,
     height = 21,
     units = "cm"
