@@ -1,6 +1,8 @@
 # NF-FRAGMENTOMICS PIPELINE
 
-<img src="assets/img/preview.png" alt="preview" width="1024">
+<center>
+  <img src="assets/img/logo.png" alt="logo" width="400">
+</center>
 
 
 ## Introduction
@@ -328,6 +330,3 @@ Usage example with test files:
 
 
 ---
-<center>
-<img src="assets/img/logo.png" alt="logo" width="200">
-</center>
