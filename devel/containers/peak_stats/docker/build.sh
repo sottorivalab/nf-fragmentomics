@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker build -t fragmentomics_peak_stats:latest . --platform=linux/amd64
+docker build -t tucano/fragmentomics_peak_stats:latest . --platform=linux/amd64
