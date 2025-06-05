@@ -3,5 +3,5 @@ Inside vagrant:
 sudo singularity build fragmentomics_peakStats.sif fragmentomics_peakStats.def
 singularity remote login
 singularity key newpair
-
+singularity sign fragmentomics_peakStats.sif
 singularity push fragmentomics_peakStats.sif library://tucano/fragmentomics/fragmentomics_peak_stats:latest
