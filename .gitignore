@@ -13,3 +13,4 @@ devel/peak_stats/*tsv
 devel/peak_stats/*pdf
 .RData
 .Rhistory
+*.sif
