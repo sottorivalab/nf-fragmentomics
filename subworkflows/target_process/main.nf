@@ -10,7 +10,7 @@ workflow TARGET_PROCESS {
         blacklist_bed
 
     main:
-        ch_versions = Channel.empty()
+        ch_versions = channel.empty()
         signal_target_ch = wiggle_ch
             .combine(blacklist_bed)
             .combine(target_ch)

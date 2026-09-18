@@ -13,7 +13,7 @@ workflow BAM_PREPROCESS {
         blacklist_bed
 
     main:
-        ch_versions = Channel.empty()
+        ch_versions = channel.empty()
         /////////////////////////////////////////////////
         // BAMQC AND FILTER READS BY SIZE
         /////////////////////////////////////////////////
